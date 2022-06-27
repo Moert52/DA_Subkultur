@@ -14,5 +14,9 @@ def Start():
 def Test():
     print('Hallo')
 
+def tTest():
+    print('Hallo')
+
+
 if __name__ == '__main__':
     app.run(debug=True)

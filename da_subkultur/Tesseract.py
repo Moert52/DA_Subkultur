@@ -8,7 +8,7 @@ from PIL import Image, ImageDraw, ImageFont
 import glob
 from lxml import etree
 import io
-import aspose.words as aw
+
 
 
 #Hier wird Tesseract definiert
