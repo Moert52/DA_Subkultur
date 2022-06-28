@@ -1,0 +1,12 @@
+html {
+    margin: 0;
+    background: url("https://reisenexclusiv.com/wp-content/uploads/2019/04/Innsbruck-Panorama-Inn-Berge-Mariahilf.jpg") no-repeat center center fixed;
+    height: 100%;
+}
+
+.head {
+    position: absolute;
+    top: 25%;
+    left: 50%;
+
+}

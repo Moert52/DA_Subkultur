@@ -15,8 +15,7 @@ def Test():
     print('Hallo')
 
 def tTest():
-    print('LEonardo stinkt')
-
+    print('Leonardo stinkt')
 
 if __name__ == '__main__':
     app.run(debug=True)
