@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/start.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+<head>
+    <meta charset="UTF-8">
+    <title>Subkulturarchiv Innsbruck</title>
+</head>
+<body class="module">
+    <!-- Creating a canvas element in HTML-->
+    <div class="line">
+
+    </div>
+             <canvas id="canv" class="line" width="1500" height="315"></canvas>
+
+
+    <script>
+
+        /*The window.onload function will run as
+        soon as the window loads in the browser */
+        window.onload = function () {
+
+            /* This method returns the html element that
+                has the ID attribute with the specified
+                value. */
+            let canvas = document.getElementById("canv");
+
+            /* This method returns a drawing context
+                on the canvas, or null if the context
+                identified is not supported. */
+            let context = canvas.getContext("2d");
+
+            /* It will change the style and appearance
+                of the text to make it look more geeky. */
+            context.font = "90px serif";
+            context.fillStyle = "yellow";
+            context.textAlign = "center";
+
+            let string = "Subkulturarchiv Innsbruck";
+
+            let angle = Math.PI * 0.5; // in radians
+            let radius = 700;
+
+
+            context.translate(600, 800);
+            context.rotate(-1 * angle / 2);
+
+            for (let i = 0; i < string.length; i++) {
+
+                /* It is worth noting that we are not
+                    rotating the text,here the whole
+                    context is being rotated and
+                    translated, and the letters are just
+                    filled in it. */
+                context.rotate(angle / string.length);
+                context.save();
+                context.translate(0, -1 * radius);
+                context.fillText(string[i], 0, 0);
+                context.restore();
+            }
+        };
+    </script>
+</body>
+</html>
