@@ -13,11 +13,11 @@ c = conn.cursor()
 #)""")
 
 
-#c.execute("""CREATE TABLE users(
+# c.execute("""CREATE TABLE users(
 #        id integer PRIMARY KEY NOT NULL,
 #        email text,
 #        password text
-#)""")
+# )""")
 
 
 conn.commit()
