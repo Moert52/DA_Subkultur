@@ -153,4 +153,4 @@ def process_dir(dir):
         highlight_images(dir)
 
 if __name__ == '__main__':
-    process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\utopia')
+    process_dir(r'D:\Diplomarbeit\Tesseract')
