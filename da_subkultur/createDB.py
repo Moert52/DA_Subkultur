@@ -14,9 +14,13 @@ c = conn.cursor()
 
 
 # c.execute("""CREATE TABLE users(
-#        id integer PRIMARY KEY NOT NULL,
+#        id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+#        firstname text,
+#        lastname text,
+#        birthdate text,
 #        email text,
-#        password text
+#        password text,
+#        role text
 # )""")
 
 

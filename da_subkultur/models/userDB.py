@@ -1,4 +1,5 @@
 import sqlite3
+from datetime import date
 
 from da_subkultur.models.User import User
 
@@ -18,7 +19,9 @@ def insert(user):
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        c.execute("INSERT INTO users (id, email, password) VALUES (?, ?, ?)", (user.id, user.email, user.password))
+        c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
+                  "VALUES (?, ?, ?, ?, ?, ?)",
+                  (user.firstname, user.lastname, user.birthdate, user.email, user.password, user.role))
         conn.commit()
     except sqlite3.Error as error:
         print("An error occurred while inserting a user", error)
@@ -57,7 +60,10 @@ def login(email, password):
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
-        return 1
+        if (c.fetchone() != None):
+            return 1
+        else:
+            return 0
     except sqlite3.Error as error:
         print("An error occurred while login", error)
     finally:
@@ -66,12 +72,31 @@ def login(email, password):
 
 
 if __name__ == "__main__":
-    print("Enter EMail: ")
-    email = input()
-    print("Enter Password: ")
-    password = input()
+    print("Login oder Register (login/register):")
 
-    if login(email, password) == 1:
-        print("logged in")
-    else:
-        print("login failed")
+    if input() == "login":
+
+        print("Enter EMail: ")
+        email = input()
+        print("Enter Password: ")
+        password = input()
+
+        if login(email, password) == 1:
+            print("logged in")
+        else:
+            print("login failed")
+
+    if input() == "register":
+        print("Firstname: ")
+        firstname = str(input())
+        print("Lastname: ")
+        lastname = str(input())
+        print("Birthdate(YYYY:MM:DD): ")
+        b = input().split(":")
+        birthdate = date(int(b[0]), int(b[1]), int(b[2]))
+        print("EMail: ")
+        email = str(input())
+        print("Password: ")
+        password = str(input())
+        user = (firstname, lastname, birthdate, email, password, "user")
+        insert(user)
