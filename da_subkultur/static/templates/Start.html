@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/start.css') }}">
+    <link href='https://fonts.googleapis.com/css?family=Abril Fatface' rel='stylesheet'>
+
 <head>
     <meta charset="UTF-8">
     <title>Subkulturarchiv Innsbruck</title>
@@ -9,7 +11,12 @@
     <!-- Creating a canvas element in HTML-->
 
     <div class="background"></div>
-    <div></div><canvas id="canv" width="1500" height="315"></canvas></div>
+
+    <canvas id="canv" width="1500" height="315"></canvas>
+    <div class='semi-circle'></div>
+    <div class="drei" style="
+
+"></div>
 
     <script>
 
@@ -29,11 +36,12 @@
 
             /* It will change the style and appearance
                 of the text to make it look more geeky. */
-            context.font = "90px serif";
-            context.fillStyle = "yellow";
+            context.font = "bold 90px Abril Fatface";
+            context.fillStyle = "#D0DD4B";
             context.textAlign = "center";
 
             let string = "Subkulturarchiv Innsbruck";
+
 
             let angle = Math.PI * 0.5; // in radians
             let radius = 700;
