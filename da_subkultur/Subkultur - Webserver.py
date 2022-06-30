@@ -15,7 +15,7 @@ def Test():
     print('Hallo')
 
 def tTest():
-    print('LEonardo ist ein stinkender Serbe')
+    print('Leonardo ist ein stinkender Serbe')
 
 
 if __name__ == '__main__':

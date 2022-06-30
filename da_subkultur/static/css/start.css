@@ -9,34 +9,22 @@ body {
 
 }
 
-.line {
-  --c:130px; /* control the size */
-
-  width: 1200px;
-  margin-top:-100px;
-  display:inline-block;
-  box-sizing:border-box;
-  border: solid var(--c) transparent;
-  border-radius:50%;
-  border-bottom-color:red;
-  background:
-    radial-gradient(farthest-side,red 98%,transparent) left  15% bottom 14%,
-    radial-gradient(farthest-side,red 98%,transparent) right 15% bottom 14%;
-  background-size:var(--c) var(--c);
-  background-origin:border-box;
-  background-repeat:no-repeat;
-}
-
-/* maintain the square ratio */
-.line::before {
-  content:"";
-  display:block;
-  padding-top:100%;
-}
 
 #canv {
-    margin-left: 150px;
-    margin-top: 230px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 
+.background {
+    position: absolute;
+    top: 90px;
+    left: 20px;
+    width: 1100px;
+    height: 200px;
+    border: solid 80px #000;
+    border-color: #000 transparent transparent transparent;
+    border-radius: 50%/300px 300px 0 0;
+    border-top-color: orange;
+    opacity: 0.5;
+}
