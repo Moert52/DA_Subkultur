@@ -100,7 +100,7 @@ if __name__ == "__main__":
         else:
             print("login failed")
 
-    elif input() == "register":
+    else:
         print("Firstname: ")
         firstname = str(input())
         print("Lastname: ")
