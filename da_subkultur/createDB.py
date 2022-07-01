@@ -13,15 +13,15 @@ c = conn.cursor()
 #)""")
 
 
-# c.execute("""CREATE TABLE users(
-#        id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-#        firstname text,
-#        lastname text,
-#        birthdate text,
-#        email text,
-#        password text,
-#        role text
-# )""")
+#c.execute("""CREATE TABLE users(
+#       id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+#        firstname text NOT NULL,
+#       lastname text NOT NULL,
+#      birthdate text NOT NULL,
+#     email text UNIQUE NOT NULL,
+#    password text NOT NULL,
+#   role text NOT NULL default 'user'
+#)""")
 
 
 conn.commit()
