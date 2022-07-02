@@ -1,22 +1,10 @@
 import sqlite3
 from datetime import date
 import User
-from sqlalchemy import Column, Integer, Text, Float, DateTime, create_engine, or_, desc
-from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.sql.expression import func
-from dataclasses import dataclass
-
-us = User.User
-Base = User.Base
-
-engine = create_engine('user.db') #Welche Datenbank wird verwendet
-db_session = scoped_session(sessionmaker(autocommit=True, autoflush=True, bind=engine))
-Base.query = db_session.query_property()
 
 def tryConnection():
     try:
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect(r'/models/users.db')
         print("A SQLite connection has been established")
     except sqlite3.Error as error:
         print("An error occurred while connecting to SQLite", error)
@@ -28,7 +16,7 @@ def tryConnection():
 def insert(user):
     try:
         userList = list(user)
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password) "
                   "VALUES (?, ?, ?, ?, ?)",
@@ -40,25 +28,26 @@ def insert(user):
         conn.close()
 
 
-def getUser(id):
+def getUser(email):
     try:
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE email=?", email)
-        us.query.get(id)
+        c.execute("SELECT * FROM users WHERE email=?", [email])
+        user = c.fetchone()
+        return user
     except sqlite3.Error as error:
         print("An error occurred while getting a user", error)
-    finally:
-        conn.close()
+    #finally:
+        #conn.close()
     return -1
 
 def getAllUser():
     try:
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users")
-        user = c.fetchone()
-        return user
+        users = c.fetchall()
+        return users
     except sqlite3.Error as error:
         print("An error occurred while getting a user", error)
     finally:
@@ -67,9 +56,9 @@ def getAllUser():
 
 def deleteUser(id):
     try:
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect('user.db')
         c = conn.cursor()
-        c.execute("DELETE FROM users WHERE id=?", id)
+        c.execute("DELETE FROM users WHERE id=?", [id])
         conn.commit()
     except sqlite3.Error as error:
         print("An error occurred while deleting a user", error)
@@ -79,7 +68,7 @@ def deleteUser(id):
 
 def login(email, password):
     try:
-        conn = sqlite3.connect(r'C:\Users\mertc\PycharmProjects\da_subkultur\users.db')
+        conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
         if (c.fetchone() != None):
@@ -111,9 +100,8 @@ def logreg():
         firstname = str(input())
         print("Lastname: ")
         lastname = str(input())
-        print("Birthdate(YYYY:MM:DD): ")
-        b = input().split(":")
-        birthdate = date(int(b[0]), int(b[1]), int(b[2]))
+        print("Birthdate(YYYY-MM-DD): ")
+        birthdate = str(input())
         print("EMail: ")
         email = str(input())
         print("Password: ")
@@ -122,7 +110,7 @@ def logreg():
         insert(user)
 
 if __name__ == "__main__":
-    getUser(0)
-    #logreg()
-
+    print(getUser('mcetinkaya@tsn.at'))
+    logreg()
+    #print(getAllUser())
 
