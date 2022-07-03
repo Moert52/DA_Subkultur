@@ -38,6 +38,11 @@ def highlight_image(img, xml):
     image = Image.open(img)
     draw = ImageDraw.Draw(image)
     anz = 1
+    ff = os.path.splitext(img)[0]
+    dir = ff + "_bilder"
+    Path(dir).mkdir(exist_ok=True)
+    #os.mkdir(ff + "_bilder")
+
     for p in elementpath.select(root, '//Illustration', {'' : 'http://www.loc.gov/standards/alto/ns-v3#'}):
         gid = p.attrib["ID"]
         x0 = int(p.attrib["HPOS"])
@@ -46,7 +51,7 @@ def highlight_image(img, xml):
         y1 = int(y0 + int(p.attrib["HEIGHT"]))
         shape = [x0, y0,x1,y1 ]
 
-        crop_img(img, shape, anz)
+        crop_img(img, shape, anz, dir)
         anz+=1
         print (gid, shape)
         draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
@@ -95,14 +100,18 @@ def get_Text(img, xml):
     open(img + "_text.txt", "w",encoding="iso-8859-1").write(te)
 
 #Hier werden die Bilder von den einzelnen Dokumenten ausgeschneidet und dann abgespeichert
-def crop_img(img, shape, anz):
+def crop_img(img, shape, anz, dir):
+
+    ff = dir.removesuffix("_bilder")
+
+    name = os.path.basename(ff)
     im = Image.open(img)
     im1 = im.crop((shape))
     #im1.show()
     if im1.width == 0 or im1.height == 0:
         print("Fehler beim Bildausschnitt erstellen")
     else:
-        im1.save(img + "_pic_"+str(anz)+".jpg")
+        im1.save(dir + "\\\\" + name +"_pic_"+str(anz)+".jpg")
 
 #Hier werden alle Seiten des pdfs File in einzelne png - Bilder abgespeichert
 def extract_pdf(fname):
@@ -153,4 +162,5 @@ def process_dir(dir):
         highlight_images(dir)
 
 if __name__ == '__main__':
-    process_dir(r'D:\Diplomarbeit\Tesseract')
+    process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    #process_dir(r'D:\Diplomarbeit\Tesseract') #Leos Tesseract

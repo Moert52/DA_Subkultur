@@ -79,6 +79,7 @@ class Processor(object):
                 z += 1
                 #print('URL: %s' % result['url'])
                 arr.append(result['url'])
+            print(arr)
             highlight(title, arr)
         except Exception as e:
             self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
@@ -112,6 +113,15 @@ def extract_pdf(fname):
         dir, extension = os.path.splitext(pdffile)
         Path(dir).mkdir(exist_ok=True)
         pix.save("%s/%d.png" % (dir,i))
+
+def getPictures():
+    clearFolder()
+    for f in dir:
+        ff = f[0].removesuffix('_text.pdf')
+        ff = ff.replace("\\\\", "\\")
+
+        highlight_image(ff, '%s_alto_neu.xml' % ff, string)
+
 
 def highlight(string, dir):
     #print(os.path.basename(dir[0]))
@@ -196,4 +206,5 @@ if __name__ == '__main__':
     #p.delete('Cutblech_Logo_0')
 
     p.search('Innsbruck')
+
     p.server.commit()
