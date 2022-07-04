@@ -12,9 +12,11 @@ import io
 import json
 import glob
 import re
+from flask import Flask, render_template
 
 DOCUMENT_SITE_ID = 'Cultblech'
 DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
+app=Flask(__name__,template_folder='static/templates')  # Die Flask-Anwendung
 
 class Processor(object):
 
@@ -80,6 +82,7 @@ class Processor(object):
                 #print('URL: %s' % result['url'])
                 arr.append(result['url'])
             print(arr)
+            getPictures(arr)
             highlight(title, arr)
         except Exception as e:
             self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
@@ -114,13 +117,26 @@ def extract_pdf(fname):
         Path(dir).mkdir(exist_ok=True)
         pix.save("%s/%d.png" % (dir,i))
 
-def getPictures():
-    clearFolder()
-    for f in dir:
-        ff = f[0].removesuffix('_text.pdf')
-        ff = ff.replace("\\\\", "\\")
+arr = []
 
-        highlight_image(ff, '%s_alto_neu.xml' % ff, string)
+@app.route('/')
+def homepage():
+    # returning index.html and list
+    # and length of list to html page
+    return render_template("test.html", len=len(arr), arr=arr)
+
+def getPictures(dir):
+    for f in dir:
+        ff = f[0].removesuffix('.png_text.pdf')
+
+
+        ff = ff + '_bilder'
+        for file in os.listdir(ff):
+            folder = os.path.join(ff, file)
+            print(folder)
+            arr.append(folder)
+            #img = Image.open(folder)
+            #img.show()
 
 
 def highlight(string, dir):
@@ -196,6 +212,8 @@ def clearFolder():
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
+
+
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
@@ -205,6 +223,6 @@ if __name__ == '__main__':
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
 
-    p.search('Innsbruck')
-
+    p.search('Charlie McMahon')
+    app.run(use_reloader=True, debug=True)
     p.server.commit()
