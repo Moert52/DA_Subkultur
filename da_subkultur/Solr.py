@@ -137,6 +137,7 @@ def getPictures(dir):
             arr.append(folder)
             #img = Image.open(folder)
             #img.show()
+        print('URL: ' + arr[0])
 
 
 def highlight(string, dir):
