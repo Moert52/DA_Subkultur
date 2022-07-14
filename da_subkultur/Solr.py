@@ -1,4 +1,4 @@
-from pysolr import Solr
+from pysolr import Solr 
 import os
 import logging
 import hashlib
@@ -16,7 +16,7 @@ from flask import Flask, render_template
 
 DOCUMENT_SITE_ID = 'Cultblech'
 DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
-app=Flask(__name__,template_folder='static/templates')  # Die Flask-Anwendung
+app=Flask(__name__, template_folder=r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')  # Die Flask-Anwendung
 
 class Processor(object):
 
@@ -123,7 +123,7 @@ arr = []
 def homepage():
     # returning index.html and list
     # and length of list to html page
-    return render_template("test.html", len=len(arr), arr=arr)
+    return render_template(r"C:\Users\mertc\PycharmProjects\da_subkultur\static\templates\test.html", len=len(arr), arr=arr)
 
 def getPictures(dir):
     for f in dir:
