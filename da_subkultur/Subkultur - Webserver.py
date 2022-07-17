@@ -11,11 +11,6 @@ def Start():
     return render_template("Start.html")
 
 
-def Test():
-    print('Hallo')
-
-def tTest():
-    print('Leonardo ist ein stinkender Serbe')
 
 
 if __name__ == '__main__':
