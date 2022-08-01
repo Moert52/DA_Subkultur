@@ -6,8 +6,11 @@
 </head>
 <body>
 
+<h1> Bildersuche: </h1>
 
-<img src="{{ url_for('C:/Users/mertc/Desktop/HTL - Fächer/Diplomarbeit', filename='Test-tesseract/suche/-1999-06-01_utopia-programm 4-7.png_suche.jpg"') }}" width="300">
+{% for file in arr %}
+<img width="20%" height="20%" src="{{ url_for('download_file', filename=file) }}">
+{% endfor %}
 
 
 </body>

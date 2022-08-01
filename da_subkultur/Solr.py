@@ -12,7 +12,7 @@ import io
 import json
 import glob
 import re
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 
 DOCUMENT_SITE_ID = 'Cultblech'
 DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
@@ -117,15 +117,31 @@ def extract_pdf(fname):
         Path(dir).mkdir(exist_ok=True)
         pix.save("%s/%d.png" % (dir,i))
 
-arr = []
 
-@app.route('/')
-def homepage():
+
+@app.route('/suche/<name>')
+def homepage(name):
     # returning index.html and list
     # and length of list to html page
+
+    p.search(str(name))
+    arr = []
+    dirr = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
+    for f in glob.glob("%s/*.jpg" % dirr):
+        ff = os.path.join(dirr, f)
+        print(os.path.basename(ff))
+        arr.append(os.path.basename(ff))
+    print(arr)
+
     return render_template("test.html", len=len(arr), arr=arr)
 
+#first create the route
+@app.route('/uploads/<path:filename>')
+def download_file(filename):
+    return send_from_directory(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche", filename, as_attachment=True)
+
 def getPictures(dir):
+    arr=[]
     for f in dir:
         ff = f[0].removesuffix('.png_text.pdf')
 
@@ -217,13 +233,13 @@ def clearFolder():
 
 if __name__ == '__main__':
 
-    #p = Processor('http://localhost:8983/solr/test')
+    p = Processor('http://localhost:8983/solr/test')
 
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
-
     #p.search('Charlie McMahon')
+
     app.run(use_reloader=True, debug=True)
     #p.server.commit()
