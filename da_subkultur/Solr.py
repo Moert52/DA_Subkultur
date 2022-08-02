@@ -256,7 +256,7 @@ def clearFolder():
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
-    dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
+    #dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')

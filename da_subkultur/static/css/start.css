@@ -11,25 +11,22 @@ body {
 
 
 #canv {
-    margin-left: auto;
-    margin-right: auto;
     transform: rotate(-2deg);
 }
 
 
 .background {
     position: absolute;
-    top: 19px;
+    top: 9px;
     left: 21px;
     rigth: 50px;
     width: 980px;
     height: 198px;
     border: solid 120px #000;
     border-color: #000 transparent transparent transparent;
-    border-radius: 50%/400px 412px 0 0;
+    border-radius: 50%/408px 445px 0 0;
     border-top-color: #343909;
-    opacity: 0.8;
-}
+    opacity: 0.8;}
 
 .semi-circle {
     margin-left: 29.1px;
@@ -55,3 +52,73 @@ body {
     transform: rotate(280deg);
 }
 
+.title {
+    margin-left: 145px;
+    margin-right: auto;
+    margin-top: 60px;
+}
+
+a {
+    margin-top: 80px;
+    font-family: monospace;
+    font-size: x-large;
+    font-weight: bolder;
+
+}
+
+a:link, a:visited {
+  background-color: #d0dd4b;
+  color: #343909;
+  padding: 14px 50px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: #969f3a;
+}
+
+.para1 {
+    background-color: #545454;
+    color: white;
+    font-weight: bold;
+    padding: 9px 26px;
+    border-radius: 25px;
+    font-size: 26px;
+
+}
+
+.para2 {
+    background-color: #545454;
+    color: white;
+    font-weight: bold;
+    padding: 1px 45px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+    padding-bottom: 6px;
+    font-size: 26px;
+}
+
+
+
+.text {
+    text-align:center;
+    margin-top: -20px;
+
+}
+
+.goo {
+    text-align: center;
+    font-size: 2rem;
+    line-height: 1.35;
+    display: inline;
+    box-decoration-break: clone;
+    background: var(--color-highlight);
+    padding: 0.5rem 1rem;
+    filter: url('#goo');
+}
+
+.goo:focus {
+    outline: 0;
+}

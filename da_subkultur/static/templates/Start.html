@@ -10,22 +10,50 @@
 <body class="module">
     <!-- Creating a canvas element in HTML-->
 
-    <div class="background"></div>
+    <div>
+        <div class="background title"></div>
 
-    <!--<canvas id="canv" width="1500" height="315"></canvas>
-    <div class='semi-circle'></div>
+        <canvas class="title" id="canv" width="1160" height="355"></canvas>
+    </div>
+
+    <div class="text">
+             <p > <span class="para1"> Das Online-Rechercheprojekt zur Alternativ-, Sub- und Gegenkultur </span><br>
+                 <span class="para2"> Innsbrucks im Zeitraum von 1955 bis 2000.</span>
+             </p>
+        </div>
+
+    <!--
+        <div class="text" contenteditable="false">
+             <p class="goo"> Das Online-Rechercheprojekt zur Alternativ-, Sub- und Gegenkultur <br>
+                 Innsbrucks im Zeitraum von 1955 bis 2000.
+             </p>
+        </div>
+
+    Filter: https://css-tricks.com/gooey-effect/
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0" xmlns="http://www.w3.org/2000/svg" version="1.1">
+        <defs>
+            <filter id="goo"><feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 19 -9" result="goo" />
+                <feComposite in="SourceGraphic" in2="goo" operator="atop"/>
+            </filter>
+        </defs>
+    </svg>
+    -->
+    <div style="text-align: center;">
+        <a href="https://www.semrush.com/" target="_blank">Zum Archiv</a>
+    </div>
+    <!--<div class='semi-circle'></div>
     <div class="drei" style=""></div>-->
 
 
-    <svg viewBox="0 0 130 130">
+    <!--<svg viewBox="0 0 130 130">
 
         <path id="MyPath" fill="none" stroke="lightblue"
         d="m10,45c53,-43 96,3 96,3" />
 
     <text><textPath href="#MyPath">CURVE ME!</textPath></text>
 
-    </svg>
-
+    </svg> -->
     <script>
 
         /*The window.onload function will run as
@@ -44,18 +72,18 @@
 
             /* It will change the style and appearance
                 of the text to make it look more geeky. */
-            context.font = "bold 90px Abril Fatface";
+            context.font = "75px Abril Fatface";
             context.fillStyle = "#D0DD4B";
             context.textAlign = "center";
 
             let string = "Subkulturarchiv Innsbruck";
 
 
-            let angle = Math.PI * 0.48; // in radians
-            let radius = 700;
+            let angle = Math.PI * 0.52; // in radians
+            let radius = 680;
 
 
-            context.translate(600, 800);
+            context.translate(600, 770);
             context.rotate(-1 * angle / 2);
 
             for (let i = 0; i < string.length; i++) {
