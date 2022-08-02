@@ -14,8 +14,8 @@ import glob
 import re
 from flask import Flask, render_template, send_from_directory
 
-DOCUMENT_SITE_ID = 'Cultblech'
-DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
+DOCUMENT_SITE_ID = 'Artikel'
+#DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
 app=Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 
 class Processor(object):
@@ -23,7 +23,8 @@ class Processor(object):
     def __init__(self, solr_server_url):
         self.server = Solr(solr_server_url)
 
-    def process(self, fname, title):
+    #def process(self, fname, title):
+    def process(self, fname, title, DOCUMENT_URL):
         base, _ = os.path.splitext(os.path.basename(fname))
         url = DOCUMENT_URL + r"\%s" % (base) + '.pdf'
         fPath = os.path.join(DOCUMENT_URL,fname)
@@ -95,14 +96,35 @@ class Processor(object):
         print("Alles gelöscht")
 
 
-def addAll(dir, p, title):
+def dire(dir, p):
+    arr = []
+    rootdir = dir
+    for file in os.listdir(rootdir):
+        d = os.path.join(rootdir, file)
+        if os.path.isdir(d):
+            arr.append(d)
+    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in arr or r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in arr:
+        arr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF")
+        arr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche")
+
+    #print(arr)
+    for i in arr:
+        DOCUMENT_URL = i
+        #addAll(i, p, 'Titel')
+        addAll(i, p, 'Titel', DOCUMENT_URL)
+
+
+#def addAll(dir, p, title):
+def addAll(dir, p, title, DOCUMENT_URL):
     z = 0
     for f in glob.glob("%s/*.txt" % dir):
         ff = os.path.join(dir, f)
         file = ff.removeprefix(dir+'\\')
         print(file)
+        name = os.path.basename(dir)
 
-        p.process(file, title+'_%s' % str(z))
+        #p.process(file, name + '_%s' % str(z))
+        p.process(file, name+'_%s' % str(z), DOCUMENT_URL)
         z=z+1
 
 def extract_pdf(fname):
@@ -234,12 +256,12 @@ def clearFolder():
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
-
+    dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
-    #p.search('Charlie McMahon')
+    p.search('Innsbruck')
 
     app.run(use_reloader=True, debug=True)
     #p.server.commit()
