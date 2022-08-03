@@ -71,6 +71,7 @@ class Processor(object):
         self.server.commit()
         z = 0
         arr = []
+        titlearr = []
         title.split()
         for t in title:
             t.capitalize()
@@ -82,14 +83,17 @@ class Processor(object):
                 z += 1
                 #print('URL: %s' % result['url'])
                 arr.append(result['url'])
+                titlearr.append(result['title'])
             print(arr)
             getPictures(arr)
             highlight(title, arr)
+
         except Exception as e:
             self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
 
         print('Es wurden %s Eintraege gefunden' % z)
 
+        return titlearr
 
     def delAll(self):
         self.server.delete(q='*:*')
@@ -145,17 +149,32 @@ def extract_pdf(fname):
 def homepage(name):
     # returning index.html and list
     # and length of list to html page
-
-    p.search(str(name))
+    titlear = p.search(str(name))
+    titlearr = []
     arr = []
+    print(titlear)
+    for title in titlear:
+        titlearr.append(str(title[0]).capitalize())
+
+    titlearr.sort()
+    print(titlearr)
+    #titlear.sort(key = lambda x: x.lower())
     dirr = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
     for f in glob.glob("%s/*.jpg" % dirr):
-        ff = os.path.join(dirr, f)
-        print(os.path.basename(ff))
-        arr.append(os.path.basename(ff))
-    print(arr)
 
-    return render_template("test.html", len=len(arr), arr=arr)
+
+            ff = os.path.join(dirr, f)
+            doc = {
+                'title': titlearr[glob.glob("%s/*.jpg" % dirr).index(f)],
+                'url': os.path.basename(ff)
+            }
+            #print(os.path.basename(ff))
+            arr.append(doc)
+
+    #print(arr)
+
+
+    return render_template("test.html", len=len(arr), arr=arr) #, titlearr= sorted(titlear))
 
 #first create the route
 @app.route('/uploads/<path:filename>')
@@ -234,8 +253,8 @@ def highlight_image(img, xml, string):
                 file = file.replace("\\", "-")
                 #print(file)
                 image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file)
-                image.save(img+"_suche.jpg")
-                print(img+"_suche.jpg")
+                #image.save(img+"_suche.jpg")
+                #print(img+"_suche.jpg")
 
 
 def clearFolder():
@@ -261,7 +280,7 @@ if __name__ == '__main__':
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
-    p.search('Innsbruck')
+    #p.search('Innsbruck')
 
     app.run(use_reloader=True, debug=True)
     #p.server.commit()

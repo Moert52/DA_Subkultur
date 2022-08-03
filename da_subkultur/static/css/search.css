@@ -1,0 +1,26 @@
+.first {
+    width: 0px;
+}
+
+.second {
+    width: 180px;
+}
+
+.img {
+    width: 100%;
+}
+
+.spalte {
+    heigt:220px;
+}
+
+.titel {
+     font-size: large;
+    font-weight: bold;
+    vertical-align: top;
+    padding-top: 40px!important;
+}
+
+label {
+    visibility: hidden;
+}
