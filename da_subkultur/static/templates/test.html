@@ -19,6 +19,25 @@
 
 <h1> Bildersuche: </h1>
 
+<h4>{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
+    <form method="post">
+
+           <label class="lblSuche" for="keyword">Suche:</label>
+        <br>
+        <input type="text" name="keyword"
+               placeholder="Keyword"
+        {% if name %}
+                value="{{name}}">
+        {% else %}
+
+               value="{{ request.form['keyword']}}">
+        {% endif %}
+        </input>
+        <br>
+        <button type="submit">Submit</button>
+
+    </form>
+
 <table id="table_id" class="display">
     <thead>
             <th class="first">Bilder</th>

@@ -12,11 +12,13 @@ import io
 import json
 import glob
 import re
-from flask import Flask, render_template, send_from_directory
+from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
+from app.forms import SearchForm
 
 DOCUMENT_SITE_ID = 'Artikel'
 #DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
 app=Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
+app.config['SECRET_KEY'] = 'you-will-never-guess'
 
 class Processor(object):
 
@@ -144,6 +146,24 @@ def extract_pdf(fname):
         pix.save("%s/%d.png" % (dir,i))
 
 
+@app.route('/index')
+def index():
+    return render_template('Start.html')
+
+keywords = []
+
+@app.route('/suche', methods=('GET', 'POST'))
+def create():
+    if request.method == 'POST':
+        keyword = request.form['keyword']
+
+        if not keyword:
+            flash('Keyword is required!')
+        else:
+            keywords.append(keyword)
+            return redirect(url_for('homepage', name=keyword))
+    return render_template('test.html')
+
 
 @app.route('/suche/<name>')
 def homepage(name):
@@ -161,8 +181,6 @@ def homepage(name):
     #titlear.sort(key = lambda x: x.lower())
     dirr = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
     for f in glob.glob("%s/*.jpg" % dirr):
-
-
             ff = os.path.join(dirr, f)
             doc = {
                 'title': titlearr[glob.glob("%s/*.jpg" % dirr).index(f)],
@@ -170,11 +188,8 @@ def homepage(name):
             }
             #print(os.path.basename(ff))
             arr.append(doc)
-
     #print(arr)
-
-
-    return render_template("test.html", len=len(arr), arr=arr) #, titlearr= sorted(titlear))
+    return render_template("test.html", len=len(arr), arr=arr, name=str(name)) #, titlearr= sorted(titlear))
 
 #first create the route
 @app.route('/uploads/<path:filename>')

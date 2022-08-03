@@ -24,3 +24,7 @@
 label {
     visibility: hidden;
 }
+
+.lblSuche {
+    visibility: visible;
+}
