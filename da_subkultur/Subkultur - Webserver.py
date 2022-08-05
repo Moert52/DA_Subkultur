@@ -10,8 +10,9 @@ app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
 def Start():
     return render_template("Start.html")
 
-
-
+@app.route('/admin/create')
+def create():
+    return render_template("create.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
