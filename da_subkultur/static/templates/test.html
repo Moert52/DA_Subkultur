@@ -26,15 +26,10 @@
         <br>
         <input type="text" name="keyword"
                placeholder="Keyword"
-        {% if name %}
-                value="{{name}}">
-        {% else %}
-
-               value="{{ request.form['keyword']}}">
-        {% endif %}
+      >
         </input>
         <br>
-        <button type="submit">Submit</button>
+        <button type="submit" name="submit_button" value="Suche">>Submit</button>
 
     </form>
 

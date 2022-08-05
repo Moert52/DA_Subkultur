@@ -167,6 +167,14 @@ def create():
 
 @app.route('/suche/<name>')
 def homepage(name):
+    if request.method == 'POST':
+        keyword = request.form['keyword']
+
+        if not keyword:
+            flash('Keyword is required!')
+        else:
+            keywords.append(keyword)
+            return redirect(url_for('homepage', name=keyword))
     # returning index.html and list
     # and length of list to html page
     titlear = p.search(str(name))
@@ -189,6 +197,7 @@ def homepage(name):
             #print(os.path.basename(ff))
             arr.append(doc)
     #print(arr)
+
     return render_template("test.html", len=len(arr), arr=arr, name=str(name)) #, titlearr= sorted(titlear))
 
 #first create the route
@@ -243,7 +252,7 @@ def highlight_image(img, xml, string):
                 y0 = int(p.attrib["VPOS"])
                 x1 = int(x0 + int(p.attrib["WIDTH"]))
                 y1 = int(y0 + int(p.attrib["HEIGHT"]))
-                shape = [x0, y0,x1,y1 ]
+                shape = [x0-7, y0-10,x1+8,y1+14 ]
 
 
                 TINT_COLOR = (0, 0, 0)  # Black
@@ -257,7 +266,7 @@ def highlight_image(img, xml, string):
                 overlay = Image.new('RGBA', image.size, TINT_COLOR + (0,))
                 draw = ImageDraw.Draw(overlay)  # Create a context for drawing things on it.
                 #draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
-                draw.rectangle(shape, fill=(255, 127, 127, 127), outline="black")
+                draw.rectangle(shape, fill=(255, 255, 80, 130), outline="black")
 
                 # Alpha composite these two images together to obtain the desired result.
                 image = Image.alpha_composite(image, overlay)
