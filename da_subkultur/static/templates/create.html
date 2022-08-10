@@ -10,7 +10,7 @@
     {% for message in get_flashed_messages() %}
             <div class="alert">{{ message }}</div>
     {% endfor %}
-    <form method="post" >
+    <form method="POST" action="" enctype="multipart/form-data">
         <label for="title">Title</label>
         <br>
         <input type="text" name="title"
@@ -27,7 +27,7 @@
         <br>
         <input type="file" name="file"
                placeholder="Content file"
-               value="{{ request.form['file'] }}"></input>
+               value="{{ request.form['file'] }}" accept=".pdf" multiple>
         <br>
 
         <button type="submit">Submit</button>
