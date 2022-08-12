@@ -116,14 +116,20 @@ def crop_img(img, shape, anz, dir):
 #Hier werden alle Seiten des pdfs File in einzelne png - Bilder abgespeichert
 def extract_pdf(fname):
     pdffile = fname
+    #print('PDF:' + pdffile)
     doc = fitz.open(pdffile)
     for i in range(doc.page_count):
         page = doc.load_page(i)  # number of page
         mat = fitz.Matrix(5,5) # To get higher resolution
         pix = page.get_pixmap(matrix=mat)
         dir, extension = os.path.splitext(pdffile)
-        Path(dir).mkdir(exist_ok=True)
-        pix.save("%s/%d.png" % (dir,i))
+        filename = Path(dir).stem
+        dirr = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\' + filename
+        print(dirr)
+        Path(dirr).mkdir(exist_ok=True)
+        #dirr = 'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+        #Path(dirr).mkdir(exist_ok=True)
+        pix.save("%s/%d.png" % (dirr,i))
 
 #Hier erfolgt die ocr der seite, aschnließend werden die Informationen in einem xml - File abgespeichert
 def do_ocr(f):
@@ -155,8 +161,13 @@ def do_ocr_dir(dir):
 def process_dir(dir):
     for f in glob.glob("%s/*.pdf" % dir):
         ff = os.path.join(dir, f)
-        print (ff)
+        #print (ff)
         dir, extension = os.path.splitext(ff)
+        #print('Ordner' + dir)
+        filename = Path(ff).stem
+        di = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+        dir = os.path.join(di, filename)#r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\' + filename
+        print(dir)
         extract_pdf(ff)
         do_ocr_dir(dir)
         highlight_images(dir)
