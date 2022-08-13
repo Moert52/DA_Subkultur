@@ -15,7 +15,7 @@ import re
 from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
 from app.forms import SearchForm
 
-DOCUMENT_SITE_ID = 'Artikel'
+DOCUMENT_SITE = 'Artikel'
 #DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
 app=Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 app.config['SECRET_KEY'] = 'you-will-never-guess'
@@ -26,7 +26,7 @@ class Processor(object):
         self.server = Solr(solr_server_url)
 
     #def process(self, fname, title):
-    def process(self, fname, title, DOCUMENT_URL):
+    def process(self, fname, title, DOCUMENT_URL, DOCUMENT_SITE_ID):
         base, _ = os.path.splitext(os.path.basename(fname))
         url = DOCUMENT_URL + r"\%s" % (base) + '.pdf'
         fPath = os.path.join(DOCUMENT_URL,fname)
@@ -56,12 +56,9 @@ class Processor(object):
             self.server.add([doc])
             self.server.commit()
         except (IOError, Exception) as e:
-            if not self.silently_fail:
-                raise
-
             self.log.error("Failed to add documents to Solr: %s", e)
 
-    def delete(self, title):
+    def delete(self, title, DOCUMENT_SITE_ID):
         document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)
         logging.info("new document: %s" % (document_id,))
         print(hashlib.sha1(document_id.encode('utf-8')).hexdigest())
@@ -130,7 +127,7 @@ def addAll(dir, p, title, DOCUMENT_URL):
         name = os.path.basename(dir)
 
         #p.process(file, name + '_%s' % str(z))
-        p.process(file, name+'_%s' % str(z), DOCUMENT_URL)
+        p.process(file, name+'_%s' % str(z), DOCUMENT_URL, DOCUMENT_SITE)
         z=z+1
 
 def extract_pdf(fname):
@@ -299,12 +296,12 @@ def clearFolder():
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
-    #dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
+    dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
     #p.search('Innsbruck')
 
-    app.run(use_reloader=True, debug=True)
+    #app.run(use_reloader=True, debug=True)
     #p.server.commit()
