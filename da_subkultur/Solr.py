@@ -15,22 +15,26 @@ import re
 from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
 from app.forms import SearchForm
 
-DOCUMENT_SITE = 'Artikel'
+
+DOCUMENT_SITE = 'Artikel' #Zentrale Document Site für die Add_All Methode
 #DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
 app=Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
-class Processor(object):
+class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
 
+    #Initialisierung vom Processor Objekt
     def __init__(self, solr_server_url):
         self.server = Solr(solr_server_url)
 
+    #Hier wird die "put" - Methode in Solr durchgeführt
     #def process(self, fname, title):
     def process(self, fname, title, DOCUMENT_URL, DOCUMENT_SITE_ID):
-        base, _ = os.path.splitext(os.path.basename(fname))
-        url = DOCUMENT_URL + r"\%s" % (base) + '.pdf'
-        fPath = os.path.join(DOCUMENT_URL,fname)
-        fp = open(fPath, encoding="iso-8859-1")
+        base, _ = os.path.splitext(os.path.basename(fname))     #Dateiname ohne Extension
+        url = DOCUMENT_URL + r"\%s" % (base) + '.pdf'       #Der Pfad von PDF Datei
+        fPath = os.path.join(DOCUMENT_URL,fname)            #Pfad der txt Datei
+        fp = open(fPath, encoding="iso-8859-1")     #Die Datei wird geöffnet
+        #Hier wird der ganze Text der txt Datei in die content Variable gepseichert
         content = ''
         for line in fp:
             s = line.strip()
@@ -38,11 +42,12 @@ class Processor(object):
             if s and not s.startswith(('**', '==', '--')):
                 content += s #str(s.encode(encoding='utf-8', errors='strict'))
         fp.close()
-        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)
+        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)  #Hier ensteht eine ID mittels dem Titel und der Site
         logging.info("new document: %s" % (document_id,))
-        t = os.path.getmtime(fPath)
+        t = os.path.getmtime(fPath)  #Hier wird die Zeit gespeichert
+        #Hier ensteht ein Dictionary vom Artikel mit Title, site, content, id, url and date, welches auf Solr hochgeladen wird
         doc = {
-            'id': hashlib.sha1(document_id.encode('utf-8')).hexdigest(),
+            'id': hashlib.sha1(document_id.encode('utf-8')).hexdigest(), #die id wird gehasht
             'site': DOCUMENT_SITE_ID,
             'url': url,
             'title': title,
@@ -50,21 +55,23 @@ class Processor(object):
             'last_modified': str(datetime.datetime.fromtimestamp(t))
         }
 
-        docStr = json.dumps(doc)
-        print(docStr)
+
+        #docStr = json.dumps(doc)
         try:
-            self.server.add([doc])
+            self.server.add([doc])  #Hier wird das Document in Solr hochgeladen
             self.server.commit()
         except (IOError, Exception) as e:
             self.log.error("Failed to add documents to Solr: %s", e)
 
+    #Hier wird ein Eintrag gelöscht auf Solr
     def delete(self, title, DOCUMENT_SITE_ID):
-        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)
+        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)  #Mittels title und site bekommt man die gehashte ID
         logging.info("new document: %s" % (document_id,))
         print(hashlib.sha1(document_id.encode('utf-8')).hexdigest())
-        self.server.delete(id=str(hashlib.sha1(document_id.encode('utf-8')).hexdigest()))
+        self.server.delete(id=str(hashlib.sha1(document_id.encode('utf-8')).hexdigest())) #Hier wird der Eintrag mittels der ID gelöscht
         self.server.commit()
 
+    #Hier wird nach einem Eintrag gesucht
     def search(self, title):
         results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title), sort='order_i asc', rows=500,)
         self.server.commit()
