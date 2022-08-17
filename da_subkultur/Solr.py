@@ -73,88 +73,86 @@ class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
 
     #Hier wird nach einem Eintrag gesucht
     def search(self, title):
+        #Hier wird im content, title und site nach dem schlüsselwort gesucht und in max. 500 Zeilen gespeichert
         results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title), sort='order_i asc', rows=500,)
         self.server.commit()
         z = 0
-        arr = []
+        pathArr = []
         titlearr = []
-        title.split()
+        title.split()   # Die Wörter werden sozugagen aufgesplittet und array artig gespeichert
         for t in title:
-            t.capitalize()
+            t.capitalize() #Jeder Buchstabe bei jedem Wort wird groß geschrieben
 
-        title = title + ' %s ' % title.upper() + '%s ' % title.lower()
+        title = title + ' %s ' % title.upper() + '%s ' % title.lower() #Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
         print(title)
         try:
-            for result in results:
-                z += 1
+            for result in results:  #Man läuft jetzt jedes einzelne Ergebnis durch
+                z += 1  #Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
                 #print('URL: %s' % result['url'])
-                arr.append(result['url'])
-                titlearr.append(result['title'])
-            print(arr)
-            getPictures(arr)
-            highlight(title, arr)
+                pathArr.append(result['url'])    #Hier wird die Pfad des Ergebnissen gespeichert
+                titlearr.append(result['title'])    #Hier wird der Titel des Ergebnisses gespeichert
+            print(pathArr)
+            getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
+            highlight(title, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
 
+        #Hier kommt die entsprechende Fehlermedlung wenn es eine gibt
         except Exception as e:
             self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
 
         print('Es wurden %s Eintraege gefunden' % z)
 
+        #Der Titel Array wird zurückgegeben
         return titlearr
 
+    #Methode zum Löschen aller Einträge auf Solr
     def delAll(self):
         self.server.delete(q='*:*')
         print("Alles gelöscht")
 
+# Der Ordner, wo alle Subordner, die durch die Ocr enstellt wurde, wird durchgelaufen und ladet die jeweiligen
+# Einträge auf Solr hoch
+def directoryToAddAll(directory, processor, title, site):  #
+    dirArr = []     #Array wo der Pfad aller Subordner hinzugefügt wird
+    rootdir = directory    #rootdir ist des Hauptordner, wo sich die Subordner befinden
+    for dir in os.listdir(rootdir):    # Hier wird jeder einzelner Ordner
+        d = os.path.join(rootdir, dir)     # Mit dem richtigen Pfad
+        if os.path.isdir(d):    # Und mit der Überprüfung, ob es ein Ordner ist
+            dirArr.append(d)    #i in die dirArr gespeichert
+    # Dann wird geprüft ob der Ordner PDF & Suche im Array ist
+    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in dirArr:
+        # Und jenachdem werden diese vom Array entfernt
+        dirArr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF")
+    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche" in dirArr:
+        dirArr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche")
 
-def dire(dir, p):
-    arr = []
-    rootdir = dir
-    for file in os.listdir(rootdir):
-        d = os.path.join(rootdir, file)
-        if os.path.isdir(d):
-            arr.append(d)
-    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in arr or r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in arr:
-        arr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF")
-        arr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche")
+    #print(dirArr)
 
-    #print(arr)
-    for i in arr:
-        DOCUMENT_URL = i
-        #addAll(i, p, 'Titel')
-        addAll(i, p, 'Titel', DOCUMENT_URL)
+    for i in dirArr:    # dirArr wird in einer for Schleife durchgelaufen
+        DOCUMENT_URL = i    # der Pfad wird gespeichert
+        #addAll(i, processor, 'Titel')
+        # Und dann wird die addAll Methode ausgeführt, wobei jeder Eintrag die gleiche Site und den gleichen Titel bekommt
+        addAll(i, processor, title, site)
 
-
-#def addAll(dir, p, title):
-def addAll(dir, p, title, DOCUMENT_URL):
-    z = 0
-    for f in glob.glob("%s/*.txt" % dir):
-        ff = os.path.join(dir, f)
-        file = ff.removeprefix(dir+'\\')
+#Hier wird jede txt Datei in einem Ordner auf Solr hochgeladen
+#def addAll(dir, processor, title):
+def addAll(directory, processor, title, DOCUMENT_URL):
+    id = 0   # Hier bekommt jeder Eintrag eine ID mit dem Filenamen
+    for f in glob.glob("%s/*.txt" % directory):     #Hier läuft jede einzelner txt Datei + ihren Pfad im Ordner durch
+        file = f.removeprefix(directory+'\\')  #Danach bekommt man den Dateinamen + Extension
         print(file)
-        name = os.path.basename(dir)
+        name = os.path.basename(directory)  # Hier bekommt man nur den Dateinamen ohne Extension
 
-        #p.process(file, name + '_%s' % str(z))
-        p.process(file, name+'_%s' % str(z), DOCUMENT_URL, DOCUMENT_SITE)
-        z=z+1
+        #processor.process(file, name + '_%s' % str(id))
+        #Dann wird die txt Datei auf Solr hochgeladen
+        processor.process(file, name+'_%s' % str(id), DOCUMENT_URL, DOCUMENT_SITE)
+        id=id+1   # Die ID erhöht sich dann um 1
 
-def extract_pdf(fname):
-    pdffile = fname
-    doc = fitz.open(pdffile)#
-
-    for i in range(doc.page_count):
-        page = doc.load_page(i)  # number of page
-        mat = fitz.Matrix(5,5) # To get higher resolution
-        pix = page.get_pixmap(matrix=mat)
-        dir, extension = os.path.splitext(pdffile)
-        Path(dir).mkdir(exist_ok=True)
-        pix.save("%s/%d.png" % (dir,i))
 
 
 @app.route('/index')
 def index():
     return render_template('Start.html')
 
-keywords = []
 
 @app.route('/suche', methods=('GET', 'POST'))
 def create():
@@ -164,7 +162,6 @@ def create():
         if not keyword:
             flash('Keyword is required!')
         else:
-            keywords.append(keyword)
             return redirect(url_for('homepage', name=keyword))
     return render_template('test.html')
 
@@ -303,7 +300,7 @@ def clearFolder():
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
-    dire(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p)
+    directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
