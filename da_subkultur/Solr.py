@@ -13,7 +13,7 @@ import json
 import glob
 import re
 from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
-from app.forms import SearchForm
+
 
 
 DOCUMENT_SITE = 'Artikel' #Zentrale Document Site für die Add_All Methode
@@ -233,68 +233,74 @@ def highlight(string, pathArr):
 
 def highlight_image(img, xml, string):
     #print(xml)
-    stri = string.split()
+    stri = string.split()   #Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
     #print(stri)
-    root = ET.parse(xml)
-    image = Image.open(img)
+    root = ET.parse(xml)        #Die xml wird geöffnet
+    image = Image.open(img)     #Die jpg Datei wird geöffnet
 
-    anz = 1
+    #Jedes String element in dem xml File läuft hier durch
     for p in elementpath.select(root, '//String', {'' : 'http://www.loc.gov/standards/alto/ns-v3#'}):
-        st = str(p.attrib["CONTENT"])
-        for e in stri:
-            if re.search(e, st):
-                gid = p.attrib["ID"]
-                x0 = int(p.attrib["HPOS"])
-                y0 = int(p.attrib["VPOS"])
-                x1 = int(x0 + int(p.attrib["WIDTH"]))
-                y1 = int(y0 + int(p.attrib["HEIGHT"]))
-                shape = [x0-7, y0-10,x1+8,y1+14 ]
+        st = str(p.attrib["CONTENT"])   #den Content vom String Element wird abgespeichert
+        for e in stri:  #Dann läuft jedes einzelne wort vom keyword hier durch
+            if re.search(e, st):    #Dann wird geprüft ob das keyword im content vom String vorhanden ist
+                #gid = p.attrib["ID"]
+                x0 = int(p.attrib["HPOS"])  #Die x - Position wird gepseichert
+                y0 = int(p.attrib["VPOS"])  #Die y - Position wird gepseichert
+                x1 = int(x0 + int(p.attrib["WIDTH"]))   #Hier wird die Breite gepseichert
+                y1 = int(y0 + int(p.attrib["HEIGHT"]))  #Hier wird die Höhe gespeichert
+                shape = [x0-7, y0-10,x1+8,y1+14 ]   #Hier werden die entsprechenden Größen in einem Array gespeichert
 
 
-                TINT_COLOR = (0, 0, 0)  # Black
-                TRANSPARENCY = .50  # Degree of transparency, 0-100%
+                TINT_COLOR = (0, 0, 0)  # Black     #Die Schriftfarbe ist schwarz
+                TRANSPARENCY = .50  # Degree of transparency, 0-100%    #Die Transparenz bei 50%
                 OPACITY = int(255 * TRANSPARENCY)
 
 
-                anz+=1
                 #print (gid, shape)
-                image = image.convert("RGBA")
-                overlay = Image.new('RGBA', image.size, TINT_COLOR + (0,))
-                draw = ImageDraw.Draw(overlay)  # Create a context for drawing things on it.
+                image = image.convert("RGBA")   #Das jpg File wird ins RGBA Format konvertiert
+                overlay = Image.new('RGBA', image.size, TINT_COLOR + (0,))  #und mit den entsprechenden Werten bekommt sozusagen einen Filter
+                draw = ImageDraw.Draw(overlay)  # EIen Variable wird erstellt umd auf dem Bild etwas zu zeichnen / malen.
                 #draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
-                draw.rectangle(shape, fill=(255, 255, 80, 130), outline="black")
+                draw.rectangle(shape, fill=(255, 255, 80, 130), outline="black")    #Es wird ein Rechteck gemalt auf dem content
+                # vom String, ist dann sozusagen ein Highlight auf das keyword im jpg File gemalt
 
                 # Alpha composite these two images together to obtain the desired result.
-                image = Image.alpha_composite(image, overlay)
-                image = image.convert("RGB")  # Remove alpha for saving in jpg format.
+                image = Image.alpha_composite(image, overlay)   #Hier wird das ganze format
+                image = image.convert("RGB")  # und Filter zurückgesetut
+                #Die enstprechende Prefix wird gellöscht
                 dic = img.removeprefix(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
                 #print('JA:' +dic)
-                file = dic + '_suche.jpg'
-                file = file.replace("\\", "-")
+                file = dic + '_suche.jpg'   #die entsprechende suffix wird hinzugefügt
+                file = file.replace("\\", "-")  #Die enstprechenden Zeichen werden ersetzt
                 #print(file)
+                #Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
                 image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file)
                 #image.save(img+"_suche.jpg")
                 #print(img+"_suche.jpg")
 
 
+#Hier wird der gesamte Inhalt vom Suchordner gelöscht
 def clearFolder():
+    #Hier ist die Variable vom Pfad zum Suchordner
     folder = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche'
-    for filename in os.listdir(folder):
-        file_path = os.path.join(folder, filename)
+    for filename in os.listdir(folder): #Jeder einzelne Datei im Ordner läuft hier durch
+        file_path = os.path.join(folder, filename)     #Hier bekommt man den Pfad zu der Datei
         try:
+            #Dann wird wird geprüft ob es sich um Eine Datei oder einen Link haltet
             if os.path.isfile(file_path) or os.path.islink(file_path):
-                os.unlink(file_path)
-            elif os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-        except Exception as e:
+                os.unlink(file_path)    #Wird dementsprechend gelöscht
+            elif os.path.isdir(file_path):  #Sonst wird geprüft ob es sich um einen Subordner handelt
+                shutil.rmtree(file_path)    #Dann wird der Subordner gelöscht
+        except Exception as e:  #Sonst gibt es demenstprechend eine Exception
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
 
-
+#Die Main
 if __name__ == '__main__':
 
-    p = Processor('http://localhost:8983/solr/test')
+
+    p = Processor('http://localhost:8983/solr/test')    #Hier wird ein Processor instanziert
     #directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
@@ -302,5 +308,6 @@ if __name__ == '__main__':
     #p.delete('Cutblech_Logo_0')
     #p.search('Innsbruck')
 
-    app.run(use_reloader=True, debug=True)
+
+    app.run(use_reloader=True, debug=True)  #Hier läuft die Flask Anwendung
     #p.server.commit()
