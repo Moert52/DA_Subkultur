@@ -31,7 +31,7 @@ class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
     #def process(self, fname, title):
     def process(self, fname, title, DOCUMENT_URL, DOCUMENT_SITE_ID):
         base, _ = os.path.splitext(os.path.basename(fname))     #Dateiname ohne Extension
-        url = DOCUMENT_URL + r"\%s" % (base) + '.pdf'       #Der Pfad von PDF Datei
+        url = DOCUMENT_URL + r"\%s" % (base) + '.txt'       #Der Pfad der txt Datei
         fPath = os.path.join(DOCUMENT_URL,fname)            #Pfad der txt Datei
         fp = open(fPath, encoding="iso-8859-1")     #Die Datei wird geöffnet
         #Hier wird der ganze Text der txt Datei in die content Variable gepseichert
@@ -89,10 +89,10 @@ class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
             for result in results:  #Man läuft jetzt jedes einzelne Ergebnis durch
                 z += 1  #Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
                 #print('URL: %s' % result['url'])
-                pathArr.append(result['url'])    #Hier wird die Pfad des Ergebnissen gespeichert
+                pathArr.append(result['url'])    #Hier wird der Pfad des Ergebnissen gespeichert
                 titlearr.append(result['title'])    #Hier wird der Titel des Ergebnisses gespeichert
             print(pathArr)
-            getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
+            #getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
             highlight(title, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
 
         #Hier kommt die entsprechende Fehlermedlung wenn es eine gibt
@@ -135,106 +135,101 @@ def directoryToAddAll(directory, processor, title, site):  #
 
 #Hier wird jede txt Datei in einem Ordner auf Solr hochgeladen
 #def addAll(dir, processor, title):
-def addAll(directory, processor, title, DOCUMENT_URL):
+def addAll(DOCUMENT_URL, processor, title, site):
     id = 0   # Hier bekommt jeder Eintrag eine ID mit dem Filenamen
-    for f in glob.glob("%s/*.txt" % directory):     #Hier läuft jede einzelner txt Datei + ihren Pfad im Ordner durch
-        file = f.removeprefix(directory+'\\')  #Danach bekommt man den Dateinamen + Extension
+    for f in glob.glob("%s/*.txt" % DOCUMENT_URL):     #Hier läuft jede einzelner txt Datei + ihren Pfad im Ordner durch
+        file = f.removeprefix(DOCUMENT_URL+'\\')  #Danach bekommt man den Dateinamen + Extension
         print(file)
-        name = os.path.basename(directory)  # Hier bekommt man nur den Dateinamen ohne Extension
+        name = os.path.basename(DOCUMENT_URL)  # Hier bekommt man nur den Dateinamen ohne Extension
 
         #processor.process(file, name + '_%s' % str(id))
         #Dann wird die txt Datei auf Solr hochgeladen
         processor.process(file, name+'_%s' % str(id), DOCUMENT_URL, DOCUMENT_SITE)
         id=id+1   # Die ID erhöht sich dann um 1
 
+# Ist die leere Suchbar, wenn man einen Suchbegriff eingibt, werden die entsprechend Einträge angezeigt
+@app.route('/suche', methods=('GET', 'POST'))   # Ist eine Get / Post Methode
+def search():
+    if request.method == 'POST':    # Wenn das keyword submitted wird
+        keyword = request.form['keyword']   # wird das eingegebene keyword in eine Variable gespeichert
 
-
-@app.route('/index')
-def index():
-    return render_template('Start.html')
-
-
-@app.route('/suche', methods=('GET', 'POST'))
-def create():
-    if request.method == 'POST':
-        keyword = request.form['keyword']
-
-        if not keyword:
+        if not keyword:     # Wenn das Feld aber leer steht, soll es eine Fehlermeldung bringen
             flash('Keyword is required!')
         else:
-            return redirect(url_for('homepage', name=keyword))
+            #sonst wird man zur getSearch Methode weitergeleitet
+            return redirect(url_for('getSearch', name=keyword))
     return render_template('test.html')
 
-
+# Hier wird mittels dem keyword nach die jeweiligen Bilder gesuch   t
 @app.route('/suche/<name>')
-def homepage(name):
-    if request.method == 'POST':
-        keyword = request.form['keyword']
+def getSearch(name):
+    if request.method == 'POST':    # Wenn das keyword submitted wird
+        keyword = request.form['keyword']   # wird das eingegebene keyword in eine Variable gespeichert
 
-        if not keyword:
+        if not keyword:     # Wenn das Feld aber leer steht, soll es eine Fehlermeldung bringen
             flash('Keyword is required!')
         else:
-            keywords.append(keyword)
-            return redirect(url_for('homepage', name=keyword))
-    # returning index.html and list
-    # and length of list to html page
-    titlear = p.search(str(name))
-    titlearr = []
-    arr = []
-    print(titlear)
-    for title in titlear:
-        titlearr.append(str(title[0]).capitalize())
+            #sonst wird man zur getSearch Methode weitergeleitet
+            return redirect(url_for('getSearch', name=keyword))
 
-    titlearr.sort()
-    print(titlearr)
-    #titlear.sort(key = lambda x: x.lower())
-    dirr = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
-    for f in glob.glob("%s/*.jpg" % dirr):
-            ff = os.path.join(dirr, f)
+    searchArr = p.search(str(name))     #Gibt einen Array von den Titeln der Ergebnissen bei der Suche
+    titlearr = []       # Wieder eine Titelarray, aber für die Titel nachdem capitalize
+    resultArr = []    #ein Array für die Ergebnisse, nachdem Sie angepasst wurden
+    
+    #print(searchArr)
+    
+    #Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
+    for title in searchArr:
+        titlearr.append(str(title[0]).capitalize())
+    titlearr.sort()     #Danach wird das titleArr nach dem Alphabet sortiert
+    
+    #print(titlearr)
+    
+    #Variable zum Suchordner
+    resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
+    for f in glob.glob("%s/*.jpg" % resultDirectory):   # Alle jpg Files im Suchordner werden durchgelaufen
+            ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
+            #Dann wird ein Dictionary erstellt mit den entsprechen Weten
             doc = {
-                'title': titlearr[glob.glob("%s/*.jpg" % dirr).index(f)],
+                'title': titlearr[glob.glob("%s/*.jpg" % resultDirectory).index(f)],
                 'url': os.path.basename(ff)
             }
             #print(os.path.basename(ff))
-            arr.append(doc)
-    #print(arr)
+            resultArr.append(doc)   #Das Dictionary wird dann ins result - Array gepseichert
+    print(resultArr)
 
-    return render_template("test.html", len=len(arr), arr=arr, name=str(name)) #, titlearr= sorted(titlear))
+    #Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
+    return render_template("test.html", len=len(resultArr), arr=resultArr, name=str(name)) #, titlearr= sorted(searchArr))
 
-#first create the route
+#Hier kann man die entsprechenden Bilder downloaden bzw auf der Flask anzeigen
 @app.route('/uploads/<path:filename>')
 def download_file(filename):
     return send_from_directory(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche", filename, as_attachment=True)
 
+#Dort bekommt man die ganzen Bilder von einem Ordner / PDF File
+###################
+#noch nicht fertig#
+###################
 def getPictures(dir):
-    arr=[]
+    picArr=[]  #Array für die Bilder
     for f in dir:
-        ff = f[0].removesuffix('.png_text.pdf')
-
-
-        ff = ff + '_bilder'
-        for file in os.listdir(ff):
-            folder = os.path.join(ff, file)
+        ff = f[0].removesuffix('.png_text.pdf')     #Die enstprechende Suffix wird entfernt
+        ff = ff + '_bilder'     #und durch Bilder ersetzt
+        for file in os.listdir(ff):     #jede Datei / jedes Bild im Ordner läuft hier durch
+            folder = os.path.join(ff, file)     #Pfad der Datei
             print(folder)
-            arr.append(folder)
+            picArr.append(folder)   #Das Pfad der Datei wird in picArr gespeichert
             #img = Image.open(folder)
             #img.show()
-        print('URL: ' + arr[0])
+        print('URL: ' + picArr[0])
 
-
-def highlight(string, dir):
-    #print(os.path.basename(dir[0]))
-    #dic = dir[0].removesuffix('\\'+ os.path.basename(dir[0]))
-    #dic = dic.replace("\\\\", "\\")
-    #print(dic)
-    #for f in glob.glob("%s/*.png" % dic):
-        #ff = os.path.join(dic, f)
-        #highlight_image(ff, '%s_alto_neu.xml' % ff, string)
-    clearFolder()
-    for f in dir:
-        ff = f[0].removesuffix('_text.pdf')
+# Hier wird der ganze Inhalt vom Suchordner gelöscht und wieder neue Ergebnisse draufgespeichert
+def highlight(string, pathArr):
+    clearFolder()   #die clearFolder Methode wird durchgeführt
+    for f in pathArr:   #Jeder einzelner Pfad im mitgegebnen Array läuft hier durch
+        ff = f[0].removesuffix('_text.pdf') # Die entsprechende Suffix wird entfernt
         ff = ff.replace("\\\\", "\\")
-        highlight_image(ff, '%s_alto_neu.xml' % ff, string)
+        highlight_image(ff, '%s_alto_neu.xml' % ff, string)     #Dann wird die highlight_image Methode durchgeführt
 
 def highlight_image(img, xml, string):
     #print(xml)
@@ -300,12 +295,12 @@ def clearFolder():
 if __name__ == '__main__':
 
     p = Processor('http://localhost:8983/solr/test')
-    directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
+    #directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
     #p.delAll()
     #addAll(DOCUMENT_URL, p, )
     #p.process('0.png_text.txt', 'Cultblech_Logo_0')
     #p.delete('Cutblech_Logo_0')
     #p.search('Innsbruck')
 
-    #app.run(use_reloader=True, debug=True)
+    app.run(use_reloader=True, debug=True)
     #p.server.commit()
