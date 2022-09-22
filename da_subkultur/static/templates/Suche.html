@@ -25,9 +25,7 @@
            <label class="lblSuche" for="keyword">Suche:</label>
         <br>
         <input type="text" name="keyword"
-               placeholder="Keyword"
-      >
-        </input>
+               placeholder="Keyword">
         <br>
         <button type="submit" name="submit_button" value="Suche">>Submit</button>
 
@@ -43,7 +41,7 @@
 
         <tr class="spalte">
             <td>
-                <a href="https://flask.palletsprojects.com/en/2.2.x/patterns/appdispatch/?highlight=use_reloader">
+                <a href="{{ url_for('getImage', url=file.url, string=name) }}">
                     <img class="img" width="20%" height="20%" src="{{ url_for('download_file', filename=file.url) }}">
                 </a>
             </td>

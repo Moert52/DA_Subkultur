@@ -165,9 +165,6 @@ def getSearch():
 
     if request.method == 'POST':    # Wenn das keyword submitted wird
         keyword = request.form['keyword']   # wird das eingegebene keyword in eine Variable gespeichert
-
-
-
         searchArr, patharr = p.search(str(keyword))     #Gibt einen Array von den Titeln der Ergebnissen bei der Suche
 
         print("asas" + str(patharr))
@@ -195,6 +192,23 @@ def getSearch():
 
     #Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
     return render_template("Suche.html", len=len(resultArr), arr=resultArr, name=str(keyword)) #, titlearr= sorted(searchArr))
+
+@app.route('/getImage/<path:url>/<string>')
+def getImage(url, string):
+    clearFolder()
+    print(url)
+    print(string)
+    string.split()
+    for s in string:
+        s.capitalize()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
+
+    string = string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
+    print(string)
+    highlight_image(url, '%s_alto_neu.xml' % url, string)
+    name = pathlib.Path(url).stem
+    path=r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.png'
+    print(path)
+    return render_template("getImage.html", url=path) #, titlearr= sorted(searchArr))
 
 #Hier kann man die entsprechenden Bilder downloaden bzw auf der Flask anzeigen
 @app.route('/uploads/<path:filename>')
@@ -268,15 +282,17 @@ def highlight_image(img, xml, string):
                 image = Image.alpha_composite(image, overlay)   #Hier wird das ganze format
                 image = image.convert("RGB")  # und Filter zurückgesetut
                 #Die enstprechende Prefix wird gellöscht
-                dic = img.removeprefix(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
+                dic = os.path.basename(img)
                 #print('JA:' +dic)
-                file = dic + '_suche.jpg'   #die entsprechende suffix wird hinzugefügt
+                dic = dic.removesuffix('.png')
+                file = dic + '_suche.png'   #die entsprechende suffix wird hinzugefügt
                 file = file.replace("\\", "-")  #Die enstprechenden Zeichen werden ersetzt
                 #print(file)
                 #Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
                 image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file)
                 #image.save(img+"_suche.jpg")
                 #print(img+"_suche.jpg")
+
 
 
 #Hier wird der gesamte Inhalt vom Suchordner gelöscht
