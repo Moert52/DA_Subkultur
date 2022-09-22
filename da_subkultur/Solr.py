@@ -13,6 +13,8 @@ import json
 import glob
 import re
 from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
+import pathlib
+
 
 
 
@@ -89,11 +91,16 @@ class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
             for result in results:  #Man läuft jetzt jedes einzelne Ergebnis durch
                 z += 1  #Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
                 #print('URL: %s' % result['url'])
-                pathArr.append(result['url'])    #Hier wird der Pfad des Ergebnissen gespeichert
+                url = str(result['url'][0])
+                path = os.path.dirname(url)
+                p = pathlib.Path(url).stem
+                path = os.path.join(path, p.removesuffix('png_text') +'png')
+
+                pathArr.append(path)    #Hier wird der Pfad des Ergebnissen gespeichert
                 titlearr.append(result['title'])    #Hier wird der Titel des Ergebnisses gespeichert
             print(pathArr)
             #getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
-            highlight(title, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
+            #highlight(title, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
 
         #Hier kommt die entsprechende Fehlermedlung wenn es eine gibt
         except Exception as e:
@@ -102,7 +109,7 @@ class Processor(object): #Klasse Processur - beinhaltet die Solr - Methoden
         print('Es wurden %s Eintraege gefunden' % z)
 
         #Der Titel Array wird zurückgegeben
-        return titlearr
+        return titlearr, pathArr
 
     #Methode zum Löschen aller Einträge auf Solr
     def delAll(self):
@@ -147,64 +154,71 @@ def addAll(DOCUMENT_URL, processor, title, site):
         processor.process(file, name+'_%s' % str(id), DOCUMENT_URL, DOCUMENT_SITE)
         id=id+1   # Die ID erhöht sich dann um 1
 
-# Ist die leere Suchbar, wenn man einen Suchbegriff eingibt, werden die entsprechend Einträge angezeigt
-@app.route('/suche', methods=('GET', 'POST'))   # Ist eine Get / Post Methode
-def search():
-    if request.method == 'POST':    # Wenn das keyword submitted wird
-        keyword = request.form['keyword']   # wird das eingegebene keyword in eine Variable gespeichert
-
-        if not keyword:     # Wenn das Feld aber leer steht, soll es eine Fehlermeldung bringen
-            flash('Keyword is required!')
-        else:
-            #sonst wird man zur getSearch Methode weitergeleitet
-            return redirect(url_for('getSearch', name=keyword))
-    return render_template('test.html')
 
 # Hier wird mittels dem keyword nach die jeweiligen Bilder gesuch   t
-@app.route('/suche/<name>')
-def getSearch(name):
+@app.route('/suche', methods=('GET', 'POST'))
+def getSearch():
+    print("search")
+    keyword = ""
+    titlearr = []  # Wieder eine Titelarray, aber für die Titel nachdem capitalize
+    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
+
     if request.method == 'POST':    # Wenn das keyword submitted wird
         keyword = request.form['keyword']   # wird das eingegebene keyword in eine Variable gespeichert
+        searchArr, patharr = p.search(str(keyword))     #Gibt einen Array von den Titeln der Ergebnissen bei der Suche
 
-        if not keyword:     # Wenn das Feld aber leer steht, soll es eine Fehlermeldung bringen
-            flash('Keyword is required!')
-        else:
-            #sonst wird man zur getSearch Methode weitergeleitet
-            return redirect(url_for('getSearch', name=keyword))
+        print("asas" + str(patharr))
+        #print(searchArr)
 
-    searchArr = p.search(str(name))     #Gibt einen Array von den Titeln der Ergebnissen bei der Suche
-    titlearr = []       # Wieder eine Titelarray, aber für die Titel nachdem capitalize
-    resultArr = []    #ein Array für die Ergebnisse, nachdem Sie angepasst wurden
-    
-    #print(searchArr)
-    
-    #Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
-    for title in searchArr:
-        titlearr.append(str(title[0]).capitalize())
-    titlearr.sort()     #Danach wird das titleArr nach dem Alphabet sortiert
-    
-    #print(titlearr)
-    
-    #Variable zum Suchordner
-    resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
-    for f in glob.glob("%s/*.jpg" % resultDirectory):   # Alle jpg Files im Suchordner werden durchgelaufen
-            ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
-            #Dann wird ein Dictionary erstellt mit den entsprechen Weten
-            doc = {
-                'title': titlearr[glob.glob("%s/*.jpg" % resultDirectory).index(f)],
-                'url': os.path.basename(ff)
-            }
-            #print(os.path.basename(ff))
-            resultArr.append(doc)   #Das Dictionary wird dann ins result - Array gepseichert
-    print(resultArr)
+        #Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
+        for title in searchArr:
+            titlearr.append(str(title[0]).capitalize())
+        titlearr.sort()     #Danach wird das titleArr nach dem Alphabet sortiert
+
+        #print(titlearr)
+
+        #Variable zum Suchordner
+        resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
+        for f in patharr:   # Alle jpg Files im Suchordner werden durchgelaufen
+                #ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
+                #Dann wird ein Dictionary erstellt mit den entsprechen Weten
+                doc = {
+                    'title': pathlib.Path(str(f)).stem,
+                    'url': str(f.removeprefix("['"))
+                }
+                #print(os.path.basename(ff))
+                resultArr.append(doc)   #Das Dictionary wird dann ins result - Array gepseichert
+        print(resultArr)
 
     #Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
-    return render_template("test.html", len=len(resultArr), arr=resultArr, name=str(name)) #, titlearr= sorted(searchArr))
+    return render_template("Suche.html", len=len(resultArr), arr=resultArr, name=str(keyword)) #, titlearr= sorted(searchArr))
+
+@app.route('/getImage/<path:url>/<string>')
+def getImage(url, string):
+    clearFolder()
+    print(url)
+    print(string)
+    string.split()
+    for s in string:
+        s.capitalize()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
+
+    string = string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
+    print(string)
+    highlight_image(url, '%s_alto_neu.xml' % url, string)
+    name = pathlib.Path(url).stem
+    path=r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.png'
+    print(path)
+    return render_template("getImage.html", url=path) #, titlearr= sorted(searchArr))
 
 #Hier kann man die entsprechenden Bilder downloaden bzw auf der Flask anzeigen
 @app.route('/uploads/<path:filename>')
 def download_file(filename):
-    return send_from_directory(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche", filename, as_attachment=True)
+    folder = os.path.dirname(filename)
+    print(folder)
+    name = os.path.basename(filename)
+    print(name)
+    return send_from_directory(folder,name,  as_attachment=True)
+    #return send_from_directory(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche", filename, as_attachment=True)
 
 #Dort bekommt man die ganzen Bilder von einem Ordner / PDF File
 ###################
@@ -268,15 +282,17 @@ def highlight_image(img, xml, string):
                 image = Image.alpha_composite(image, overlay)   #Hier wird das ganze format
                 image = image.convert("RGB")  # und Filter zurückgesetut
                 #Die enstprechende Prefix wird gellöscht
-                dic = img.removeprefix(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
+                dic = os.path.basename(img)
                 #print('JA:' +dic)
-                file = dic + '_suche.jpg'   #die entsprechende suffix wird hinzugefügt
+                dic = dic.removesuffix('.png')
+                file = dic + '_suche.png'   #die entsprechende suffix wird hinzugefügt
                 file = file.replace("\\", "-")  #Die enstprechenden Zeichen werden ersetzt
                 #print(file)
                 #Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
                 image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file)
                 #image.save(img+"_suche.jpg")
                 #print(img+"_suche.jpg")
+
 
 
 #Hier wird der gesamte Inhalt vom Suchordner gelöscht
