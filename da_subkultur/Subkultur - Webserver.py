@@ -24,6 +24,8 @@ app.config['UPLOAD_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\
 app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
 
+
+
 #Hier wird die Startseite aufgerufen
 @app.route('/')
 def Start():
@@ -35,7 +37,7 @@ def register():
 
 @app.route('/login')
 def login():
-    return render_template("login")
+    return render_template("login.html")
 
 
 
