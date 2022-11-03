@@ -1,4 +1,6 @@
-from pysolr import Solr 
+import shutil
+
+from pysolr import Solr
 import os
 import logging
 import hashlib
@@ -12,7 +14,7 @@ import io
 import json
 import glob
 import re
-from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory
+from flask import Flask,  render_template, request, url_for, flash, redirect, send_from_directory, jsonify
 import pathlib
 
 
@@ -310,6 +312,19 @@ def clearFolder():
         except Exception as e:  #Sonst gibt es demenstprechend eine Exception
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+
+@app.get('/images/{imageID}')
+def get_Image(imageID: int):
+    return
+
+@app.post('/images')
+def post_Image():
+    return {"error": "An Error occured"}, 415
+
+@app.delete('/images/{imageID}')
+def delete_Image():
+
+    return
 
 
 #Die Main

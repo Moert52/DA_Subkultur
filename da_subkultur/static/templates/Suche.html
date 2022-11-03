@@ -17,7 +17,14 @@
 </head>
 <body>
 
-<h1> Bildersuche: </h1>
+    <nav>
+        <ul>
+            <li><a href="/">Startseite</a></li>
+            <li><a class= "active"  href="subArchiv.html">Das Subarchiv</a></li>
+            <li><a href="/login">LoginSeite</a></li>
+            <li><a href="/register">RegistrationSeite</a></li>
+        </ul>
+    </nav>
 
 <h4>{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
     <form method="post" target="search">
@@ -47,6 +54,7 @@
             </td>
 
             <td class="titel" >Titel: <br>{{file.title}}</td>
+
 
 
         </tr>

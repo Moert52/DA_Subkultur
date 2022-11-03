@@ -1,10 +1,14 @@
-from flask_restful import Resource, Api
-from flask import Flask, render_template, session, jsonify, flash, request, redirect
-from werkzeug.utils import secure_filename
-import os
-from Solr import Processor
 import glob
+import os
+
+from flask import Flask, render_template, flash, request, url_for
+from flask_restful import Api
+from werkzeug.utils import secure_filename, redirect
+
+
+
 import Tesseract
+from Solr import Processor
 
 #Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -13,14 +17,30 @@ p = Processor('http://localhost:8983/solr/test')
 app=Flask(__name__,template_folder='static/templates')  # Die Flask-Anwendung
 api = Api(app)  # Die Flask API
 app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SECRET_KEY'] = 'thisisasecretkey'
 #Variablen für wichtige Pfäde
 app.config['UPLOAD_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\ToOCR'
 app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+
+
+
 
 #Hier wird die Startseite aufgerufen
 @app.route('/')
 def Start():
     return render_template("Start.html")
+
+@app.route('/register')
+def register():
+    return render_template("register.html")
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+
+
 
 
 #Hier ist die Methode und das Formular um Artikel hochzuladen (OCR + Solr)
@@ -61,3 +81,7 @@ def Menu():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
