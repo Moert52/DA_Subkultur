@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <title>LoginSeite</title>
 
+    <table id="demo">
+      {% for u in usr %}
+        <tr>
+            <td>{{ u[1] }}</td>
+            <td>{{ u[2] }}</td>
+            <td>{{ u[3] }}</td>
+            <td>{{ u[4] }}</td>
+            <td>{{ u[5] }}</td>
+            <td>{{ u[6] }}</td>
+        </tr>
+      {% endfor %}
+    </table>
 
 </head>
-    </html>
+</html>
