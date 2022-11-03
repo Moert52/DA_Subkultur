@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>Alle User:</h1>
+
+    <table id="demo">
+        {% for u in usr %}
+          <tr>
+              <td>{{ u[0] }}</td>
+              <td>{{ u[1] }}</td>
+              <td>{{ u[2] }}</td>
+              <td>{{ u[3] }}</td>
+              <td>{{ u[4] }}</td>
+              <td>{{ u[5] }}</td>
+              <td>{{ u[6] }}</td>
+          </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>

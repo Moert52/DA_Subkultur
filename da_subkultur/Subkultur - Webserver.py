@@ -29,21 +29,25 @@ def Start():
     return render_template("Start.html")
 
 
+# Login-Register
+
 @app.route('/register')
 def register():
     return render_template("register.html")
 
 
-@app.route('/login')
+@app.route('/login', methods=('GET', 'POST'))
 def login():
-    return render_template("login.html")
+    form = None
+    return render_template("login.html", form=form)
 
 
-@app.route("/testData")
+@app.route("/allUsers")
 def getUsers():
     users = getAllUser()
     print(users)
-    return render_template("login.html", usr=users)
+    return render_template("allUsers.html", usr=users)
+
 
 
 # Hier ist die Methode und das Formular um Artikel hochzuladen (OCR + Solr)
