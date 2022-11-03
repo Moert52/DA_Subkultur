@@ -1,13 +1,10 @@
 import sqlite3
-from flask import Flask, render_template, request, make_response
 from datetime import date
-
-from da_subkultur.models.User import User
 
 
 def tryConnection():
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(r'/models/users.db')
         print("A SQLite connection has been established")
     except sqlite3.Error as error:
         print("An error occurred while connecting to SQLite", error)
@@ -18,11 +15,12 @@ def tryConnection():
 
 def insert(user):
     try:
+        userList = list(user)
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
-                  "VALUES (?, ?, ?, ?, ?, ?)",
-                  (user.firstname, user.lastname, user.birthdate, user.email, user.password, user.role))
+        c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password) "
+                  "VALUES (?, ?, ?, ?, ?)",
+                  (userList[0], userList[1], userList[2], userList[3], userList[4]))
         conn.commit()
     except sqlite3.Error as error:
         print("An error occurred while inserting a user", error)
@@ -30,21 +28,21 @@ def insert(user):
         conn.close()
 
 
-def getUser(id):
+def getUser(email):
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE id=?", id)
+        c.execute("SELECT * FROM users WHERE email=?", [email])
         user = c.fetchone()
         return user
     except sqlite3.Error as error:
         print("An error occurred while getting a user", error)
-    finally:
-        conn.close()
+    # finally:
+    # conn.close()
     return -1
 
 
-def getUsers():
+def getAllUser():
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
@@ -60,9 +58,9 @@ def getUsers():
 
 def deleteUser(id):
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect('user.db')
         c = conn.cursor()
-        c.execute("DELETE FROM users WHERE id=?", id)
+        c.execute("DELETE FROM users WHERE id=?", [id])
         conn.commit()
     except sqlite3.Error as error:
         print("An error occurred while deleting a user", error)
@@ -75,7 +73,7 @@ def login(email, password):
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
-        if c.fetchone() is not None:
+        if (c.fetchone() != None):
             return 1
         else:
             return 0
@@ -86,21 +84,9 @@ def login(email, password):
     return 0
 
 
-app = Flask(__name__)
 
-
-#@app.route("/")
-#def getUsers():
-#    users = getUsers()
-#    print(users)
-#    return render_template("login.html", usr=users)
-
-
-if __name__ == "__main__":
-    #app.run(debug=True)
-    print(getUsers())
+def logreg():
     print("Login oder Register (login/register):")
-
     if input() == "login":
 
         print("Enter EMail: ")
@@ -113,17 +99,22 @@ if __name__ == "__main__":
         else:
             print("login failed")
 
-    if input() == "register":
+    else:
         print("Firstname: ")
         firstname = str(input())
         print("Lastname: ")
         lastname = str(input())
-        print("Birthdate(YYYY:MM:DD): ")
-        b = input().split(":")
-        birthdate = date(int(b[0]), int(b[1]), int(b[2]))
+        print("Birthdate(YYYY-MM-DD): ")
+        birthdate = str(input())
         print("EMail: ")
         email = str(input())
         print("Password: ")
         password = str(input())
-        user = (firstname, lastname, birthdate, email, password, "user")
+        user = (firstname, lastname, birthdate, email, password)
         insert(user)
+
+
+if __name__ == "__main__":
+    print(getUser('mcetinkaya@tsn.at'))
+    logreg()
+    # print(getAllUser())
