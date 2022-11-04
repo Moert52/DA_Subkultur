@@ -7,7 +7,9 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor
-from da_subkultur.models.userDB import getAllUser
+from da_subkultur.models.userDB import getAllUser, LoginForm
+
+import requests
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -22,6 +24,7 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 app.config['UPLOAD_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\ToOCR'
 app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
+base = "http://127.0.0.1:5000/"
 
 # Hier wird die Startseite aufgerufen
 @app.route('/')
@@ -30,7 +33,6 @@ def Start():
 
 
 # Login-Register
-
 @app.route('/register')
 def register():
     return render_template("register.html")
@@ -38,7 +40,7 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    form = None
+    form = LoginForm
     return render_template("login.html", form=form)
 
 
@@ -47,7 +49,6 @@ def getUsers():
     users = getAllUser()
     print(users)
     return render_template("allUsers.html", usr=users)
-
 
 
 # Hier ist die Methode und das Formular um Artikel hochzuladen (OCR + Solr)
@@ -69,7 +70,7 @@ def create():
                 file = secure_filename(uploaded_file.filename)  # Dateiname mit Extension
                 path = os.path.join(app.config['UPLOAD_PATH'], file)  # Pfad der Datei
                 uploaded_file.save(
-                    path)  # PDFs werden in einen bestimmen Ordner gespeichert, wo dann die OCR durchöäuft
+                    path)  # PDFs werden in einen bestimmen Ordner gespeichert, wo dann die OCR durchläuft
 
                 filename = os.path.basename(path).split('.')[0]  # Dateiname ohne Extension
                 # print(title)
@@ -87,7 +88,7 @@ def create():
 
 
 # Hier wird die Menüseite aufgerufen@app.route('/Menu')
-def Menu():
+def menu():
     return render_template("Start.html")
 
 

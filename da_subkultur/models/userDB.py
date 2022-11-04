@@ -1,5 +1,8 @@
 import sqlite3
 from datetime import date
+from flask_wtf import FlaskForm
+from wtforms import StringField, PasswordField, SubmitField
+from wtforms.validators import InputRequired, Length
 
 
 def tryConnection():
@@ -84,7 +87,6 @@ def login(email, password):
     return 0
 
 
-
 def logreg():
     print("Login oder Register (login/register):")
     if input() == "login":
@@ -112,6 +114,16 @@ def logreg():
         password = str(input())
         user = (firstname, lastname, birthdate, email, password)
         insert(user)
+
+
+class LoginForm(FlaskForm):
+    email = StringField(validators=[
+        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
+
+    password = PasswordField(validators=[
+        InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    submit = SubmitField('Login')
 
 
 if __name__ == "__main__":

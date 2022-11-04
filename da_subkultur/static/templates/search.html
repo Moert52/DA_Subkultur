@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Content suchen</title>
+</head>
+<body>
+    <h1>Das Subarchiv</h1>
+
+    {% for message in get_flashed_messages() %}
+            <div class="alert">{{ message }}</div>
+    {% endfor %}
+    <form method="POST" action="" enctype="multipart/form-data">
+        <label for="title">Title</label>
+        <br>
+        <input type="text" name="title"
+               placeholder="Content title"
+               value="{{ request.form['title'] }}">
+        </input>
+        <br>
+
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
