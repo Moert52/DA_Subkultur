@@ -13,11 +13,8 @@
 
     <form method="POST" action="">
 
-        {{ form.firstname}}
-        {{ form.lastname}}
-        {{ form.birthdate}}
-        {{ form.email}}
-        {{ form.role}}
+          {{ form.hidden_tag() }}
+        {{ form.username }}
         {{ form.password }}
         {{ form.submit }}
     </form>
