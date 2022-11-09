@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor
-from da_subkultur.models.userDB import getAllUser, LoginForm
+from models.userDB import getAllUser, LoginForm
 
 import requests
 

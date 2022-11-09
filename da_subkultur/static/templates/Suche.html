@@ -26,15 +26,15 @@
         </ul>
     </nav>
 
-<h4>{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
+<h4 class="searchTitle">{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
     <form method="post" target="search">
 
            <label class="lblSuche" for="keyword">Suche:</label>
         <br>
-        <input type="text" name="keyword"
+        <input class="inputKeyword"type="text" name="keyword"
                placeholder="Keyword">
-        <br>
-        <button type="submit" name="submit_button" value="Suche">>Submit</button>
+
+        <button class="btn" type="submit" name="submit_button" value="Suche">Submit</button>
 
     </form>
 
@@ -46,10 +46,10 @@
     <tbody>
         {% for file in arr %}
 
-        <tr class="spalte">
-            <td>
+        <tr class="column">
+            <td class="picture">
                 <a href="{{ url_for('getImage', url=file.url, string=name) }}">
-                    <img class="img" width="20%" height="20%" src="{{ url_for('download_file', filename=file.url) }}">
+                    <img class="img" width="20%" height="20%" src="{{ url_for('download_file', filename=file.thumb) }}">
                 </a>
             </td>
 

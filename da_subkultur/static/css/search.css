@@ -9,8 +9,16 @@
 .img {
     width: 100%;
 }
+thead{
+    color: white;
+}
 
-.spalte {
+.picture{
+    background-color: rgba(0, 0, 0, 0) !important;
+}
+.column {
+    color:white;
+    background-color: rgba(0, 0, 0, 0.5) !important;
     heigt:220px;
 }
 
@@ -25,8 +33,53 @@ label {
     visibility: hidden;
 }
 
+.btn {
+    padding: 8px 19px 8px 13px;
+    font-size: 19px;
+    margin-left: -5px;
+    border-style: solid;
+    border-radius: 1px 25px 25px 1px;
+    background-color: #b3b3b3;
+}
+
+.searchTitle {
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-left: 15px;
+    color:white;
+    text-shadow:
+        -1px -1px 0 #000,
+         0   -1px 0 #000,
+         1px -1px 0 #000,
+         1px  0   0 #000,
+         1px  1px 0 #000,
+         0    1px 0 #000,
+        -1px  1px 0 #000,
+        -1px  0   0 #000;
+    font-size: 30px;
+}
+
+.inputKeyword {
+    margin-top: 8px;
+    margin-left: 15px;
+    width: 300px;
+    background: #fff;
+    color: $input-text-color;
+    font: inherit;
+    box-shadow: 0 6px 10px 0 rgb(0 0 0 / 10%);
+    border: 0;
+    outline: 0;
+    padding: 8px 10px 8px 18px;
+    font-size: 20px;
+    border: solid 2px;
+    border-radius: 25px 1px 1px 25px;
+}
+
 .lblSuche {
+    margin-left: 15px;
+    font-size: 30px;
     visibility: visible;
+    color:white;
 }
 
 

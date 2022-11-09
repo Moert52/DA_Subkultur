@@ -18,6 +18,8 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 def highlight_images(dir):
     for f in glob.glob("%s/*.png" % dir):   #Jedes einzelne pnf File im Ordner läuft hier durch
         ff = os.path.join(dir, f)   # Hier wird der Pfad den png Files gepseichert
+        if '-thumb' in ff:      #Wenn der Pfad ff enthält
+            continue            #soll er zur nächsten Iteration springen
         print(ff)
 
 
@@ -138,6 +140,12 @@ def extract_pdf(fname):
         #dirr = 'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
         #Path(dirr).mkdir(exist_ok=True)
         pix.save("%s/%d.png" % (dirr,i))        #Die PDF einzelne Seite wird als png File gespeichert
+        image = Image.open(("%s/%d.png" % (dirr,i)))
+        w =int(image.width/10)
+        h =int(image.height / 10)
+        image = image.resize((w,h), Image.ANTIALIAS)
+        image.save("%s/%d-thumb.png" % (dirr,i), quality=10, dpi=(72, 72))
+
 
 #Hier erfolgt die ocr der seite, aschnließend werden die Informationen in einem xml - File abgespeichert
 def do_ocr(f):
@@ -166,10 +174,13 @@ def do_ocr(f):
 def do_ocr_dir(dir):
     for f in glob.glob("%s/*.png" % dir):   #Jedes einezlne png File im Ordner läuft hier durch
         ff = os.path.join(dir, f)   #Der Pfad der png Files wird gespeichert
+        if '-thumb' in ff:      #Wenn der Pfad ff enthält
+            continue            #soll er zur nächsten Iteration springen
         do_ocr(ff)      #Die do_ocr Methode wird durchgeführt
 
 #Hier werden alle Methoden zusammengefasst, welches dann bei allen pdf Files im Ordner durchgeführt wird
 def process_dir(dir):
+
     for f in glob.glob("%s/*.pdf" % dir):   #Jedes pdf File im Ordner läuft hier durch
         ff = os.path.join(dir, f)   # Der Pfad der PDF Files
         #print (ff)
@@ -185,6 +196,22 @@ def process_dir(dir):
         do_ocr_dir(dir) # DIe do_ocr_dir Methode wird durchgeführt
         highlight_images(dir)   # Die highlight_images Methode wird durchgeführt
 
+#Hier wird in jedem Unterordner nach dem png - File gesucht und ein thumb png bzüglich dem png File erzeugt
+def searchDir(path):
+    r = glob.glob('%s/**/*.png'% path, recursive=True)
+
+    for file in r:
+        #print(file)
+        image = Image.open(file)
+        w = int(image.width / 10)
+        h = int(image.height / 10)
+        image = image.resize((w, h), Image.ANTIALIAS)
+        file = file.removesuffix('.png')
+        image.save("%s-thumb.png" % file, quality=10, dpi=(72, 72))
+    #print(r)
+
+
 if __name__ == '__main__':
-    process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    #process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    searchDir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
     #process_dir(r'D:\Diplomarbeit\Tesseract') #Leos Tesseract

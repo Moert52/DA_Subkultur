@@ -17,7 +17,9 @@ import glob
 import re
 from flask import Flask, render_template, request, url_for, flash, redirect, send_from_directory, jsonify
 import pathlib
-import datetime;
+import datetime
+from urllib.parse import urlparse, unquote
+from pathlib import Path
 
 DOCUMENT_SITE = 'Artikel'  # Zentrale Document Site für die Add_All Methode
 # DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
@@ -114,7 +116,7 @@ class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
         print('Es wurden %s Eintraege gefunden' % z)
 
         # Der Titel Array wird zurückgegeben
-        return 0, titlearr, pathArr
+        return titlearr, pathArr
 
     # Methode zum Löschen aller Einträge auf Solr
     def delAll(self):
@@ -189,9 +191,12 @@ def getSearch():
         for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
             # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
             # Dann wird ein Dictionary erstellt mit den entsprechen Weten
+            thumbFile = f.removesuffix('.png') + '-thumb.png'
+            print(thumbFile)
             doc = {
                 'title': pathlib.Path(str(f)).stem,
-                'url': str(f.removeprefix("['"))
+                'url': f, # str(f.removeprefix("['"))
+                'thumb': thumbFile
             }
             # print(os.path.basename(ff))
             resultArr.append(doc)  # Das Dictionary wird dann ins result - Array gepseichert
@@ -218,7 +223,7 @@ def getImage(url, string):
     highlight_image(url, '%s_alto_neu.xml' % url, string)
     thh = datetime.datetime.now().timestamp()
     name = pathlib.Path(url).stem
-    path = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.png'
+    path = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.jpg'
     print(path)
     delta1 = th - ts
     delta2 = thh - ts
@@ -266,6 +271,12 @@ def highlight(string, pathArr):
 
 
 def highlight_image(img, xml, string):
+    dic = os.path.basename(img)
+    # print('JA:' +dic)
+    dic = dic.removesuffix('.png')
+    file = dic + '_suche.jpg'  # die entsprechende suffix wird hinzugefügt
+    file = file.replace("\\", "-")  # Die enstprechenden Zeichen werden ersetzt
+    # print(file)
     # print(xml)
     stri = string.split()  # Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
     # print(stri)
@@ -305,18 +316,13 @@ def highlight_image(img, xml, string):
                 # Alpha composite these two images together to obtain the desired result.
                 image = Image.alpha_composite(image, overlay)  # Hier wird das ganze format
                 image = image.convert("RGB")  # und Filter zurückgesetut
-                # Die enstprechende Prefix wird gellöscht
-                dic = os.path.basename(img)
-                # print('JA:' +dic)
-                dic = dic.removesuffix('.png')
-                file = dic + '_suche.png'  # die entsprechende suffix wird hinzugefügt
-                file = file.replace("\\", "-")  # Die enstprechenden Zeichen werden ersetzt
-                # print(file)
+
+
                 # Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
                 delta1 = th - ts
                 print("Timestamp 1: %d s" % delta1)
     ts = datetime.datetime.now().timestamp()
-    image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file)
+    image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file, quality=10, dpi=(72,72))
     th = datetime.datetime.now().timestamp()
     delta1 = th - ts
     print("Timestamp 3 %d s" % delta1)  # Laufzeit liegt beim Speichern
