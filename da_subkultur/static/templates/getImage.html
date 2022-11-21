@@ -5,6 +5,8 @@
     <title>Title</title>
 </head>
 <body>
+    <a href="{{ url_for('getSearch', key=name) }}"> Back</a><br>
     <img class="img" width="50%" height="50%" src="{{ url_for('download_file', filename=url) }}">
 </body>
 </html>
+

@@ -27,12 +27,12 @@
     </nav>
 
 <h4 class="searchTitle">{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
-    <form method="post" target="search">
+    <form method="post">
 
            <label class="lblSuche" for="keyword">Suche:</label>
         <br>
         <input class="inputKeyword"type="text" name="keyword"
-               placeholder="Keyword">
+               placeholder={{keyword}}>
 
         <button class="btn" type="submit" name="submit_button" value="Suche">Submit</button>
 

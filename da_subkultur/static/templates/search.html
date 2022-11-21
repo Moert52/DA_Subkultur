@@ -10,7 +10,7 @@
     {% for message in get_flashed_messages() %}
             <div class="alert">{{ message }}</div>
     {% endfor %}
-    <form method="POST" action="" enctype="multipart/form-data">
+    <form method="POST" action="" target="_plain" enctype="multipart/form-data">
         <label for="title">Title</label>
         <br>
         <input type="text" name="title"

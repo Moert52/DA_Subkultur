@@ -81,18 +81,16 @@ class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
     # Hier wird nach einem Eintrag gesucht
     def search(self, title):
         # Hier wird im content, title und site nach dem schlüsselwort gesucht und in max. 500 Zeilen gespeichert
-        results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title), sort='order_i asc',
+        if title == '':
+            results = self.server.search('*:*',sort='order_i asc', rows=500, )
+        else:
+            results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title), sort='order_i asc',
                                      rows=500, )
         self.server.commit()
         z = 0
         pathArr = []
         titlearr = []
-        title.split()  # Die Wörter werden sozugagen aufgesplittet und array artig gespeichert
-        for t in title:
-            t.capitalize()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
 
-        title = title + ' %s ' % title.upper() + '%s ' % title.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
-        print(title)
         try:
             for result in results:  # Man läuft jetzt jedes einzelne Ergebnis durch
                 z += 1  # Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
@@ -164,47 +162,56 @@ def addAll(DOCUMENT_URL, processor, title, site):
         id = id + 1  # Die ID erhöht sich dann um 1
 
 
-# Hier wird mittels dem keyword nach die jeweiligen Bilder gesuch   t
+# Hier wird mittels dem keyword nach die jeweiligen Bilder gesucht
+@app.route('/suche/<key>', methods=('GET', 'POST'))
 @app.route('/suche', methods=('GET', 'POST'))
-def getSearch():
+def getSearch(key=''):
+    print(key)
     print("search")
     keyword = ""
-    titlearr = []  # Wieder eine Titelarray, aber für die Titel nachdem capitalize
-    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
+    if key != '':
+        keyword = key
 
+
+    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
     if request.method == 'POST':  # Wenn das keyword submitted wird
         keyword = request.form['keyword']  # wird das eingegebene keyword in eine Variable gespeichert
-        searchArr, patharr = p.search(str(keyword))  # Gibt einen Array von den Titeln der Ergebnissen bei der Suche
+        resultArr = search(keyword)
+    if not resultArr:
 
-        print("asas" + str(patharr))
-        # print(searchArr)
-
-        # Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
-        for title in searchArr:
-            titlearr.append(str(title[0]).capitalize())
-        titlearr.sort()  # Danach wird das titleArr nach dem Alphabet sortiert
-
-        # print(titlearr)
-
-        # Variable zum Suchordner
-        resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
-        for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
-            # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
-            # Dann wird ein Dictionary erstellt mit den entsprechen Weten
-            thumbFile = f.removesuffix('.png') + '-thumb.png'
-            print(thumbFile)
-            doc = {
-                'title': pathlib.Path(str(f)).stem,
-                'url': f, # str(f.removeprefix("['"))
-                'thumb': thumbFile
-            }
-            # print(os.path.basename(ff))
-            resultArr.append(doc)  # Das Dictionary wird dann ins result - Array gepseichert
-        print(resultArr)
-
+        resultArr = search(keyword)
     # Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
     return render_template("Suche.html", len=len(resultArr), arr=resultArr,
-                           name=str(keyword))  # , titlearr= sorted(searchArr))
+                           name=str(keyword) or 'StringIsNull', keyword=keyword or "Keyword")  # , titlearr= sorted(searchArr))
+
+
+def search(keyword):
+    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
+    titlearr = []  # Wieder eine Titelarray, aber für die Titel nachdem capitalize
+    searchArr, patharr = p.search(str(keyword))  # Gibt einen Array von den Titeln der Ergebnissen bei der Suche
+    print("asas" + str(patharr))
+    # print(searchArr)
+    # Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
+    for title in searchArr:
+        titlearr.append(str(title[0]).capitalize())
+    titlearr.sort()  # Danach wird das titleArr nach dem Alphabet sortiert
+    # print(titlearr)
+    # Variable zum Suchordner
+    resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
+    for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
+        # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
+        # Dann wird ein Dictionary erstellt mit den entsprechen Weten
+        thumbFile = f.removesuffix('.png') + '-thumb.png'
+        print(thumbFile)
+        doc = {
+            'title': pathlib.Path(str(f)).stem,
+            'url': f,  # str(f.removeprefix("['"))
+            'thumb': thumbFile
+        }
+        # print(os.path.basename(ff))
+        resultArr.append(doc)  # Das Dictionary wird dann ins result - Array gepseichert
+    print(resultArr)
+    return resultArr
 
 
 @app.route('/getImage/<path:url>/<string>')
@@ -213,14 +220,18 @@ def getImage(url, string):
     clearFolder()
     print(url)
     print(string)
-    string.split()
-    for s in string:
-        s.capitalize()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
+    if string != "StringIsNull":
+        strr = string.lower()
 
-    string = string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
-    print(string)
+        strr = strr.title() # Jeder Buchstabe bei jedem Wort wird groß geschrieben
+        strr = strr.split()
+
+        getstring=''
+        for s in strr:
+            getstring = '%s %s %s %s' % (s, s.upper(), s.lower(), getstring ) #+  string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
+        print(getstring)
     th = datetime.datetime.now().timestamp()
-    highlight_image(url, '%s_alto_neu.xml' % url, string)
+    highlight_image(url, '%s_alto_neu.xml' % url, getstring)
     thh = datetime.datetime.now().timestamp()
     name = pathlib.Path(url).stem
     path = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.jpg'
@@ -229,7 +240,7 @@ def getImage(url, string):
     delta2 = thh - ts
     print("Timestamp 1: %d s" % delta1)
     print("Timestamp 2: %d s" % delta2)
-    return render_template("getImage.html", url=path)  # , titlearr= sorted(searchArr))
+    return render_template("getImage.html", url=path, name=string)  # , titlearr= sorted(searchArr))
 
 
 # Hier kann man die entsprechenden Bilder downloaden bzw auf der Flask anzeigen
@@ -278,49 +289,52 @@ def highlight_image(img, xml, string):
     file = file.replace("\\", "-")  # Die enstprechenden Zeichen werden ersetzt
     # print(file)
     # print(xml)
-    stri = string.split()  # Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
+
     # print(stri)
     root = ET.parse(xml)  # Die xml wird geöffnet
     image = Image.open(img)  # Die jpg Datei wird geöffnet
     ts = datetime.datetime.now().timestamp()
-    # Jedes String element in dem xml File läuft hier durch
-    for p in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
-        st = str(p.attrib["CONTENT"])  # den Content vom String Element wird abgespeichert
-        for e in stri:  # Dann läuft jedes einzelne wort vom keyword hier durch
-            if re.search(e, st):  # Dann wird geprüft ob das keyword im content vom String vorhanden ist
-                th = datetime.datetime.now().timestamp()
-                print("x")
-                # gid = p.attrib["ID"]
-                x0 = int(p.attrib["HPOS"])  # Die x - Position wird gepseichert
-                y0 = int(p.attrib["VPOS"])  # Die y - Position wird gepseichert
-                x1 = int(x0 + int(p.attrib["WIDTH"]))  # Hier wird die Breite gepseichert
-                y1 = int(y0 + int(p.attrib["HEIGHT"]))  # Hier wird die Höhe gespeichert
-                shape = [x0 - 7, y0 - 10, x1 + 8,
-                         y1 + 14]  # Hier werden die entsprechenden Größen in einem Array gespeichert
+    if string !='StringIsNull': #Wenn der String null ist soll er das normale Bild ohne es zu higlighten abspeichern
+        stri = string.split()  # Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
+        print(stri)
+        # Jedes String element in dem xml File läuft hier durch
+        for p in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
+            st = str(p.attrib["CONTENT"])  # den Content vom String Element wird abgespeichert
+            for e in stri:  # Dann läuft jedes einzelne wort vom keyword hier durch
+                if re.search(e, st):  # Dann wird geprüft ob das keyword im content vom String vorhanden ist
+                    th = datetime.datetime.now().timestamp()
+                    print("x")
+                    # gid = p.attrib["ID"]
+                    x0 = int(p.attrib["HPOS"])  # Die x - Position wird gepseichert
+                    y0 = int(p.attrib["VPOS"])  # Die y - Position wird gepseichert
+                    x1 = int(x0 + int(p.attrib["WIDTH"]))  # Hier wird die Breite gepseichert
+                    y1 = int(y0 + int(p.attrib["HEIGHT"]))  # Hier wird die Höhe gespeichert
+                    shape = [x0 - 7, y0 - 10, x1 + 8,
+                             y1 + 14]  # Hier werden die entsprechenden Größen in einem Array gespeichert
 
-                TINT_COLOR = (0, 0, 0)  # Black     #Die Schriftfarbe ist schwarz
-                TRANSPARENCY = .50  # Degree of transparency, 0-100%    #Die Transparenz bei 50%
-                OPACITY = int(255 * TRANSPARENCY)
+                    TINT_COLOR = (0, 0, 0)  # Black     #Die Schriftfarbe ist schwarz
+                    TRANSPARENCY = .50  # Degree of transparency, 0-100%    #Die Transparenz bei 50%
+                    OPACITY = int(255 * TRANSPARENCY)
 
-                # print (gid, shape)
-                image = image.convert("RGBA")  # Das jpg File wird ins RGBA Format konvertiert
-                overlay = Image.new('RGBA', image.size, TINT_COLOR + (
-                    0,))  # und mit den entsprechenden Werten bekommt sozusagen einen Filter
-                draw = ImageDraw.Draw(
-                    overlay)  # EIen Variable wird erstellt umd auf dem Bild etwas zu zeichnen / malen.
-                # draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
-                draw.rectangle(shape, fill=(255, 255, 80, 130),
-                               outline="black")  # Es wird ein Rechteck gemalt auf dem content
-                # vom String, ist dann sozusagen ein Highlight auf das keyword im jpg File gemalt
+                    # print (gid, shape)
+                    image = image.convert("RGBA")  # Das jpg File wird ins RGBA Format konvertiert
+                    overlay = Image.new('RGBA', image.size, TINT_COLOR + (
+                        0,))  # und mit den entsprechenden Werten bekommt sozusagen einen Filter
+                    draw = ImageDraw.Draw(
+                        overlay)  # EIen Variable wird erstellt umd auf dem Bild etwas zu zeichnen / malen.
+                    # draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
+                    draw.rectangle(shape, fill=(255, 255, 80, 130),
+                                   outline="black")  # Es wird ein Rechteck gemalt auf dem content
+                    # vom String, ist dann sozusagen ein Highlight auf das keyword im jpg File gemalt
 
-                # Alpha composite these two images together to obtain the desired result.
-                image = Image.alpha_composite(image, overlay)  # Hier wird das ganze format
-                image = image.convert("RGB")  # und Filter zurückgesetut
+                    # Alpha composite these two images together to obtain the desired result.
+                    image = Image.alpha_composite(image, overlay)  # Hier wird das ganze format
+                    image = image.convert("RGB")  # und Filter zurückgesetut
 
 
-                # Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
-                delta1 = th - ts
-                print("Timestamp 1: %d s" % delta1)
+                    # Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
+                    delta1 = th - ts
+                    print("Timestamp 1: %d s" % delta1)
     ts = datetime.datetime.now().timestamp()
     image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file, quality=10, dpi=(72,72))
     th = datetime.datetime.now().timestamp()
