@@ -361,7 +361,7 @@ def clearFolder():
 
 
 artikel_put_args = reqparse.RequestParser()
-artikel_put_args.add_argument("name", type=str, help="Name nicht angegeben", required=True)
+artikel_put_args.add_argument("filename", type=str, help="Name nicht angegeben", required=True)
 artikel_put_args.add_argument("title", type=str, help="Titel nicht angegeben", required=True)
 artikel_put_args.add_argument("url", type=str, help="Url nicht angegeben", required=True)
 artikel_put_args.add_argument("site_id", type=str, help="Site_ID nicht angegeben", required=True)
@@ -372,11 +372,11 @@ class Artikel(Resource):
         data_get = Processor.search(title)
         if data_get == 1:
             abort("Artikel nicht vorhanden!")
-        return data_get
+        return jsonify(data_get)
 
     def put(self, title):
         args = artikel_put_args.parse_args()
-        Processor.process(args['name'], args['title'], args['url'], args['site_id'])
+        Processor.process(args['filename'], args['title'], args['url'], args['site_id'])
         return '', 201
 
     def delete(self, title):
@@ -386,8 +386,7 @@ class Artikel(Resource):
 
 api.add_resource(Artikel, "/artikel/<string:title>")
 
-# Die Main
-if __name__ == '__main__':
+def main():
     p = Processor('http://localhost:8983/solr/test')  # Hier wird ein Processor instanziert
     # directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
     # p.delAll()
@@ -395,6 +394,9 @@ if __name__ == '__main__':
     # p.process('0.png_text.txt', 'Cultblech_Logo_0')
     # p.delete('Cutblech_Logo_0')
     # p.search('Innsbruck')
-
     app.run(use_reloader=True, debug=True)  # Hier läuft die Flask Anwendung
     # p.server.commit()
+
+# Die Main
+if __name__ == '__main__':
+    main()
