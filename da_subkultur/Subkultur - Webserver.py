@@ -87,7 +87,8 @@ def create():
     return render_template("create.html")
 
 
-# Hier wird die Menüseite aufgerufen@app.route('/Menu')
+# Hier wird die Menüseite aufgerufen
+@app.route('/Menu')
 def menu():
     return render_template("Start.html")
 

@@ -387,7 +387,9 @@ class Artikel(Resource):
 api.add_resource(Artikel, "/artikel/<string:title>")
 
 def main():
+    global p
     p = Processor('http://localhost:8983/solr/test')  # Hier wird ein Processor instanziert
+
     # directoryToAddAll(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract', p, 'Titel', 'Artikel - Site')
     # p.delAll()
     # addAll(DOCUMENT_URL, p, )
