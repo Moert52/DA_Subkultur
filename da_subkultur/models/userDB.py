@@ -8,6 +8,11 @@ from wtforms.validators import InputRequired, Length, ValidationError
 from da_subkultur.models.User import User
 import Validation
 
+from cryptography.fernet import Fernet
+
+
+key = b'f-_6pyLfUVeDMtCP1BjDcmFv_ninS7WZqxFyQGfF0vs='
+
 
 def tryConnection():
     try:
@@ -126,6 +131,16 @@ def logreg():
         insert(user)
 
 
+def encrypt(password):
+    cipher_suite = Fernet(key)
+    ciphered_text = cipher_suite.encrypt(password)
+    return ciphered_text
+
+
+def decrypt():
+    return
+
+
 class LoginForm(FlaskForm):
     email = StringField(validators=[
         InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
@@ -164,7 +179,7 @@ class RegisterForm(FlaskForm):
                 "Diese Email wurde bereits verwendet bitte verwenden Sie eine andere Mail-Adresse")
 
 
-if __name__ == "__main__":
-    logreg()
+#if __name__ == "__main__":
+    #logreg()
     #print(getAllUser())
     #deleteUser(5)
