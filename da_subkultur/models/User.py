@@ -11,3 +11,5 @@ class User:
         return "First Name: {} Last Name: {} Birthdate: {} " \
                "EMail: {} Password: {} Role: {}".format(self.firstname, self.lastname, self.birthdate,
                                                         self.email, self.password, self.role)
+
+    

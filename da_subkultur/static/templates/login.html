@@ -9,18 +9,17 @@
 </head>
 
 <body>
-    <h1>Login Page</h1>
+    <h1>Login </h1>
 
-    <form method="POST" action="">
+    <form method = "POST" action="">
+        {{ form.hidden_tag() }}
         {{ form.email }}
-        {{ form.password }}
-        {{ form.submit }}
+        {{form.password }}
+         {{form.submit }}
     </form>
 
-    <a href="{{ url_for('register') }}">Don't have an account? Sign Up</a>
-
-
-
+    <input type="button" value="Back" onClick="javascript:history.back()"> <br></br>
+<a href="{{url_for('register')}}" >Du hast noch keinen Account? Registrieren</a>
 </body>
 
 </html>

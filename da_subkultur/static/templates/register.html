@@ -9,17 +9,21 @@
 </head>
 
 <body>
-    <h1>Register Page</h1>
+    <h1>Register</h1>
 
-    <form method="POST" action="">
-
-          {{ form.hidden_tag() }}
-        {{ form.username }}
-        {{ form.password }}
-        {{ form.submit }}
+    <form method = "POST" action="">
+        {{ form.hidden_tag() }}
+        {{ form.firstname }}
+        {{form.lastname }}
+        {{form.bithdate }}
+        {{form.email}}
+        {{form.password}}
+        {{form.role}}
+        {{form.submit}}
     </form>
 
-    <a href="{{ url_for('login') }}">Already have an account? Log In</a>
+<input type="button" value="Back" onClick="javascript:history.back()"> <br> </br>
+ <a href="{{url_for('login')}}">Sie haben bereits einen Account? Log dich ein</a>
 </body>
 
 </html>

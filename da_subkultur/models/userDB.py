@@ -1,8 +1,9 @@
 import sqlite3
 from datetime import date
+
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length
+from wtforms.validators import InputRequired, Length, ValidationError
 
 
 def tryConnection():
@@ -124,6 +125,38 @@ class LoginForm(FlaskForm):
         InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
 
     submit = SubmitField('Login')
+
+
+class RegisterForm(FlaskForm):
+    firstname = StringField(validators=[
+        InputRequired(), Length(min=4, max=20)], render_kw= {"placeholder": "First Name"})
+
+    lastname = StringField(validators=[
+        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Last Name"})
+
+
+    birthdate = StringField(validators=[
+        InputRequired(), Length(min=4, max=8)], render_kw={"placeholder": "Birthdate"})
+
+    email = StringField(validators=[
+        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
+
+    password = PasswordField(validators=[
+        InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
+
+    role = PasswordField(validators=[
+        InputRequired(), Length(min=2, max=10)], render_kw={"placeholder": "Role"})
+
+    submit = SubmitField('Register')
+
+
+    def validate_username(self, email):
+        existing_User_email = User.query.filter_by(
+            email=email.data).first()
+        if existing_User_email:
+            raise ValidationError(
+                "Diese Email wurde bereits verwendet bitte verwenden Sie eine Andere Mail_Adresse")
+
 
 
 if __name__ == "__main__":

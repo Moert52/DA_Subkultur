@@ -1,13 +1,14 @@
 import glob
 import os
 
+import SQLAlchemy as SQLAlchemy
 from flask import Flask, render_template, flash, request, url_for
 from flask_restful import Api
 from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor
-from models.userDB import getAllUser, LoginForm
+from models.userDB import getAllUser, LoginForm, RegisterForm
 
 import requests
 
@@ -18,6 +19,7 @@ p = Processor('http://localhost:8983/solr/test')
 app = Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 api = Api(app)  # Die Flask API
 app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
+users = SQLAlchemy(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 # Variablen für wichtige Pfäde
@@ -26,6 +28,11 @@ app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbe
 
 base = "http://127.0.0.1:5000/"
 
+
+
+
+
+
 # Hier wird die Startseite aufgerufen
 @app.route('/')
 def Start():
@@ -33,14 +40,15 @@ def Start():
 
 
 # Login-Register
-@app.route('/register')
+@app.route('/register', methods=('GET', 'POST'))
 def register():
-    return render_template("register.html")
+    form = RegisterForm()
+    return render_template("register.html",form=form)
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    form = LoginForm
+    form = LoginForm()
     return render_template("login.html", form=form)
 
 
