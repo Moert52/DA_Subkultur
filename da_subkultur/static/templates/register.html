@@ -11,16 +11,61 @@
 <body>
     <h1>Register</h1>
 
-    <form method = "POST" action="">
-        {{ form.hidden_tag() }}
-        {{ form.firstname }}
-        {{form.lastname }}
-        {{form.bithdate }}
-        {{form.email}}
-        {{form.password}}
-        {{form.role}}
-        {{form.submit}}
-    </form>
+     <p class="login">
+
+        <label asp-for="First Name">
+            Vorname
+        </label>
+        <input type="string" asp-for="First Name" />
+        <span asp-validation-for="First Name"></span>
+    </p>
+
+    <p class="login">
+
+        <label asp-for="Last Name">
+            Nachname
+        </label>
+        <input type="string" asp-for="Last Name" />
+        <span asp-validation-for="Last Name"></span>
+    </p>
+
+    <p class="login">
+        <label asp-for="EMail">
+            EMail
+        </label>
+        <input type="email" asp-for="EMail" />
+        <span asp-validation-for="EMail"></span>
+    </p>
+
+
+     <p class="login">
+
+        <label asp-for="Password">
+            Passwort
+        </label>
+        <input type="password" asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </p>
+    <p class="login">
+        <label asp-for="EMail">
+            EMail
+        </label>
+        <input type="email" asp-for="EMail" />
+        <span asp-validation-for="EMail"></span>
+    </p>
+
+     <label asp-for="Birthdate">
+            Geburtsdatum
+        </label>
+        <input type="date" asp-for="Birthdate" />
+        <span asp-validation-for="Birthdate"></span> <br> </br>
+
+
+
+    <label>
+            <input type="submit" value="absenden" />
+            <input type="reset" value="abbrechen" /> <br> </br>
+        </label>
 
 <input type="button" value="Back" onClick="javascript:history.back()"> <br> </br>
  <a href="{{url_for('login')}}">Sie haben bereits einen Account? Log dich ein</a>

@@ -11,12 +11,30 @@
 <body>
     <h1>Login </h1>
 
-    <form method = "POST" action="">
-        {{ form.hidden_tag() }}
-        {{ form.email }}
-        {{form.password }}
-         {{form.submit }}
-    </form>
+
+     <p class="login">
+        <label asp-for="EMail">
+            EMail
+        </label>
+        <input type="email" asp-for="EMail" />
+        <span asp-validation-for="EMail"></span>
+    </p>
+
+
+     <p class="login">
+
+        <label asp-for="Password">
+            Passwort
+        </label>
+        <input type="password" asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </p>
+
+    <label>
+            <input type="submit" value="absenden" /> <br> </br>
+
+        </label>
+
 
     <input type="button" value="Back" onClick="javascript:history.back()"> <br></br>
 <a href="{{url_for('register')}}" >Du hast noch keinen Account? Registrieren</a>
