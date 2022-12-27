@@ -1,7 +1,7 @@
 import glob
 import os
 
-import SQLAlchemy as SQLAlchemy
+
 from flask import Flask, render_template, flash, request, url_for
 from flask_restful import Api
 from werkzeug.utils import secure_filename, redirect
@@ -19,7 +19,6 @@ p = Processor('http://localhost:8983/solr/test')
 app = Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 api = Api(app)  # Die Flask API
 app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
-users = SQLAlchemy(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 # Variablen für wichtige Pfäde
