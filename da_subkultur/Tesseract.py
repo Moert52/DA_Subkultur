@@ -201,7 +201,7 @@ def process_dir(dir):
         # print('Ordner' + dir)
         filename = Path(ff).stem  # Hier bekommt man nur den Namen der pdf Datei
         # Der PFad wo sich die PDFS befindne wo di eOrdner mit den Inhalten erzeugt werden soll
-        di = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+        di = ordner
         # Hier wird ein Pfad zu einem neuen Ordner erzeugt
         dir = os.path.join(di,
                            filename)  # r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\' + filename
@@ -228,6 +228,6 @@ def searchDir(path):
 
 if __name__ == '__main__':
     #process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
-    process_dir(r'D:\Diplomarbeit\test_tesseract')
-    #searchDir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
+    process_dir(ordner)
+    #searchDir(r'C:\Users\mertc\Desktop\HTL++ - Fächer\Diplomarbeit\Test-tesseract')
     # process_dir(r'D:\Diplomarbeit\Tesseract') #Leos Tesseract

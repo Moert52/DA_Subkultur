@@ -11,8 +11,6 @@ from da_subkultur.models.User import User
 from da_subkultur.models import Validation
 
 
-
-
 key = b'f-_6pyLfUVeDMtCP1BjDcmFv_ninS7WZqxFyQGfF0vs='
 
 
