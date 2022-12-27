@@ -27,6 +27,16 @@ app = Flask(__name__, template_folder='static/templates')  # Die Flask-Anwendung
 api = Api(app)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
+# Mert's Ordner
+# ordner = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\"
+
+# Leo's Ordner
+# ordner = r'D:\Diplomarbeit\test_tesseract'
+
+# Melih's Ordner
+ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+
+
 
 class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
 
@@ -133,11 +143,11 @@ def directoryToAddAll(directory, processor, title, site):  #
         if os.path.isdir(d):  # Und mit der Überprüfung, ob es ein Ordner ist
             dirArr.append(d)  # i in die dirArr gespeichert
     # Dann wird geprüft ob der Ordner PDF & Suche im Array ist
-    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF" in dirArr:
+    if (ordner + "\PDF") in dirArr:
         # Und jenachdem werden diese vom Array entfernt
-        dirArr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\PDF")
-    if r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche" in dirArr:
-        dirArr.remove(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche")
+        dirArr.remove((ordner + "\PDF"))
+    if (ordner + "\suche") in dirArr:
+        dirArr.remove((ordner + "\suche"))
 
     # print(dirArr)
 
@@ -197,7 +207,7 @@ def search(keyword):
     titlearr.sort()  # Danach wird das titleArr nach dem Alphabet sortiert
     # print(titlearr)
     # Variable zum Suchordner
-    resultDirectory = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche"
+    resultDirectory = (ordner + "\suche")
     for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
         # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
         # Dann wird ein Dictionary erstellt mit den entsprechen Weten
@@ -235,7 +245,7 @@ def getImage(url, string):
     highlight_image(url, '%s_alto_neu.xml' % url, getstring)
     thh = datetime.datetime.now().timestamp()
     name = pathlib.Path(url).stem
-    path = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + name + '_suche.jpg'
+    path = (ordner + '\suche\\') + name + '_suche.jpg'
     print(path)
     delta1 = th - ts
     delta2 = thh - ts
@@ -336,7 +346,7 @@ def highlight_image(img, xml, string):
                     delta1 = th - ts
                     print("Timestamp 1: %d s" % delta1)
     ts = datetime.datetime.now().timestamp()
-    image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file, quality=10,
+    image.save((ordner + '\suche\\') + file, quality=10,
                dpi=(72, 72))
     th = datetime.datetime.now().timestamp()
     delta1 = th - ts
@@ -348,7 +358,7 @@ def highlight_image(img, xml, string):
 # Hier wird der gesamte Inhalt vom Suchordner gelöscht
 def clearFolder():
     # Hier ist die Variable vom Pfad zum Suchordner
-    folder = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche'
+    folder = (ordner + '\suche')
     for filename in os.listdir(folder):  # Jeder einzelne Datei im Ordner läuft hier durch
         file_path = os.path.join(folder, filename)  # Hier bekommt man den Pfad zu der Datei
         try:
