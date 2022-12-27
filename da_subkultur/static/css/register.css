@@ -1,0 +1,9 @@
+body {
+    margin:0px;
+    background: url('http://127.0.0.1:5000/static/multimedia/start.jpg') no-repeat fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #cccccc;
+}

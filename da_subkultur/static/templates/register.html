@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+ <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+    <link href='https://fonts.googleapis.com/css?family=Abril Fatface' rel='stylesheet'>
 
 <head>
+
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +14,7 @@
 <body>
     <h1>Register</h1>
 
-     <p class="login">
+     <p class="register">
 
         <label asp-for="First Name">
             Vorname
@@ -20,7 +23,7 @@
         <span asp-validation-for="First Name"></span>
     </p>
 
-    <p class="login">
+    <p class="register">
 
         <label asp-for="Last Name">
             Nachname
@@ -29,7 +32,7 @@
         <span asp-validation-for="Last Name"></span>
     </p>
 
-    <p class="login">
+    <p class="register">
         <label asp-for="EMail">
             EMail
         </label>
@@ -38,7 +41,7 @@
     </p>
 
 
-     <p class="login">
+     <p class="register">
 
         <label asp-for="Password">
             Passwort
@@ -46,13 +49,7 @@
         <input type="password" asp-for="Password" />
         <span asp-validation-for="Password"></span>
     </p>
-    <p class="login">
-        <label asp-for="EMail">
-            EMail
-        </label>
-        <input type="email" asp-for="EMail" />
-        <span asp-validation-for="EMail"></span>
-    </p>
+
 
      <label asp-for="Birthdate">
             Geburtsdatum

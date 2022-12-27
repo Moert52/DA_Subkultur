@@ -6,6 +6,7 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from cryptography.fernet import Fernet
 
+from da_subkultur.models import Validation
 from da_subkultur.models.User import User
 from da_subkultur.models import Validation
 
@@ -173,7 +174,7 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
-    def validate_username(self, email):
+    def validate_email(self, email):
         existing_User_email = User.query.filter_by(email=email.data).first()
         if existing_User_email:
             raise ValidationError(
