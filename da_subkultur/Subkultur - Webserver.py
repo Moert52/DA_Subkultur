@@ -1,14 +1,13 @@
 import glob
 import os
 
-
 from flask import Flask, render_template, flash, request, url_for
 from flask_restful import Api
 from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor
-from models.userDB import getAllUser, LoginForm, RegisterForm
+from models.userDB import getAllUser, LoginForm
 
 import requests
 
@@ -27,11 +26,6 @@ app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbe
 
 base = "http://127.0.0.1:5000/"
 
-
-
-
-
-
 # Hier wird die Startseite aufgerufen
 @app.route('/')
 def Start():
@@ -39,15 +33,14 @@ def Start():
 
 
 # Login-Register
-@app.route('/register', methods=('GET', 'POST'))
+@app.route('/register')
 def register():
-    form = RegisterForm()
-    return render_template("register.html",form=form)
+    return render_template("register.html")
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    form = LoginForm()
+    form = LoginForm
     return render_template("login.html", form=form)
 
 

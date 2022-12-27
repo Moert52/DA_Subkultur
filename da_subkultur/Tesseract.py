@@ -12,6 +12,12 @@ import io
 # Hier wird Tesseract definiert
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
+# Mert's Ordner
+# ordner = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
+
+# Leo's Ordner
+ordner = r'D:\Diplomarbeit\test_tesseract'
+
 
 # hier werden alle xml Files der Text ausgelesen und die Bilder mit einem Rahmen gekennzeichnet
 def highlight_images(dir):
@@ -135,7 +141,8 @@ def extract_pdf(fname):
         pix = page.get_pixmap(matrix=mat)  # wird in eine pixmap umgewandelt
         dir, extension = os.path.splitext(pdffile)  # der Pfad der Datei wird heruasgeholt
         filename = Path(dir).stem  # der Dateiname wird herausgeholt
-        dirr = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\' + filename  # Pfad zum Ordner
+        # r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
+        dirr = ordner + filename  # Pfad zum Ordner
         # wohin es gespeichert wird
         print(dirr)
         Path(dirr).mkdir(exist_ok=True)  # Hier wird ein Ordner neues Ordner erstellt
@@ -217,6 +224,7 @@ def searchDir(path):
 
 
 if __name__ == '__main__':
-    process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    #process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    process_dir(r'D:\Diplomarbeit\test_tesseract')
     #searchDir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
     # process_dir(r'D:\Diplomarbeit\Tesseract') #Leos Tesseract

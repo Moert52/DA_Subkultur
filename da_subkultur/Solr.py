@@ -82,10 +82,11 @@ class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
     def search(self, title):
         # Hier wird im content, title und site nach dem schlüsselwort gesucht und in max. 500 Zeilen gespeichert
         if title == '':
-            results = self.server.search('*:*',sort='order_i asc', rows=500, )
+            results = self.server.search('*:*', sort='order_i asc', rows=500, )
         else:
-            results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title), sort='order_i asc',
-                                     rows=500, )
+            results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title),
+                                         sort='order_i asc',
+                                         rows=500, )
         self.server.commit()
         z = 0
         pathArr = []
@@ -108,8 +109,8 @@ class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
 
         # Hier kommt die entsprechende Fehlermedlung wenn es eine gibt
         except Exception as e:
-            self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
-            return 1, e
+            error = self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
+            return 404
 
         print('Es wurden %s Eintraege gefunden' % z)
 
@@ -172,17 +173,16 @@ def getSearch(key=''):
     if key != '':
         keyword = key
 
-
     resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
     if request.method == 'POST':  # Wenn das keyword submitted wird
         keyword = request.form['keyword']  # wird das eingegebene keyword in eine Variable gespeichert
         resultArr = search(keyword)
     if not resultArr:
-
         resultArr = search(keyword)
     # Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
     return render_template("Suche.html", len=len(resultArr), arr=resultArr,
-                           name=str(keyword) or 'StringIsNull', keyword=keyword or "Keyword")  # , titlearr= sorted(searchArr))
+                           name=str(keyword) or 'StringIsNull',
+                           keyword=keyword or "Keyword")  # , titlearr= sorted(searchArr))
 
 
 def search(keyword):
@@ -223,12 +223,13 @@ def getImage(url, string):
     if string != "StringIsNull":
         strr = string.lower()
 
-        strr = strr.title() # Jeder Buchstabe bei jedem Wort wird groß geschrieben
+        strr = strr.title()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
         strr = strr.split()
 
-        getstring=''
+        getstring = ''
         for s in strr:
-            getstring = '%s %s %s %s' % (s, s.upper(), s.lower(), getstring ) #+  string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
+            getstring = '%s %s %s %s' % (s, s.upper(), s.lower(),
+                                         getstring)  # +  string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
         print(getstring)
     th = datetime.datetime.now().timestamp()
     highlight_image(url, '%s_alto_neu.xml' % url, getstring)
@@ -294,7 +295,7 @@ def highlight_image(img, xml, string):
     root = ET.parse(xml)  # Die xml wird geöffnet
     image = Image.open(img)  # Die jpg Datei wird geöffnet
     ts = datetime.datetime.now().timestamp()
-    if string !='StringIsNull': #Wenn der String null ist soll er das normale Bild ohne es zu higlighten abspeichern
+    if string != 'StringIsNull':  # Wenn der String null ist soll er das normale Bild ohne es zu higlighten abspeichern
         stri = string.split()  # Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
         print(stri)
         # Jedes String element in dem xml File läuft hier durch
@@ -331,12 +332,12 @@ def highlight_image(img, xml, string):
                     image = Image.alpha_composite(image, overlay)  # Hier wird das ganze format
                     image = image.convert("RGB")  # und Filter zurückgesetut
 
-
                     # Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
                     delta1 = th - ts
                     print("Timestamp 1: %d s" % delta1)
     ts = datetime.datetime.now().timestamp()
-    image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file, quality=10, dpi=(72,72))
+    image.save(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche\\' + file, quality=10,
+               dpi=(72, 72))
     th = datetime.datetime.now().timestamp()
     delta1 = th - ts
     print("Timestamp 3 %d s" % delta1)  # Laufzeit liegt beim Speichern
@@ -360,31 +361,39 @@ def clearFolder():
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-artikel_put_args = reqparse.RequestParser()
-artikel_put_args.add_argument("filename", type=str, help="Name nicht angegeben", required=True)
-artikel_put_args.add_argument("title", type=str, help="Titel nicht angegeben", required=True)
-artikel_put_args.add_argument("url", type=str, help="Url nicht angegeben", required=True)
-artikel_put_args.add_argument("site_id", type=str, help="Site_ID nicht angegeben", required=True)
+parser = reqparse.RequestParser()
+parser.add_argument("filename", required=True)
+parser.add_argument("title", required=True)
+parser.add_argument("url", required=True)
+parser.add_argument("site_id", required=True)
 
 
 class Artikel(Resource):
     def get(self, title):
+        # Es wird nach dem passenden Eintrag gesucht
         data_get = Processor.search(title)
-        if data_get == 1:
-            abort("Artikel nicht vorhanden!")
-        return jsonify(data_get)
+        # Wenn die keine Daten gefunden werden, wird eine Fehlermeldung ausgegeben
+        if data_get == 404:
+            abort(404, message=f"Eintrag {title} nicht gefunden!")
+        # Dann wird der gefundene Eintrag zurückgegeben
+        return jsonify(data_get), 200
 
-    def put(self, title):
-        args = artikel_put_args.parse_args()
-        Processor.process(args['filename'], args['title'], args['url'], args['site_id'])
-        return '', 201
+    def post(self):
+        args = parser.parse_args()
+        Processor.process(fname=args["filename"], title=args["title"], DOCUMENT_URL=args["url"], DOCUMENT_SITE_ID=args["site_id"])
+        return Processor.search(args["title"]), 201
 
-    def delete(self, title):
-        Processor.delete()
+    def delete(self):
+        args = parser.parse_args()
+        data_del = Processor.search(title=args["title"])
+        if data_del == 404:
+            abort(404, message=f"Eintrag {args['title']} nicht gefunden!")
+        Processor.delete(title=args["title"], DOCUMENT_SITE_ID=args["site_id"])
         return '', 204
 
 
-api.add_resource(Artikel, "/artikel/<string:title>")
+api.add_resource(Artikel, "/artikel/<title>")
+
 
 def main():
     global p
@@ -398,6 +407,7 @@ def main():
     # p.search('Innsbruck')
     app.run(use_reloader=True, debug=True)  # Hier läuft die Flask Anwendung
     # p.server.commit()
+
 
 # Die Main
 if __name__ == '__main__':

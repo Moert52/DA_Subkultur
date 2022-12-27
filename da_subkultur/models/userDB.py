@@ -5,13 +5,16 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 
+from da_subkultur.models.User import User
+import Validation
+
 
 def tryConnection():
     try:
         conn = sqlite3.connect(r'/models/users.db')
         print("A SQLite connection has been established")
     except sqlite3.Error as error:
-        print("An error occurred while connecting to SQLite", error)
+        raise Exception("An error occurred while connecting to SQLite", error)
     finally:
         conn.close()
         print("The SQLite connection has been closed")
@@ -22,12 +25,18 @@ def insert(user):
         userList = list(user)
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
+
+        Validation.check_user(user)
+        # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
+        if getUser(userList[3]) == -1:
+            raise Exception("E-Mail is already used.")
+
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password) "
                   "VALUES (?, ?, ?, ?, ?)",
                   (userList[0], userList[1], userList[2], userList[3], userList[4]))
         conn.commit()
     except sqlite3.Error as error:
-        print("An error occurred while inserting a user", error)
+        raise Exception("An error occurred while inserting a user", error)
     finally:
         conn.close()
 
@@ -40,9 +49,9 @@ def getUser(email):
         user = c.fetchone()
         return user
     except sqlite3.Error as error:
-        print("An error occurred while getting a user", error)
-    # finally:
-    # conn.close()
+        raise Exception("An error occurred while getting a user", error)
+    finally:
+        conn.close()
     return -1
 
 
@@ -54,7 +63,7 @@ def getAllUser():
         users = c.fetchall()
         return users
     except sqlite3.Error as error:
-        print("An error occurred while getting a user", error)
+        raise Exception("An error occurred while getting a user", error)
     finally:
         conn.close()
     return -1
@@ -62,12 +71,12 @@ def getAllUser():
 
 def deleteUser(id):
     try:
-        conn = sqlite3.connect('user.db')
+        conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("DELETE FROM users WHERE id=?", [id])
         conn.commit()
     except sqlite3.Error as error:
-        print("An error occurred while deleting a user", error)
+        raise Exception("An error occurred while deleting a user", error)
     finally:
         conn.close()
 
@@ -77,12 +86,12 @@ def login(email, password):
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
-        if (c.fetchone() != None):
+        if c.fetchone() is not None:
             return 1
         else:
             return 0
     except sqlite3.Error as error:
-        print("An error occurred while login", error)
+        raise Exception("An error occurred while login", error)
     finally:
         conn.close()
     return 0
@@ -109,7 +118,7 @@ def logreg():
         lastname = str(input())
         print("Birthdate(YYYY-MM-DD): ")
         birthdate = str(input())
-        print("EMail: ")
+        print("E-Mail: ")
         email = str(input())
         print("Password: ")
         password = str(input())
@@ -129,11 +138,10 @@ class LoginForm(FlaskForm):
 
 class RegisterForm(FlaskForm):
     firstname = StringField(validators=[
-        InputRequired(), Length(min=4, max=20)], render_kw= {"placeholder": "First Name"})
+        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "First Name"})
 
     lastname = StringField(validators=[
         InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Last Name"})
-
 
     birthdate = StringField(validators=[
         InputRequired(), Length(min=4, max=8)], render_kw={"placeholder": "Birthdate"})
@@ -149,17 +157,14 @@ class RegisterForm(FlaskForm):
 
     submit = SubmitField('Register')
 
-
     def validate_username(self, email):
-        existing_User_email = User.query.filter_by(
-            email=email.data).first()
+        existing_User_email = User.query.filter_by(email=email.data).first()
         if existing_User_email:
             raise ValidationError(
-                "Diese Email wurde bereits verwendet bitte verwenden Sie eine Andere Mail_Adresse")
-
+                "Diese Email wurde bereits verwendet bitte verwenden Sie eine andere Mail-Adresse")
 
 
 if __name__ == "__main__":
-    print(getUser('mcetinkaya@tsn.at'))
     logreg()
-    # print(getAllUser())
+    #print(getAllUser())
+    #deleteUser(5)
