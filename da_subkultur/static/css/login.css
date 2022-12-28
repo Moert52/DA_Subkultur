@@ -10,7 +10,7 @@ body {
 
 
  h1 {
-        color: #343909;
+        color: #d0dd4b;
         text-transform: uppercase;
         font-weight: 4000;
        text-align: center;
@@ -22,7 +22,9 @@ p {
     text-align: center;
     color: white;
     font-size:25pt;
-
+    -webkit-text-stroke: 2px black;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
 }
 
  input[type = "text"],  input[type = "password"] {
@@ -44,6 +46,7 @@ p {
        input[type = "text"]:focus,  input[type = "password"]:focus {
             width: 280px;
             border-color: blue;
+            background: black;
         }
 
      input[type = "submit"] {
@@ -79,3 +82,12 @@ p {
           font-size:15pt;
 
   }
+
+.link {
+
+    color: white;
+    text-align: center;
+     margin: auto;
+    display: block;
+
+}
