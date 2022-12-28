@@ -6,9 +6,9 @@ from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import InputRequired, Length, ValidationError
 from cryptography.fernet import Fernet
 
-from da_subkultur.models import Validation
-from da_subkultur.models.User import User
-from da_subkultur.models import Validation
+from models import Validation
+from models.User import User
+from models import Validation
 
 
 key = b'f-_6pyLfUVeDMtCP1BjDcmFv_ninS7WZqxFyQGfF0vs='
