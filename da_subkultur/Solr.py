@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -- coding: iso-8859-1 --
 import shutil
 from flask_restful import Api, Resource, reqparse, abort
 from pysolr import Solr
@@ -28,54 +28,41 @@ api = Api(app)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
 # Mert's Ordner
-ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+# ordner = r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract"
 
 # Leo's Ordner
-# ordner = r'D:\Diplomarbeit\test_tesseract'
+ordner = r'D:\Diplomarbeit\test_tesseract'
 
 # Melih's Ordner
-#ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+# ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 
 
-class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
+class Processor(object):  # Klasse Processur - beinhaltet die Solr - Methoden
 
     # Initialisierung vom Processor Objekt
     def __init__(self, solr_server_url):
         self.server = Solr(solr_server_url)
 
-    # Hier wird die "put / patch" - Methode in Solr durchgeführt
+    # Hier wird die "put" - Methode in Solr durchgeführt
     # def process(self, fname, title):
     def process(self, fname, title, DOCUMENT_URL, DOCUMENT_SITE_ID):
-        #Hier wird der Pfad und der Name der Datei enstprechend bearbeitet
-        base, _ = os.path.splitext(os.path.basename(fname))  # Dateiname ohne der Dateiendung
-        url = DOCUMENT_URL + r"\%s" % (base) + '.txt'  # Der Pfad der txt - Datei (ohne den Dateinamen)
-        fPath = os.path.join(DOCUMENT_URL, fname)  # Der Pfad der txt - Datei mit dem Dateinamen
-
-        # Die Datei wird geöffnet
-        txt_file = open(fPath, encoding="iso-8859-1")
-
-        # Teil der Methode wo der ganze Text von der txt - Datei
-        # in die content - Variable für Solr gespeichert wird
+        base, _ = os.path.splitext(os.path.basename(fname))  # Dateiname ohne Extension
+        url = DOCUMENT_URL + r"\%s" % (base) + '.txt'  # Der Pfad der txt Datei
+        fPath = os.path.join(DOCUMENT_URL, fname)  # Pfad der txt Datei
+        fp = open(fPath, encoding="iso-8859-1")  # Die Datei wird geöffnet
+        # Hier wird der ganze Text der txt Datei in die content Variable gepseichert
         content = ''
-        for line in txt_file: #Jede Zeile in der Datei läuft hier durch
-            s = line.strip() #Die Zeile wird entsprechend bearbeitet
-            # Dann wird kontrolliert, ob die Zeile überhaupt irgendeinen
-            # Text enthält und nicht mit undgültigen Zeichen anfängt
-            if s and not s.startswith(('*', '=', '-')):
-                s = s.decode('iso-8859-1', 'ignore')
-                print(s)
-                content = content + " " + s  #str(s.encode(encoding='utf-8', errors='strict'))
-        txt_file.close() #Die Datei wird geschlossen
-        print(content)
-
-        # Die ID wird anhand dem Title und der Site erstellt
+        for line in fp:
+            s = line.strip()
+            print(s)
+            if s and not s.startswith(('**', '==', '--')):
+                content += s  # str(s.encode(encoding='utf-8', errors='strict'))
+        fp.close()
         document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)  # Hier ensteht eine ID mittels dem Titel und der Site
         logging.info("new document: %s" % (document_id,))
         t = os.path.getmtime(fPath)  # Hier wird die Zeit gespeichert
-
-        # Hier ensteht ein Dictionary vom Artikel mit Title, site,
-        # content, id, url and date, welches auf Solr hochgeladen wird
+        # Hier ensteht ein Dictionary vom Artikel mit Title, site, content, id, url and date, welches auf Solr hochgeladen wird
         doc = {
             'id': hashlib.sha1(document_id.encode('utf-8')).hexdigest(),  # die id wird gehasht
             'site': DOCUMENT_SITE_ID,
@@ -87,11 +74,9 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
 
         # docStr = json.dumps(doc)
         try:
-            # Der Eintrag wird auf Solr hochgeladen und commited
-            self.server.add([doc])
+            self.server.add([doc])  # Hier wird das Document in Solr hochgeladen
             self.server.commit()
         except (IOError, Exception) as e:
-            # Sonst kommt eine Fehlermeldung wenn es nicht geklappt hat
             self.log.error("Failed to add documents to Solr: %s", e)
 
     # Hier wird ein Eintrag gelöscht auf Solr
@@ -158,11 +143,11 @@ def directoryToAddAll(directory, processor, title, site):  #
         if os.path.isdir(d):  # Und mit der Überprüfung, ob es ein Ordner ist
             dirArr.append(d)  # i in die dirArr gespeichert
     # Dann wird geprüft ob der Ordner PDF & Suche im Array ist
-    if (ordner + "\PDF") in dirArr:
+    if (ordner + r"\PDF") in dirArr:
         # Und jenachdem werden diese vom Array entfernt
-        dirArr.remove((ordner + "\PDF"))
-    if (ordner + "\suche") in dirArr:
-        dirArr.remove((ordner + "\suche"))
+        dirArr.remove((ordner + r"\PDF"))
+    if (ordner + r"\suche") in dirArr:
+        dirArr.remove((ordner + r"\suche"))
 
     # print(dirArr)
 
@@ -222,7 +207,7 @@ def search(keyword):
     titlearr.sort()  # Danach wird das titleArr nach dem Alphabet sortiert
     # print(titlearr)
     # Variable zum Suchordner
-    resultDirectory = (ordner + "\suche")
+    resultDirectory = (ordner + r"\suche")
     for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
         # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
         # Dann wird ein Dictionary erstellt mit den entsprechen Weten
@@ -260,7 +245,7 @@ def getImage(url, string):
     highlight_image(url, '%s_alto_neu.xml' % url, getstring)
     thh = datetime.datetime.now().timestamp()
     name = pathlib.Path(url).stem
-    path = (ordner + '\suche\\') + name + '_suche.jpg'
+    path = (ordner + r'\suche\\') + name + '_suche.jpg'
     print(path)
     delta1 = th - ts
     delta2 = thh - ts
@@ -361,7 +346,7 @@ def highlight_image(img, xml, string):
                     delta1 = th - ts
                     print("Timestamp 1: %d s" % delta1)
     ts = datetime.datetime.now().timestamp()
-    image.save((ordner + '\suche\\') + file, quality=10,
+    image.save((ordner + r'\suche\\') + file, quality=10,
                dpi=(72, 72))
     th = datetime.datetime.now().timestamp()
     delta1 = th - ts
@@ -373,7 +358,7 @@ def highlight_image(img, xml, string):
 # Hier wird der gesamte Inhalt vom Suchordner gelöscht
 def clearFolder():
     # Hier ist die Variable vom Pfad zum Suchordner
-    folder = (ordner + '\suche')
+    folder = (ordner + r'\suche')
     for filename in os.listdir(folder):  # Jeder einzelne Datei im Ordner läuft hier durch
         file_path = os.path.join(folder, filename)  # Hier bekommt man den Pfad zu der Datei
         try:

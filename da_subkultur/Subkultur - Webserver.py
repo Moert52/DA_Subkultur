@@ -6,8 +6,8 @@ from flask_restful import Api
 from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
-from Solr import Processor
-from models.userDB import getAllUser, LoginForm, RegisterForm
+from Solr import Processor, directoryToAddAll
+from da_subkultur.models.userDB import getAllUser, LoginForm, RegisterForm
 
 
 import requests
@@ -22,8 +22,14 @@ app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 # Variablen für wichtige Pfäde
-app.config['UPLOAD_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\ToOCR'
-app.config['DOCUMENTS_PATH'] = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+
+# Mert's Pfad
+# ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\
+
+# Leo's Pfad
+ordner = r'D:\Diplomarbeit\test_tesseract'
+app.config['UPLOAD_PATH'] = ordner + r'\ToOCR'
+app.config['DOCUMENTS_PATH'] = ordner
 
 base = "http://127.0.0.1:5000/"
 
@@ -83,9 +89,12 @@ def create():
             Tesseract.process_dir(app.config[
                                       'UPLOAD_PATH'])  # OCR läuft die PDFS druch und speichert alles in einen eigenen Ordner für die Dateien
             for file in filenameArr:
-                filepath = os.path.join(app.config['DOCUMENTS_PATH'], file)  # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat    #
-                for f in glob.glob("%s/*.txt" % filepath):  # Läuft den Ordner durch um alle txt - Dateien...
-                    p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
+                filepath = os.path.join(app.config['DOCUMENTS_PATH'],
+                                        file)  # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat    #
+                # for f in glob.glob("%s/*.txt" % filepath):  # Läuft den Ordner durch um alle txt - Dateien...
+                directoryToAddAll(ordner, p, title, site)
+                # p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
+                p.server.commit()
             clear_folder_to_OCR()
 
 

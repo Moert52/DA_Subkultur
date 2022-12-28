@@ -16,10 +16,10 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 # ordner = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
 
 # Leo's Ordner
-#ordner = r'D:\Diplomarbeit\test_tesseract'
+ordner = r'D:\Diplomarbeit\test_tesseract\\'
 
 #Melih's Ordner
-ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+# ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 
 # hier wird von alle xml Files der Text ausgelesen und die Bilder mit einem Rahmen gekennzeichnet
@@ -275,7 +275,7 @@ def searchDir(path):
 
 
 if __name__ == '__main__':
-    #process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
+    # process_dir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract') #Merts Tesseract
     process_dir(ordner)
-    #searchDir(r'C:\Users\mertc\Desktop\HTL++ - Fächer\Diplomarbeit\Test-tesseract')
+    # searchDir(r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract')
     # process_dir(r'D:\Diplomarbeit\Tesseract') #Leos Tesseract
