@@ -12,47 +12,48 @@
 </head>
 
 <body>
-    <h1>Register</h1>
+    <h1>Registration</h1>
 
-     <p class="register">
+
 
         <label asp-for="First Name">
-            Vorname
+            <p>Vorname</p>
         </label>
-        <input type="string" asp-for="First Name" />
+        <input type="text" asp-for="First Name" />
         <span asp-validation-for="First Name"></span>
     </p>
 
-    <p class="register">
+
 
         <label asp-for="Last Name">
-            Nachname
+            <p>Nachname</p>
         </label>
-        <input type="string" asp-for="Last Name" />
+        <input type="text" asp-for="Last Name" />
         <span asp-validation-for="Last Name"></span>
-    </p>
 
-    <p class="register">
+
+
         <label asp-for="EMail">
-            EMail
+            <p>EMail</p>
         </label>
-        <input type="email" asp-for="EMail" />
+        <input type="text" asp-for="EMail" />
         <span asp-validation-for="EMail"></span>
-    </p>
 
 
-     <p class="register">
+
+
 
         <label asp-for="Password">
-            Passwort
+            <p> Passwort</p>
+
         </label>
         <input type="password" asp-for="Password" />
         <span asp-validation-for="Password"></span>
-    </p>
+
 
 
      <label asp-for="Birthdate">
-            Geburtsdatum
+         <p>Geburtsdatum </p>
         </label>
         <input type="date" asp-for="Birthdate" />
         <span asp-validation-for="Birthdate"></span> <br> </br>
@@ -61,7 +62,7 @@
 
     <label>
             <input type="submit" value="absenden" />
-            <input type="reset" value="abbrechen" /> <br> </br>
+
         </label>
 
 <input type="button" value="Back" onClick="javascript:history.back()"> <br> </br>

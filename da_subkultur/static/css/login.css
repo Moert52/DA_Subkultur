@@ -7,3 +7,75 @@ body {
     background-size: cover;
     background-color: #cccccc;
 }
+
+
+ h1 {
+        color: #343909;
+        text-transform: uppercase;
+        font-weight: 4000;
+       text-align: center;
+       font-size:70pt;
+
+    }
+
+p {
+    text-align: center;
+    color: white;
+    font-size:25pt;
+
+}
+
+ input[type = "text"],  input[type = "password"] {
+        border: 0;
+        background: none;
+        display: block;
+        margin: 30px auto;
+        text-align: center;
+        border: 2px solid #3498db;
+        padding: 14px 10px;
+        width: 300px;
+        outline: none;
+        color: white;
+        border-radius: 24px;
+        transition: 0.25s;
+         font-size:15pt;
+    }
+
+       input[type = "text"]:focus,  input[type = "password"]:focus {
+            width: 280px;
+            border-color: blue;
+        }
+
+     input[type = "submit"] {
+        border: 0;
+        background: none;
+        display: block;
+        margin: 20px auto;
+        text-align: center;
+        border: 2px solid #2ecc71;
+        padding: 14px 40px;
+        outline: none;
+        color: white;
+        border-radius: 24px;
+        transition: 0.25s;
+        cursor: pointer;
+          font-size:15pt;
+    }
+
+
+  input[type = "button"] {
+
+
+        border: 0;
+        background: none;
+        margin: 20px auto;
+        border: 2px solid #2ecc71;
+        padding: 14px 40px;
+        outline: none;
+        color: white;
+        border-radius: 24px;
+        transition: 0.25s;
+        cursor: pointer;
+          font-size:15pt;
+
+  }
