@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor
-from da_subkultur.models.userDB import getAllUser, LoginForm
+from models.userDB import getAllUser, LoginForm, RegisterForm
 
 
 import requests
@@ -58,7 +58,7 @@ def create():
     if request.method == 'POST':  # Wenn etwas verschickt wird
         title = request.form['title']  # wird der eingegebene Titel
         site = request.form['site']  # Docuement_Site als Variablen gespeichert
-
+        filenameArr = []
         # Überprüfung ob Titel, Site eingegeben wurden und eine Datei hochgeladen wurde
         if not title:
             flash('Title is required!')
@@ -74,16 +74,20 @@ def create():
                     path)  # PDFs werden in einen bestimmen Ordner gespeichert, wo dann die OCR durchläuft
 
                 filename = os.path.basename(path).split('.')[0]  # Dateiname ohne Extension
+                if filename not in filenameArr:
+                    filenameArr.append(filename)
                 # print(title)
                 # print(site)
                 # print(app.config['UPLOAD_PATH'])
-        if len(os.listdir(app.config['UPLOAD_PATH'])) != 0:  # Überprüfung ob sich überhaupt Dateien im Ordner befinden
-            Tesseract.process_dir(app.config[
-                                      'UPLOAD_PATH'])  # OCR läuft die PDFS druch und speichert alles in einen eigenen Ordner für die Dateien
-            filepath = os.path.join(app.config['DOCUMENTS_PATH'],
-                                    filename)  # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat    #
-            for f in glob.glob("%s/*.txt" % filepath):  # Läuft den Ordner durch um alle txt - Dateien...
-                p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
+            if len(os.listdir(app.config['UPLOAD_PATH'])) != 0:  # Überprüfung ob sich überhaupt Dateien im Ordner befinden
+                Tesseract.process_dir(app.config[
+                                          'UPLOAD_PATH'])  # OCR läuft die PDFS druch und speichert alles in einen eigenen Ordner für die Dateien
+                filepath = os.path.join(app.config['DOCUMENTS_PATH'],
+                                        filename)  # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat    #
+                for f in glob.glob("%s/*.txt" % filepath):  # Läuft den Ordner durch um alle txt - Dateien...
+                    p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
+                clear_folder_to_OCR()
+
 
     return render_template("create.html")
 
@@ -93,6 +97,11 @@ def create():
 def menu():
     return render_template("Start.html")
 
+
+def clear_folder_to_OCR():
+    dir = app.config['UPLOAD_PATH']
+    for f in os.listdir(dir):
+        os.remove(os.path.join(dir, f))
 
 if __name__ == '__main__':
     app.run(debug=True)
