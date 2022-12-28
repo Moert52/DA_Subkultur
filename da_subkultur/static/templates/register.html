@@ -21,7 +21,7 @@
         </label>
         <input type="text" asp-for="First Name" />
         <span asp-validation-for="First Name"></span>
-    </p>
+
 
 
 
@@ -56,17 +56,20 @@
          <p>Geburtsdatum </p>
         </label>
         <input type="date" asp-for="Birthdate" />
-        <span asp-validation-for="Birthdate"></span> <br> </br>
+        <span asp-validation-for="Birthdate"></span>
 
 
+<br> </br>
 
     <label>
             <input type="submit" value="absenden" />
 
         </label>
 
-<input type="button" value="Back" onClick="javascript:history.back()"> <br> </br>
- <a href="{{url_for('login')}}">Sie haben bereits einen Account? Log dich ein</a>
+<input  type="button" value="Back" onClick="javascript:history.back()"> <br> </br>
+
+<a class= "link" href="{{url_for('login')}}">Sie haben bereits einen Account? Log dich ein</a>
+
 </body>
 
 </html>
