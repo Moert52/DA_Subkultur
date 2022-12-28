@@ -22,7 +22,7 @@ pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tessera
 ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 
-# hier werden alle xml Files der Text ausgelesen und die Bilder mit einem Rahmen gekennzeichnet
+# hier wird von alle xml Files der Text ausgelesen und die Bilder mit einem Rahmen gekennzeichnet
 def highlight_images(dir):
     for f in glob.glob("%s/*.png" % dir):  # Jedes einzelne png File im Ordner läuft hier durch
         ff = os.path.join(dir, f)  # Hier wird der Pfad den png Files gepseichert
@@ -39,44 +39,63 @@ def highlight_images(dir):
         # output.save(ff+"Output.docx")
 
 
-# hier erfolgt die Kennzeichnung der Bilder mittels einem Rahmen
+# Hier werden die Dartstellungen mittels einer Umrandung gekennzeichnet
+# und die Methode zum Ausschneiden der Subbilder wird ausgeführt
 def highlight_image(img, xml):
     print(xml)
-    root = ET.parse(xml)  # Das xml File wird geöffnet
-    image = Image.open(img)  # das png wird geöffnet
-    draw = ImageDraw.Draw(image)  # es wird eien Instanz erzeugt um Zeichnen / malen des Bildes
-    anz = 1  # Dient für die Anzahl der ausgeschittenen SubBilder
-    ff = os.path.splitext(img)[0]  # der Pfad zum Ordner der Datei wird gespeichert
-    dir = ff + "_bilder"  # Die entsprechende suffix wird erstellt
-    Path(dir).mkdir(exist_ok=True)  # Es wird ein neuer Ordner mit dem neuen Pfad erzeugt
-    # os.mkdir(ff + "_bilder")
+    #Als Erstes wird das XML - File und die PNG - Datei geöffnet
+    root = ET.parse(xml)
+    image = Image.open(img)
 
-    # Jedes Illustration Element im xml FIle läuft hier durch
-    for p in elementpath.select(root, '//Illustration', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
-        gid = p.attrib["ID"]  # Die id vom Element wird abgespeichert
-        x0 = int(p.attrib["HPOS"])  # die x - Position wird gespeichert
-        y0 = int(p.attrib["VPOS"])  # die y - Position wird  gespeichert
-        x1 = int(x0 + int(p.attrib["WIDTH"]))  # Die Breite wird gespeichert
-        y1 = int(y0 + int(p.attrib["HEIGHT"]))  # Die Höhe wird gespeichert
-        shape = [x0, y0, x1, y1]  # Die ganzen Werte wird in einem array gespeichert
+    # Zum Zeichnen auf der PNG - Datei wird dafür
+    # extra eine Instanz erzeugt
+    draw = ImageDraw.Draw(image)
+    anz = 1  # Dient für die Anzahl der erkannten SubBilder
 
-        crop_img(img, shape, anz, dir)  # Die crop_img Methode wird durchgeführt
-        anz += 1  # die Anzahl wird um 1 erhöhrt
-        print(gid, shape)
+    # Hier wird ein neuer Ordner für die Subbilder erstellt,
+    # wo diese dann später nach dem Ausschneiden abgespeichert werden
+    ff = os.path.splitext(img)[0]
+    dir = ff + "_bilder"
+    Path(dir).mkdir(exist_ok=True)
 
-        # Die ganzen gefunden Bilder auf den einzelnen Seiten der Artikel wird mit einer grünen Umrandung gekenzeichnet
-        draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
+
+    # Jedes erkannte Darstellung läuft hier durch
+    for p in elementpath.select(
+            root, '//Illustration',
+            {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
+
+        # Die ID, Position und die Größe werden abgespeichert,
+        # danach werden diese in einem Array gespeichert
+        gid = p.attrib["ID"]
+        x0 = int(p.attrib["HPOS"])
+        y0 = int(p.attrib["VPOS"])
+        x1 = int(x0 + int(p.attrib["WIDTH"]))
+        y1 = int(y0 + int(p.attrib["HEIGHT"]))
+        shape = [x0, y0, x1, y1]
+
+        #Die crop_img - Methode wird ausgeführt
+        crop_img(img, shape, anz, dir)
+        anz += 1  # die Anzahl der erkannten Subbilder wird um 1 erhöhrt
+
+        # Auf der jeweiligen PNG - Seite, werden die ganzen erkannten
+        # Subbilder mit einer grünen Umrandung gekennzeichnet.
+        draw.text((x1, y1), gid, align="right",
+                  font=ImageFont.load_default(), fill="green")
         draw.rectangle(shape, fill=None, outline="green")
 
-    image.save(
-        img + "_col.jpg")  # Die einzelne Seite vom Artikel mit den gekennzeichneten Bilder wird lokal abgespeichert
+    # Die Seite mit den gekennzeichneten subbilder wird
+    # in einer neuer PNG - Datei abgespeichert
+    image.save(img + "_col.jpg")
 
 
-# Hier wird der Text vom xml File ausgelesen und in einem Text dokument abgespeichert
-# (die Zeilenumbrüche werden berücksichtigt)
+# Hier wird der erkannte Text vom XML - File ausgelesen
+# und in einem txt - Dokument abgespeichert
+# (Mit Berücksichtigung der Zeilenumbrüche)
 def get_Text(img, xml):
+    # Hier werden die notwendigen Instanzen erstellt
+    # und das XML - Dokument wird geöffnet
     print(xml)
-    root = ET.parse(xml)  # Das xml - File wird geöffnet
+    root = ET.parse(xml)
     txtArr = []  # Array umd en ganzen Content abzuspeichern
     rowArr = []  # Array um dei ganzen Wörter in einer Zeile abzuspeichern
     done = False
@@ -86,72 +105,106 @@ def get_Text(img, xml):
     # print(str(l.attrib["CONTENT"]))
 
     # Jedes String Element läuft hier durch
-    for t in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
+    for t in elementpath.select(
+            root, '//String',
+            {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
+        # Der Inhalt und die y - Position vom
+        # jeweiligen String Element werden gespeichert
         st = str(t.attrib["CONTENT"])  # Der Content
         print(st)
         height = int(t.attrib["VPOS"])  # die y - Position wird gespeichert
-        if not done:  # Solange done False ist
-            rowArr.append(st)  # der content wird ins array gepseichert
-            done = True  # done wird auf True gesetzt
-            althoe = height  # althoehe bekommt den Wert von der y Position
 
-        # Solange die Höhe nicht größer oder kleiner als 20 ist und done true ist soll es...
-        elif (height > (althoe - 20)) and (height < (althoe + 20)) and (done == True):
-            rowArr.append(st)  # speichert es den content ins array
-            althoe = height  # althoehe bekommt den Wert von der y Position
-        else:  # sonst
-            txtArr.append(rowArr)  # rowArray wird ins txtArr gespeichet (also ensteht ein Zeilenumbruch
+        # Die done Abfrage, ist dafür zuständig das diese
+        # Abfrage als erstes bei jederm ersten Durchlauf einer
+        # for - Schleife durchgeführt, dort wird der Inhalt und
+        # die y - Position vom String Element abgespeichert
+        if not done:  # Solange done False ist...
+            rowArr.append(st)
+            done = True  # ... Done wird auf True gesetzt
+            althoe = height
+
+        # Hier wird abgeprüft ob die Anfangspoisiton der Höhe
+        # vom vorigen Element, sich mit der Anfangspotion
+        # vom jetzigen Element starkt unterscheidet, dann...
+        elif (height > (althoe - 20)) and (height < (althoe + 20)) \
+                and (done == True):
+            rowArr.append(st)  # ... speichert es den Inhalt ins array
+            # ...althoehe bekommt den Wert der
+            # y - Position des jetzigen Elements
+            althoe = height
+
+        # Ansonsten soll er den Array, wo der ganze Inhalt drinnen ist
+        # in ein anderes Array abspeichern, damit sozusagen ein
+        # Zeilenumbruch steht
+        else:
+            txtArr.append(rowArr)
             rowArr = []  # rowArr steeht wieder leer
             rowArr.append(st)  # das content wird ins leere rowArr gespeichert
-            althoe = height  # althoehe bekommt den Wert von der y Position
-    txtArr.append(rowArr)  # rowArray wird ins txtArr gespeichet (also ensteht ein Zeilenumbruch
-    print(txtArr)
-    te = ''  # Hier wird der ganze Text mit den enstsprechenden Zeilenumbruchen gespeichert
+            # ...althoehe bekommt den Wert der
+            # y - Position des jetzigen Elements
+            althoe = height
+
+    txtArr.append(rowArr)  # ein Zeilenumbruch wird erzeugt
+
+    # Hier wird der ganze Text in den Arrays mit den
+    # entspechenden Zeilenumbrüchen in einer txt - Datei gespeichert
+    te = ''
     for i in txtArr:  # Jede Zeile im txtArr läuft hier durch
         for j in i:  # Jedes Wort in der Zeile läuft hier durch
-            te = te + str(j) + " "  # jedes Wort in die Variable gespeichert
-        te = te + " \n"  # und dementsprechend wird ein Zeilenumbruch in der ariable erstellt
-    print(te)
+            te = te + str(j) + " "  #und wird hier gespeichert
+        te = te + " \n"  # Ein Zeilenumbruch wird in der Variable erstellt
 
-    # Der ganze Text wird in die Entsprechende Datei gespeichert
+    # Der ganze Text wird in der einer txt - Datei gespeichert
     open(img + "_text.txt", "w", encoding="iso-8859-1").write(te)
 
 
-# Hier werden die Bilder von den einzelnen Dokumenten ausgeschneidet und dann abgespeichert
+# Hier werden die Darstellungen von den jeweiligen Seiten
+# ausgeschnitten und dann abgespeichert
 def crop_img(img, shape, anz, dir):
-    # die enstsprechende Suffix wird gelöscht
+    # die enstsprechende Suffix wird vom Dateinamen gelöscht
+    # danach wird dieser Dateiname extra abgespeichert
     ff = dir.removesuffix("_bilder")
+    name = os.path.basename(ff)
 
-    name = os.path.basename(ff)  # der Filename wird abgespeichert
-    im = Image.open(img)  # Das Bild wird geöffnet
-    im1 = im.crop(shape)  # Das entsprechende subBild wird ausgeschnitten
-    # im1.show()
-    if im1.width == 0 or im1.height == 0:  # Dann wird geprüft ob das Bild überhaupt eine Höhe und Breite hat
-        print("Fehler beim Bildausschnitt erstellen")  # eine Fehlermeldung
+    # Hier wird die die jeweilige Seite
+    # mittels Image geöffnet
+    #
+    # Danach wird anhand der Position und Größe
+    # des Subbildes, dieser ausgeschnitten
+    im = Image.open(img)
+    im1 = im.crop(shape)
+
+    #Es erfolgt eine Überprüfung, ob die Darstellung überhaupt existiert
+    if im1.width == 0 or im1.height == 0:
+        # Wenn die Darstellung nicht existiert kommt eine Fehlermeldung
+        print("Fehler beim Bildausschnitt erstellen")
     else:
-        im1.save(dir + "\\\\" + name + "_pic_" + str(
-            anz) + ".jpg")  # Das asugeschnittene Bilder wird im entsprechenden ordner gespeichert
+        # Wenn alles geklappt hat, wie erwartet, wird das jeweilige
+        # ausgeschnittene Subbild mit den formatierten Dateinamen
+        # im entsprechenden Ordner abgespeichert
+        im1.save(dir + "\\\\" + name + "_pic_" +
+                 str(anz) + ".jpg")
 
 
-# Hier werden alle Seiten des pdfs File in einzelne png - Bilder abgespeichert
+# Hier werden alle Seiten von dem PDF-Dokument
+# in einzelne PNG - Bilder abgespeichert
 def extract_pdf(fname):
     pdffile = fname
-    # print('PDF:' + pdffile)
-    doc = fitz.open(pdffile)  # Das pdfile wird geöffnet
-    for i in range(doc.page_count):  # jeder einzelne Seite der PDF läuft hier durch
+    doc = fitz.open(pdffile)  # Das PDF - File wird geöffnet
+
+    #Durchlauf jeder einzlnen PDF - Seite
+    for i in range(doc.page_count):
         page = doc.load_page(i)  # Die Nummer von der Seite
-        mat = fitz.Matrix(5, 5)  # Um eine höhe Bildqualität zu bekommen
-        pix = page.get_pixmap(matrix=mat)  # wird in eine pixmap umgewandelt
-        dir, extension = os.path.splitext(pdffile)  # der Pfad der Datei wird heruasgeholt
-        filename = Path(dir).stem  # der Dateiname wird herausgeholt
-        # r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
-        dirr = ordner + filename  # Pfad zum Ordner
-        # wohin es gespeichert wird
-        print(dirr)
-        Path(dirr).mkdir(exist_ok=True)  # Hier wird ein Ordner neues Ordner erstellt
-        # dirr = 'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
-        # Path(dirr).mkdir(exist_ok=True)
-        pix.save("%s/%d.png" % (dirr, i))  # Die PDF einzelne Seite wird als png File gespeichert
+        mat = fitz.Matrix(5, 5)  # Für eine höhere Bildqualität
+        pix = page.get_pixmap(matrix=mat)  # Umwandlung in einer PixMap
+        dir, extension = os.path.splitext(pdffile)  # Pfad der Datei
+        filename = Path(dir).stem  # der Dateiname
+        # Pfad zum Ordner wohin es gespeichert werden soll
+        dirr = ordner + filename
+        Path(dirr).mkdir(exist_ok=True)  # Erstellung eines neuen Ordners
+
+        # Die einzelne Seiten der PDF werden als png File abgespeichert
+        pix.save("%s/%d.png" % (dirr, i))
         image = Image.open(("%s/%d.png" % (dirr, i)))
         w = int(image.width / 10)
         h = int(image.height / 10)
@@ -159,24 +212,19 @@ def extract_pdf(fname):
         image.save("%s/%d-thumb.png" % (dirr, i), quality=10, dpi=(72, 72))
 
 
-# Hier erfolgt die ocr der seite, aschnließend werden die Informationen in einem xml - File abgespeichert
+# Hier erfolgt die Texterkennung der einzelnen PNG - Seiten,
+# anschließend wird der Inhalt in einem XML - File abgespeichert
 def do_ocr(f):
-    print(f)
-    res = pytesseract.image_to_alto_xml(f, lang='deu')  # Das Bild wird zu einem xml FIle umgewandelt
-    print("Ergebnis")
-    print(res)
-
-    # res = replace(res)
-    print(res)
-    fp = open("%s_alto.xml" % f, "wb")  # Es wird ein xml FIle erzeugt, wo dann der ganze Inhalt von dem
-    # umgewandelten xml File hineingeschrieben wird
-
+    # Der Inhalt der Seite wird mittels Tesseract ausgelesen
+    res = pytesseract.image_to_alto_xml(f, lang='deu')
+    # Danach wird ein XML - File erzeugt, wo dann der
+    # ganze Inhalt hineingeschrieben wird
+    fp = open("%s_alto.xml" % f, "wb")
     fp.write(res)
     fp.close()
 
-    # fp = f
-    fp_out = '0.png_alto_utf-8.xml'
-    # Dann wird ein neues xml File erzeugt mit dem richtigen encoding, wo dann der ganze Inhalt erneut hingeschrieben wird
+    # Es wir ein neues XML - File erzeugt mit dem richtigen encoding,
+    # wo dann der ganze Inhalt erneut hinein geschrieben wird
     fp = io.open("%s_alto.xml" % f, mode="r", encoding="iso-8859-1")
     s = fp.read()
     print(s)
@@ -187,8 +235,8 @@ def do_ocr(f):
 def do_ocr_dir(dir):
     for f in glob.glob("%s/*.png" % dir):  # Jedes einezlne png File im Ordner läuft hier durch
         ff = os.path.join(dir, f)  # Der Pfad der png Files wird gespeichert
-        if '-thumb' in ff:  # Wenn der Pfad ff enthält
-            continue  # soll er zur nächsten Iteration springen
+        if '-thumb' in ff:  # Wenn der Pfad (ff) -thumb enthält...
+            continue  #... soll er zur nächsten Iteration springen
         do_ocr(ff)  # Die do_ocr Methode wird durchgeführt
 
 
