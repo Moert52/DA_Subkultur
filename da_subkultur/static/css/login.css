@@ -46,7 +46,7 @@ p {
        input[type = "text"]:focus,  input[type = "password"]:focus {
             width: 280px;
             border-color: blue;
-            background: black;
+
         }
 
      input[type = "submit"] {
