@@ -53,10 +53,9 @@ def check_password(password):
 
 
 def check_user(user):
-    userList = list(user)
-    check_name(userList[0])
-    check_name(userList[1])
-    check_birthdate(userList[2])
-    check_email(userList[3])
-    check_password(userList[4])
-
+    check_name(user.firstname)
+    check_name(user.lastname)
+    check_birthdate(user.birthdate)
+    check_email(user.email)
+    check_password(user.password)
+    return 1

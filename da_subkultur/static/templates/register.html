@@ -12,59 +12,34 @@
 </head>
 
 <body>
-    <h1>Registration</h1>
 
-<form class="box" asp-controller="user" asp-action="login" method="post">
+<h1>Registration</h1>
 
-    <label asp-for="First Name">
-        <p>Vorname</p>
-    </label>
-    <input type="text" asp-for="First Name"/>
-    <span asp-validation-for="First Name"></span>
+<form class="box" action="#" method="post">
 
+    <p>Vorname</p>
+    <input type="text" name="firstname"/>
 
+    <p>Nachname</p>
+    <input type="text" name="lastname"/>
 
-    <label asp-for="Last Name">
-        <p>Nachname</p>
-    </label>
-    <input type="text" asp-for="Last Name"/>
-    <span asp-validation-for="Last Name"></span>
+    <p>EMail</p>
+    <input type="text" name="email"/>
 
+    <p>Passwort</p>
+    <input type="password" name="password"/>
 
-
-    <label asp-for="EMail">
-        <p>EMail</p>
-    </label>
-    <input type="text" asp-for="EMail"/>
-    <span asp-validation-for="EMail"></span>
+    <p>Geburtsdatum</p>
+    <input type="date" name="birthdate"/> </br>
 
 
+    <input type="submit" value="submit"/> </br> </br>
 
-    <label asp-for="Password">
-        <p> Passwort</p>
-    </label>
-    <input type="password" asp-for="Password"/>
-    <span asp-validation-for="Password"></span>
+    <!-- <input type="button" value="Back" onClick="javascript:history.back()"> </br> </br> -->
 
 
+    <a class ="link" href="{{url_for('login')}}">Sie haben bereits einen Account? Loggen Sie sich hier ein.</a>
 
-    <label asp-for="Birthdate">
-        <p>Geburtsdatum</p>
-    </label>
-    <input type="date" asp-for="Birthdate"/>
-    <span asp-validation-for="Birthdate"></span> </br> </br>
-
-
-
-    <label>
-        <input type="submit" value="absenden"/>
-    </label>
-
-
-    <input type="button" value="Back" onClick="javascript:history.back()"> </br> </br>
-
-
-    <a class ="link" href="{{url_for('login')}}">Sie haben bereits einen Account? Dann loggen Sie sich hier ein.</a>
 
 
 </form>

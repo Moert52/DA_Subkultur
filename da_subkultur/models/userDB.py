@@ -1,17 +1,6 @@
 import sqlite3
-from datetime import date
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
-from wtforms.validators import InputRequired, Length, ValidationError
-from cryptography.fernet import Fernet
 
 from da_subkultur.models import Validation
-
-from da_subkultur.models import Validation
-from da_subkultur.models.User import User
-
-key = b'f-_6pyLfUVeDMtCP1BjDcmFv_ninS7WZqxFyQGfF0vs='
 
 
 def tryConnection():
@@ -27,18 +16,18 @@ def tryConnection():
 
 def insert(user):
     try:
-        userList = list(user)
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
 
+        # userList = list(user)
         Validation.check_user(user)
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
-        if getUser(userList[3]) == -1:
-            raise Exception("E-Mail is already used.")
+        if getUser(user.email) == -1:
+            raise Exception("E-Mail is already in use!")
 
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password) "
                   "VALUES (?, ?, ?, ?, ?)",
-                  (userList[0], userList[1], userList[2], userList[3], userList[4]))
+                  (user.firstname, user.lastname, user.birthdate, user.email, user.password))
         conn.commit()
     except sqlite3.Error as error:
         raise Exception("An error occurred while inserting a user", error)
@@ -50,7 +39,6 @@ def getUser(email):
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE email=?", [email])
         user = c.fetchone()
         return user
     except sqlite3.Error as error:
@@ -62,6 +50,7 @@ def getUser(email):
 
 def getAllUser():
     try:
+        c.execute("SELECT * FROM users WHERE email=?", [email])
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users")
@@ -71,7 +60,6 @@ def getAllUser():
         raise Exception("An error occurred while getting a user", error)
     finally:
         conn.close()
-    return -1
 
 
 def deleteUser(id):
@@ -84,6 +72,7 @@ def deleteUser(id):
         raise Exception("An error occurred while deleting a user", error)
     finally:
         conn.close()
+    return 204
 
 
 def login(email, password):
@@ -91,15 +80,13 @@ def login(email, password):
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
-        if c.fetchone() is not None:
-            return 1
-        else:
-            return 0
+        if c.fetchone() is None:
+            raise Exception("Please use an existing E-Mail or Password")
     except sqlite3.Error as error:
         raise Exception("An error occurred while login", error)
     finally:
         conn.close()
-    return 0
+    return 200
 
 
 def logreg():
@@ -131,55 +118,7 @@ def logreg():
         insert(user)
 
 
-def encrypt(password):
-    cipher_suite = Fernet(key)
-    ciphered_text = cipher_suite.encrypt(password)
-    return ciphered_text
-
-
-def decrypt():
-    return
-
-
-class LoginForm(FlaskForm):
-    email = StringField(validators=[
-        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
-
-    password = PasswordField(validators=[
-        InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
-    submit = SubmitField('Login')
-
-
-class RegisterForm(FlaskForm):
-    firstname = StringField(validators=[
-        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "First Name"})
-
-    lastname = StringField(validators=[
-        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Last Name"})
-
-    birthdate = StringField(validators=[
-        InputRequired(), Length(min=4, max=8)], render_kw={"placeholder": "Birthdate"})
-
-    email = StringField(validators=[
-        InputRequired(), Length(min=4, max=20)], render_kw={"placeholder": "Email"})
-
-    password = PasswordField(validators=[
-        InputRequired(), Length(min=8, max=20)], render_kw={"placeholder": "Password"})
-
-    role = PasswordField(validators=[
-        InputRequired(), Length(min=2, max=10)], render_kw={"placeholder": "Role"})
-
-    submit = SubmitField('Register')
-
-    def validate_email(self, email):
-        existing_User_email = User.query.filter_by(email=email.data).first()
-        if existing_User_email:
-            raise ValidationError(
-                "Diese Email wurde bereits verwendet bitte verwenden Sie eine andere Mail-Adresse")
-
-
-#if __name__ == "__main__":
+if __name__ == "__main__":
     #logreg()
-    #print(getAllUser())
-    #deleteUser(5)
+    print(getAllUser())
+    #deleteUser(2)

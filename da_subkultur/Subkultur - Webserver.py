@@ -7,7 +7,9 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor, addAll
-from da_subkultur.models.userDB import getAllUser, LoginForm, RegisterForm
+from da_subkultur.models import userDB, Validation
+from da_subkultur.models.User import User
+from da_subkultur.models.userDB import getAllUser
 
 import requests
 
@@ -26,7 +28,7 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
 # Leo's Pfad
-#ordner = r'D:\Diplomarbeit\test_tesseract'
+# ordner = r'D:\Diplomarbeit\test_tesseract'
 app.config['UPLOAD_PATH'] = ordner + r'\ToOCR'
 app.config['DOCUMENTS_PATH'] = ordner
 
@@ -40,15 +42,28 @@ def Start():
 
 
 # Login-Register
-@app.route('/register')
+@app.route('/register', methods=['GET', 'POST'])
 def register():
-    return render_template("register.html")
+    if request.method == 'POST':
+        firstname = str(request.form["firstname"])
+        lastname = str(request.form["lastname"])
+        email = str(request.form["email"])
+        password = str(request.form["password"])
+        birthdate = str(request.form["birthdate"])
+        user = User(firstname, lastname, birthdate, email, password, 'user')
+
+        print(user)
+        userDB.insert(user)
+        return redirect(url_for('login'))  # , email=email, password=password, message="Efolgreich registriert!"
+
+        # return render_template("register.html")  # , error=insertDB
+    else:
+        return render_template("register.html")
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
-    form = LoginForm
-    return render_template("login.html", form=form)
+    return render_template("login.html")
 
 
 @app.route("/allUsers")
@@ -96,7 +111,6 @@ def create():
                 # p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
                 p.server.commit()
             clear_folder_to_OCR()
-
     return render_template("create.html")
 
 
