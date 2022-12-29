@@ -7,8 +7,7 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor, addAll
-from models.userDB import getAllUser, LoginForm, RegisterForm
-
+from da_subkultur.models.userDB import getAllUser, LoginForm, RegisterForm
 
 import requests
 
@@ -32,6 +31,7 @@ app.config['UPLOAD_PATH'] = ordner + r'\ToOCR'
 app.config['DOCUMENTS_PATH'] = ordner
 
 base = "http://127.0.0.1:5000/"
+
 
 # Hier wird die Startseite aufgerufen
 @app.route('/')
@@ -97,7 +97,6 @@ def create():
                 p.server.commit()
             clear_folder_to_OCR()
 
-
     return render_template("create.html")
 
 
@@ -111,6 +110,7 @@ def clear_folder_to_OCR():
     dir = app.config['UPLOAD_PATH']
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))
+
 
 if __name__ == '__main__':
     app.run(debug=True)

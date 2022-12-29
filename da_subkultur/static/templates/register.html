@@ -16,61 +16,58 @@
 
 <form class="box" asp-controller="user" asp-action="login" method="post">
 
-        <label asp-for="First Name">
-            <p>Vorname</p>
-        </label>
-        <input type="text" asp-for="First Name" />
-        <span asp-validation-for="First Name"></span>
-    </p>
+    <label asp-for="First Name">
+        <p>Vorname</p>
+    </label>
+    <input type="text" asp-for="First Name"/>
+    <span asp-validation-for="First Name"></span>
 
 
 
-        <label asp-for="Last Name">
-            <p>Nachname</p>
-        </label>
-        <input type="text" asp-for="Last Name" />
-        <span asp-validation-for="Last Name"></span>
+    <label asp-for="Last Name">
+        <p>Nachname</p>
+    </label>
+    <input type="text" asp-for="Last Name"/>
+    <span asp-validation-for="Last Name"></span>
 
 
 
-        <label asp-for="EMail">
-            <p>EMail</p>
-        </label>
-        <input type="text" asp-for="EMail" />
-        <span asp-validation-for="EMail"></span>
+    <label asp-for="EMail">
+        <p>EMail</p>
+    </label>
+    <input type="text" asp-for="EMail"/>
+    <span asp-validation-for="EMail"></span>
 
 
 
-
-
-        <label asp-for="Password">
-            <p> Passwort</p>
-
-        </label>
-        <input type="password" asp-for="Password" />
-        <span asp-validation-for="Password"></span>
+    <label asp-for="Password">
+        <p> Passwort</p>
+    </label>
+    <input type="password" asp-for="Password"/>
+    <span asp-validation-for="Password"></span>
 
 
 
-     <label asp-for="Birthdate">
-         <p>Geburtsdatum </p>
-        </label>
-        <input type="date" asp-for="Birthdate" />
-        <span asp-validation-for="Birthdate"></span> <br> </br>
+    <label asp-for="Birthdate">
+        <p>Geburtsdatum</p>
+    </label>
+    <input type="date" asp-for="Birthdate"/>
+    <span asp-validation-for="Birthdate"></span> </br> </br>
 
 
 
     <label>
-        <input type="submit" value="absenden" />
+        <input type="submit" value="absenden"/>
     </label>
 
-<input type="button" value="Back" onClick="javascript:history.back()"> <br> </br>
- <a class ="link" href="{{url_for('login')}}">Sie haben bereits einen Account? Log dich ein</a>
+
+    <input type="button" value="Back" onClick="javascript:history.back()"> </br> </br>
 
 
-    </form>
+    <a class ="link" href="{{url_for('login')}}">Sie haben bereits einen Account? Dann loggen Sie sich hier ein.</a>
 
+
+</form>
 
 </body>
-
 </html>

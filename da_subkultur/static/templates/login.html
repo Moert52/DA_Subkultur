@@ -10,44 +10,42 @@
     <title>Login</title>
 </head>
 
+
 <body>
 
-  <h1> Login </h1>
- <form class="box" asp-controller="user" asp-action="login" method="post">
+<h1> Login </h1>
+
+<form class="box" asp-controller="user" asp-action="login" method="post">
+
+
+    <label asp-for="EMail">
+        <p> EMail  </p>
+    </label>
+    <input type="text" asp-for="EMail"/>
+    <span asp-validation-for="EMail"></span>
 
 
 
+    <label asp-for="Password">
+        <p>  Passwort</p>
+    </label>
+    <input type="password" asp-for="Password"/>
+    <span asp-validation-for="Password"></span>
 
 
 
-        <label  asp-for="EMail">
-           <p> EMail  </p>
-        </label>
-        <input type="text" asp-for="EMail" />
-        <span asp-validation-for="EMail"></span>
+    <label>
+        <input type="submit" value="absenden" />
+    </label>
 
 
-        <label asp-for="Password">
 
-           <p>  Passwort</p>
-        </label>
-        <input type="password" asp-for="Password" />
-        <span asp-validation-for="Password"></span>
+    <input type="button" value="Back" onClick="javascript:history.back()"> </br>
 
-
-    <label >
-            <input type="submit" value="absenden" />
-
-        </label>
-
-
-    <input type="button" value="Back" onClick="javascript:history.back()"> <br></br>
-<a class ="link" href="{{url_for('register')}}" >Du hast noch keinen Account? Registrieren</a>
-
+    <a class ="link" href="{{url_for('register')}}">Sie haben noch keinen Account? Registrieren Sie sich nun hier.</a>
 
 
 </form>
 
 </body>
-
 </html>
