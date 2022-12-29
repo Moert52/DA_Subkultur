@@ -40,7 +40,7 @@ ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
 class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
 
-    # Initialisierung vom Processor Objekt
+    # Initialisierung des Solr - Servers
     def __init__(self, solr_server_url):
         self.server = Solr(solr_server_url)
 
@@ -52,7 +52,7 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
         url = DOCUMENT_URL + r"\%s" % (base) + '.txt'  # Der Pfad der txt - Datei (ohne den Dateinamen)
         fPath = os.path.join(DOCUMENT_URL, fname)  # Der Pfad der txt - Datei mit dem Dateinamen
 
-        # Die Datei wird geöffnet
+        # Die txt - Datei wird geöffnet
         txt_file = open(fPath, encoding="utf-8")
 
         # Teil der Methode wo der ganze Text von der txt - Datei
@@ -63,25 +63,21 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
             # Dann wird kontrolliert, ob die Zeile überhaupt irgendeinen
             # Text enthält und nicht mit undgültigen Zeichen anfängt
             if s and not s.startswith(('*', '=', '-')):
-                print('utf8')
-                u = s.encode().decode("utf-8")
-                print(u)
-                print('iso')
-                i = s.encode().decode("iso-8859-1")
-                print(i)
                 content = content + " " + s  #str(s.encode(encoding='utf-8', errors='strict'))
         txt_file.close() #Die Datei wird geschlossen
         print(content)
 
-        # Die ID wird anhand dem Title und der Site erstellt
+        # Die ID wird anhand dem Title und der Site erstellt und es wird ein
+        # Zeitstempel, wann die Datei das letze mal geändert wurde erzeugt
         document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)  # Hier ensteht eine ID mittels dem Titel und der Site
-        logging.info("new document: %s" % (document_id,))
+        #print("new document: %s" % (document_id,))
         t = os.path.getmtime(fPath)  # Hier wird die Zeit gespeichert
 
         # Hier ensteht ein Dictionary vom Artikel mit Title, site,
         # content, id, url and date, welches auf Solr hochgeladen wird
         doc = {
-            'id': hashlib.sha1(document_id.encode('utf-8')).hexdigest(),  # die id wird gehasht
+            # Die erzeugte ID wird gehasht
+            'id': hashlib.sha1(document_id.encode('utf-8')).hexdigest(),
             'site': DOCUMENT_SITE_ID,
             'url': url,
             'title': title,
@@ -98,53 +94,76 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
             # Sonst kommt eine Fehlermeldung wenn es nicht geklappt hat
             self.log.error("Failed to add documents to Solr: %s", e)
 
-    # Hier wird ein Eintrag gelöscht auf Solr
+    # Hier wird ein Eintrag auf Solr gelöscht
     def delete(self, title, DOCUMENT_SITE_ID):
-        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)  # Mittels title und site bekommt man die gehashte ID
-        logging.info("new document: %s" % (document_id,))
-        print(hashlib.sha1(document_id.encode('utf-8')).hexdigest())
-        self.server.delete(id=str(
-            hashlib.sha1(document_id.encode('utf-8')).hexdigest()))  # Hier wird der Eintrag mittels der ID gelöscht
+        # Hier ensteht ein Dictionary vom Artikel mit Title, site,
+        # content, id, url and date, welches auf Solr hochgeladen wird
+        document_id = u"%s-%s" % (DOCUMENT_SITE_ID, title)
+        #logging.info("new document: %s" % (document_id,))
+        #print(hashlib.sha1(document_id.encode('utf-8')).hexdigest())
+
+        # Hier wird die generierte id gehasht und anhand der gehashten ID
+        # wird der entsprechende Eintrag gelöscht
+        self.server.delete(id=str(hashlib.sha1(
+            document_id.encode('utf-8')).hexdigest()))  # Hier wird der Eintrag mittels der ID gelöscht
         self.server.commit()
 
     # Hier wird nach einem Eintrag gesucht
-    def search(self, title):
-        # Hier wird im content, title und site nach dem schlüsselwort gesucht und in max. 500 Zeilen gespeichert
-        if title == '':
+    def search(self, keyword):
+        # Hier werden die entsprechenden Einträge auf Solr gesucht und
+        # ausgegeben bzw. alle Einträge werden ausgegeben
+        #
+        # Wenn kein Schlüsselwort eingegeben wurde, werden alle Einträge angezeigt
+        if keyword == '':
             results = self.server.search('*:*', sort='order_i asc', rows=500, )
+
+        # Sonst wird im content, title und site nach dem schlüsselwort
+        # gesucht und in max. 500 Zeilen gespeichert
         else:
-            results = self.server.search('content:*%s* title:*%s* site:*%s*' % (title, title, title),
+            results = self.server.search('content:*%s* title:*%s* site:*%s*' %
+                                         (keyword, keyword, keyword),
                                          sort='order_i asc',
                                          rows=500, )
         self.server.commit()
+
         z = 0
         pathArr = []
-        titlearr = []
+        titleArr = []
 
         try:
-            for result in results:  # Man läuft jetzt jedes einzelne Ergebnis durch
+            # Jedes einzelne Ergebnis läuft hier durch
+            for result in results:
                 z += 1  # Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
                 # print('URL: %s' % result['url'])
+                # Die URL wird gespeichert und es wird daraus der
+                # entsprechende Pfad zum jeweiligen Bild erstellt
                 url = str(result['url'][0])
-                path = os.path.dirname(url)
-                p = pathlib.Path(url).stem
+                path = os.path.dirname(url) # Der Pfad wird herausgefiltert
+                p = pathlib.Path(url).stem  # Der Dateiname wird gespeichert
+
+                # Danach wird der Dateiname bearbeitet und anhand dem
+                # und den gepsicherten Pfad wird der Pfad zum jeweiligen
+                # Bild wird erstellt
                 path = os.path.join(path, p.removesuffix('png_text') + 'png')
 
+                #Der Titel und der Pfad wird ins jeweilige Array gespeichert
                 pathArr.append(path)  # Hier wird der Pfad des Ergebnissen gespeichert
-                titlearr.append(result['title'])  # Hier wird der Titel des Ergebnisses gespeichert
+                titleArr.append(result['title'])  # Hier wird der Titel des Ergebnisses gespeichert
             print(pathArr)
             # getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
-            # highlight(title, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
+            # highlight(keyword, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
 
-        # Hier kommt die entsprechende Fehlermedlung wenn es eine gibt
+        # Hier wird Fehlermeldung ausgegeben, wenn etwas nicht funktioniert hat
         except Exception as e:
-            error = self.log.error("Kein Content vorhanden bei %s \nError: %s", result['title'], e)
+            error = self.log.error("Bei der Suche ist ein Fehler aufgetreten"
+                                   " \nError: %s", e)
+            print(error)
             return 404
-
+            # Die Anzahl der Ergebnisse werden zur Kontrolle in der Konsole ausgegeben
         print('Es wurden %s Eintraege gefunden' % z)
 
-        # Der Titel Array wird zurückgegeben
-        return titlearr, pathArr
+        # Der Title - Array und der Path - Array werden ausgegeben
+        return titleArr, pathArr
 
     # Methode zum Löschen aller Einträge auf Solr
     def delAll(self):
@@ -321,6 +340,7 @@ def highlight_image(img, xml, string):
     # print(xml)
 
     # print(stri)
+    root = ''
     with open(xml, 'r',  encoding="utf-8") as xml_file:
         root = ET.parse(xml_file)
         print(root)
@@ -332,12 +352,12 @@ def highlight_image(img, xml, string):
         print(stri)
         # Jedes String element in dem xml File läuft hier durch
         for p in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
-            st = str(p.attrib["CONTENT"], "utf-8")  # den Content vom String Element wird abgespeichert
+            st = str(p.attrib["CONTENT"])  # den Content vom String Element wird abgespeichert
             print(st)
             st = str(st.encode("utf-8"))
             print(st)
             for e in stri:  # Dann läuft jedes einzelne wort vom keyword hier durch
-                e = str(e.encode("utf-8"))
+                e = str(e.encode("iso-8859-1"))
                 print(e)
                 if re.search(e, st):  # Dann wird geprüft ob das keyword im content vom String vorhanden ist
                     th = datetime.datetime.now().timestamp()
