@@ -91,3 +91,16 @@ p {
     display: block;
 
 }
+
+
+.box {
+    width: 400px;
+    padding: 40px;
+    position: absolute;
+    left: 50%;
+    top: 70%;
+    transform: translate(-50%,-50%);
+    background: #191919;
+    opacity: 0.9;
+    text-align: center;
+}

@@ -11,7 +11,12 @@
 </head>
 
 <body>
-    <h1> Login </h1>
+
+  <h1> Login </h1>
+ <form class="box" asp-controller="user" asp-action="login" method="post">
+
+
+
 
 
 
@@ -38,6 +43,11 @@
 
     <input type="button" value="Back" onClick="javascript:history.back()"> <br></br>
 <a class ="link" href="{{url_for('register')}}" >Du hast noch keinen Account? Registrieren</a>
+
+
+
+</form>
+
 </body>
 
 </html>
