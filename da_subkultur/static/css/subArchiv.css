@@ -1,0 +1,37 @@
+body {
+
+    margin:0px;
+    background: url('http://127.0.0.1:5000/static/multimedia/innsbruck.jpg') no-repeat fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    background-color: #cccccc;
+
+}
+
+
+h1 {
+
+    font-weight: 4000;
+    font-size:100pt;
+}
+
+
+.box {
+
+    width: 100px;
+    padding: 200px;
+    left: 30%;
+    top: 75%;
+    transform: translate(10%,-10%);
+    background: #191919;
+    opacity: 0.9;
+}
+
+p {
+    font-size:30pt;
+    color: white;
+    transform: translate(-150%,-150%);
+
+}

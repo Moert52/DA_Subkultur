@@ -68,6 +68,10 @@ def register():
 def login():
     return render_template("login.html")
 
+@app.route('/subArchiv')
+def subArchiv():
+    return render_template("subArchiv.html")
+
 
 @app.route("/allUsers")
 def getUsers():
