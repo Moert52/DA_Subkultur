@@ -13,13 +13,13 @@ import io
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
 # Mert's Ordner
-ordner = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
+#ordner = r'C:\\Users\\mertc\\Desktop\\HTL - Fächer\\Diplomarbeit\\Test-tesseract\\'
 
 # Leo's Ordner
 # ordner = r'D:\Diplomarbeit\test_tesseract\\'
 
 # Melih's Ordner
-# ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract\\'
+ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract\\'
 
 
 # hier wird von alle xml Files der Text ausgelesen und die Bilder mit einem Rahmen gekennzeichnet

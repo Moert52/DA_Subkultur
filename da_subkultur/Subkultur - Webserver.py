@@ -25,7 +25,10 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 # Variablen für wichtige Pfäde
 
 # Mert's Pfad
-ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+#ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+
+# Melih's Pfad
+ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 # Leo's Pfad
 # ordner = r'D:\Diplomarbeit\test_tesseract'

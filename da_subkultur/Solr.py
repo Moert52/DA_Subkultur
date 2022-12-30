@@ -28,13 +28,13 @@ api = Api(app)
 app.config['SECRET_KEY'] = 'you-will-never-guess'
 
 # Mert's Ordner
-ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+#ordner = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
 # Leo's Ordner
 # ordner = r'D:\Diplomarbeit\test_tesseract'
 
 # Melih's Ordner
-# ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 
 
