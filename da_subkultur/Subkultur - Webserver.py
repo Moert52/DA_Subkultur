@@ -1,4 +1,3 @@
-import glob
 import os
 
 from flask import Flask, render_template, flash, request, url_for
@@ -7,11 +6,10 @@ from werkzeug.utils import secure_filename, redirect
 
 import Tesseract
 from Solr import Processor, addAll
-from models import userDB, Validation
-from models.User import User
-from models.userDB import getAllUser
-import requests
 from conf import DOCUMENTS_PATH, OCR_PATH
+from da_subkultur.models import userDB
+from da_subkultur.models.User import User
+from da_subkultur.models.userDB import getAllUser
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -67,6 +65,7 @@ def register():
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     return render_template("login.html")
+
 
 @app.route('/subArchiv')
 def subArchiv():

@@ -1,25 +1,19 @@
 # -*- coding: utf-8 -*-
+import datetime
+import glob
+import hashlib
+import os
+import pathlib
+import re
 import shutil
+import xml.etree.ElementTree as ET
+
+import elementpath
+from PIL import Image, ImageDraw
+from flask import Flask, render_template, request, send_from_directory, jsonify
 from flask_restful import Api, Resource, reqparse, abort
 from pysolr import Solr
-import os
-import logging
-import hashlib
-import datetime
-import xml.etree.ElementTree as ET
-import elementpath
-from PIL import Image, ImageDraw, ImageFont
-import glob
-from lxml import etree
-import io
-import json
-import glob
-import re
-from flask import Flask, render_template, request, url_for, flash, redirect, send_from_directory, jsonify
-import pathlib
-import datetime
-from urllib.parse import urlparse, unquote
-from pathlib import Path
+
 from conf import DOCUMENTS_PATH
 
 DOCUMENT_SITE = 'Artikel'  # Zentrale Document Site für die Add_All Methode

@@ -1,11 +1,11 @@
 import sqlite3
 
-from models import Validation
+from da_subkultur.models import Validation
 
 
 def tryConnection():
     try:
-        conn = sqlite3.connect(r'/models/users.db')
+        conn = sqlite3.connect('users.db')
         print("A SQLite connection has been established")
     except sqlite3.Error as error:
         raise Exception("An error occurred while connecting to SQLite", error)
@@ -39,6 +39,7 @@ def getUser(email):
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
+        c.execute("SELECT * FROM users WHERE email=?", [email])
         user = c.fetchone()
         return user
     except sqlite3.Error as error:
@@ -50,7 +51,6 @@ def getUser(email):
 
 def getAllUser():
     try:
-        c.execute("SELECT * FROM users WHERE email=?", [email])
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
         c.execute("SELECT * FROM users")
@@ -119,6 +119,6 @@ def logreg():
 
 
 if __name__ == "__main__":
-    #logreg()
-    print(getAllUser())
-    #deleteUser(2)
+    logreg()
+    # print(getAllUser())
+    # deleteUser(2)

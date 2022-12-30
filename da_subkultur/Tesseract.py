@@ -1,13 +1,15 @@
-import fitz  # https://pymupdf.readthedocs.io/en/latest/tutorial.html
-import os
-from pathlib import Path
-import pytesseract
-import xml.etree.ElementTree as ET
-import elementpath
-from PIL import Image, ImageDraw, ImageFont
 import glob
 # from lxml import etree
 import io
+import os
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+import elementpath
+import fitz  # https://pymupdf.readthedocs.io/en/latest/tutorial.html
+import pytesseract
+from PIL import Image, ImageDraw, ImageFont
+
 from conf import TESSARACT_PATH
 
 # Hier wird Tesseract definiert
