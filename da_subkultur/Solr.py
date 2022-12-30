@@ -20,6 +20,7 @@ import pathlib
 import datetime
 from urllib.parse import urlparse, unquote
 from pathlib import Path
+from conf import DOCUMENTS_PATH
 
 DOCUMENT_SITE = 'Artikel'  # Zentrale Document Site für die Add_All Methode
 # DOCUMENT_URL = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\Cultblech_1'
@@ -34,7 +35,9 @@ app.config['SECRET_KEY'] = 'you-will-never-guess'
 # ordner = r'D:\Diplomarbeit\test_tesseract'
 
 # Melih's Ordner
-ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+#ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+
+ordner = DOCUMENTS_PATH
 
 
 

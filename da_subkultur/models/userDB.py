@@ -1,6 +1,6 @@
 import sqlite3
 
-from da_subkultur.models import Validation
+from models import Validation
 
 
 def tryConnection():
