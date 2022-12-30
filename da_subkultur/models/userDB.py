@@ -1,6 +1,6 @@
 import sqlite3
-
-from da_subkultur.models import Validation
+from models import Validation
+from User import User
 
 
 def tryConnection():
@@ -18,7 +18,7 @@ def insert(user):
     try:
         conn = sqlite3.connect('users.db')
         c = conn.cursor()
-
+        print(user)
         # userList = list(user)
         Validation.check_user(user)
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
@@ -86,7 +86,7 @@ def login(email, password):
         raise Exception("An error occurred while login", error)
     finally:
         conn.close()
-    return 200
+    return 1
 
 
 def logreg():
@@ -114,11 +114,14 @@ def logreg():
         email = str(input())
         print("Password: ")
         password = str(input())
-        user = (firstname, lastname, birthdate, email, password)
+        user = User(firstname, lastname, birthdate, email, password)
+        print(user.role)
+        print(user.firstname)
         insert(user)
 
 
 if __name__ == "__main__":
     logreg()
-    # print(getAllUser())
-    # deleteUser(2)
+    print(getAllUser())
+    print(getUser('mcetinkaya@tsn.at'))
+    #deleteUser(1)

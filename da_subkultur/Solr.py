@@ -147,8 +147,6 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
                 pathArr.append(path)  # Hier wird der Pfad des Ergebnissen gespeichert
                 titleArr.append(result['title'])  # Hier wird der Titel des Ergebnisses gespeichert
             print(pathArr)
-            # getPictures(pathArr)    #Dann wird die getPictures Methode durchgeführt
-            # highlight(keyword, pathArr)   #Und die gesuchten Schlüsselwörter werden in den Bildern gespeichert
 
         # Hier wird Fehlermeldung ausgegeben, wenn etwas nicht funktioniert hat
         except Exception as e:
@@ -208,26 +206,31 @@ def addAll(DOCUMENT_URL, processor, title, site):
         id = id + 1  # Die ID erhöht sich dann um 1
 
 
-# Hier wird mittels dem keyword nach die jeweiligen Bilder gesucht
-@app.route('/suche/<key>', methods=('GET', 'POST'))
+# Hier wird mittels dem keyword nach den jeweiligen Bilder gesucht
+@app.route('/suche/<keyword>', methods=('GET', 'POST'))
 @app.route('/suche', methods=('GET', 'POST'))
-def getSearch(key=''):
-    print(key)
+def getSearch(keyword=""):
     print("search")
-    keyword = ""
-    if key != '':
-        keyword = key
+    resultArr = []  # ein Array für die Ergebnisse
 
-    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
-    if request.method == 'POST':  # Wenn das keyword submitted wird
-        keyword = request.form['keyword']  # wird das eingegebene keyword in eine Variable gespeichert
+    # Wenn ein Schlüsselwort submitted wurde, wird dieser
+    # abgespeichert und der search - Methode mitgegeben, wo
+    # man dann die jeweiligen Einträge von der Suche erhält
+    if request.method == 'POST':
+        keyword = request.form['keyword']
         resultArr = search(keyword)
+
+    # Wenn das Array aber leer ist, wird ein leeres String
+    # der search - Methode mitgegeben, welche daraufhin
+    # alle Einträge zurückgibt
     if not resultArr:
         resultArr = search(keyword)
-    # Die entsprechenden Werte werden weitergegeben und die Ergebnise werden dann auf der Webseite angezeigt
+
+    # Die jeweiligen Werte werden der Webseite weitergegeben und diese
+    # werden dann mit den Ergebnissen gemeinsam auf der Webseite angezeigt
     return render_template("Suche.html", len=len(resultArr), arr=resultArr,
                            name=str(keyword) or 'StringIsNull',
-                           keyword=keyword or "Keyword")  # , titlearr= sorted(searchArr))
+                           keyword=keyword or "Keyword")
 
 
 def search(keyword):
@@ -265,6 +268,7 @@ def getImage(url, string):
     clearFolder()
     print(url)
     print(string)
+    getstring = ''
     if string != "StringIsNull":
         strr = string.lower()
 
@@ -289,13 +293,19 @@ def getImage(url, string):
     return render_template("getImage.html", url=path, name=string)  # , titlearr= sorted(searchArr))
 
 
-# Hier kann man die entsprechenden Bilder downloaden bzw auf der Flask anzeigen
-@app.route('/uploads/<path:filename>')
-def download_file(filename):
-    folder = os.path.dirname(filename)
-    print(folder)
-    name = os.path.basename(filename)
-    print(name)
+# Hier kann man die entsprechenden Bilder der Ergebnisse
+# downloaden oder auf der Webseite anzeigen
+@app.route('/uploads/<path:path>')
+def get_file(path):
+    # Der entsprechende Pfad zum Ordner wird
+    # mittels dem gegegeben Pfad erstellt
+    folder = os.path.dirname(path)
+
+    # Der Dateiname wird vom mitgegebenen Pfad rausgeholt.
+    name = os.path.basename(path)
+
+    # Mittels der send_from_directory - Methodem, welches mit dem Pfad
+    # und dem Dateinamen, das jeweilige Bild anzeigt bzw. herunterladet
     return send_from_directory(folder, name, as_attachment=True)
     # return send_from_directory(r"C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract\suche", filename, as_attachment=True)
 
@@ -316,15 +326,6 @@ def getPictures(dir):
             # img = Image.open(folder)
             # img.show()
         print('URL: ' + picArr[0])
-
-
-# Hier wird der ganze Inhalt vom Suchordner gelöscht und wieder neue Ergebnisse draufgespeichert
-def highlight(string, pathArr):
-    clearFolder()  # die clearFolder Methode wird durchgeführt
-    for f in pathArr:  # Jeder einzelner Pfad im mitgegebnen Array läuft hier durch
-        ff = f[0].removesuffix('_text.pdf')  # Die entsprechende Suffix wird entfernt
-        ff = ff.replace("\\\\", "\\")
-        highlight_image(ff, '%s_alto_neu.xml' % ff, string)  # Dann wird die highlight_image Methode durchgeführt
 
 
 def highlight_image(img, xml, string):

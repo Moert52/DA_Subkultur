@@ -45,7 +45,7 @@ def check_password(password):
             raise ValueError("There has to be at least one uppercase letter in the password!")
         if not re.search("[0-9]", password):
             raise ValueError("There has to be at least one number in the password!")
-        if not re.search("[_@$#!?=+-]" , password):
+        if not re.search("[_@$#!?=+-.]" , password):
             raise ValueError("There has to be at least one special character in the password!")
         return 1
     except:
