@@ -7,9 +7,8 @@ from werkzeug.utils import secure_filename, redirect
 import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
-from da_subkultur.models import userDB
-from da_subkultur.models.User import User
-from da_subkultur.models.userDB import getAllUser
+from models import User
+from models.userDB import getAllUser, insert
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -54,7 +53,7 @@ def register():
         user = User(firstname, lastname, birthdate, email, password, 'user')
 
         print(user)
-        userDB.insert(user)
+        insert(user)
         return redirect(url_for('login'))  # , email=email, password=password, message="Efolgreich registriert!"
 
         # return render_template("register.html")  # , error=insertDB
