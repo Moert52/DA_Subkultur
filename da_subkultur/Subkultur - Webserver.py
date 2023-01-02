@@ -7,8 +7,8 @@ from werkzeug.utils import secure_filename, redirect
 import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
-from da_subkultur.models import userDB
-from da_subkultur.models.userDB import getAllUser
+from models import User
+from models.userDB import getAllUser, insert
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
