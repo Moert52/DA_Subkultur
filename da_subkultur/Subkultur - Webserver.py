@@ -53,7 +53,7 @@ def register():
         user = User(firstname, lastname, birthdate, email, password, 'user')
 
         print(user)
-        insert(user)
+        userDB.insert(user)
         return redirect(url_for('login'))  # , email=email, password=password, message="Efolgreich registriert!"
 
         # return render_template("register.html")  # , error=insertDB

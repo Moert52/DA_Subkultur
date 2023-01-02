@@ -1,7 +1,7 @@
 import sqlite3
+from models import Validation
+from models import User
 
-import Validation
-import User
 
 
 def tryConnection():
@@ -141,6 +141,6 @@ def logreg():
 
 if __name__ == "__main__":
     #logreg()
-    print(getAllUser())
-    #print(getUser('mcetinkaya@tsn.at'))
+    #print(getAllUser())
+    print(getUser('mcetinkaya@tsn.at'))
     #deleteUser(1)
