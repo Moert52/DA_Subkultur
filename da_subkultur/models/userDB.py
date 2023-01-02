@@ -24,10 +24,17 @@ def insert(user):
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
         if getUser(user.email) == -1:
             raise Exception("E-Mail is already in use!")
+        if (
+            user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or
+                user.email == "meesen@tsn.at"):
+            user.role = 1
+        else:
+            user.role = 0
 
-        c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password) "
+
+        c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
                   "VALUES (?, ?, ?, ?, ?)",
-                  (user.firstname, user.lastname, user.birthdate, user.email, user.password))
+                  (user.firstname, user.lastname, user.birthdate, user.email, user.password, user.role))
         conn.commit()
     except sqlite3.Error as error:
         raise Exception("An error occurred while inserting a user", error)
@@ -73,6 +80,19 @@ def deleteUser(id):
     finally:
         conn.close()
     return 204
+
+
+def changeUser(id,user):
+    try:
+        conn = sqlite3.connect ('user.db')
+        c = conn.cursor()
+        c.execute("update users set firstname, lastname, birthdate, email, password, role" +
+                  " where id =?", [id])
+        conn.commit()
+    except sqlite3.Error as error:
+        raise Exception("An error occurred changing a user", error)
+    finally:
+        conn.close()
 
 
 def login(email, password):

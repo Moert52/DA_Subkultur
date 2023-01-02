@@ -5,7 +5,9 @@
     <title>Title</title>
 </head>
 <body>
-    <h1>Alle User:</h1>
+
+
+     <h1>Alle User:</h1>
 
     <table id="demo">
         {% for u in usr %}
@@ -20,6 +22,18 @@
           </tr>
         {% endfor %}
     </table>
+
+<div>
+  {% for u in usr %}
+
+   if (s.get("role") != 2 or s.get("login") != "false"):
+        print("Keine Userdaten vorhanden")
+     else:
+
+
+   {% endfor %}
+
+</div>
 
 </body>
 </html>
