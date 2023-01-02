@@ -1,5 +1,4 @@
 from django.contrib.sites import requests
-import userDB
 import admin
 from User import User
 
@@ -7,11 +6,11 @@ from User import User
 s = requests.Session()
 
 def checkAdmin(role):
-    if s.get("role") != 2 or s.get("loggedIn") != "false":
-        print("Keine Userdaten vorhanden")
+    if s.get("role") != 'user' and s.get("login") != "false":
+        print("Änderung nicht möglich")
 
 def admin(role):
-    if (s.get("role") == 1):
+    if (s.get("role") == 'admin'):
         print("Dieser User ist ein admin")
 
 

@@ -1,6 +1,6 @@
 body {
     margin:0px;
-    background: url('http://127.0.0.1:5000/static/multimedia/start.jpg') no-repeat fixed;
+    background: url('http://127.0.0.1:5000/static/multimedia/innsbruck.jpg') no-repeat fixed;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
@@ -10,18 +10,18 @@ body {
 
 
 h1 {
-    color: #d0dd4b;
+    color: white;
     text-transform: uppercase;
     font-weight: 4000;
-    text-align: center;
-    font-size:70pt;
+    text-align:center;
+    font-size:60pt;
 }
 
 
 p {
     text-align: center;
     color: white;
-    font-size:25pt;
+    font-size:15pt;
     font-weight: bold;
     font-family: 'Montserrat', sans-serif;
 }
@@ -40,7 +40,7 @@ input[type = "text"], input[type = "password"], input[type = "date"] {
     color: white;
     border-radius: 24px;
     transition: 0.25s;
-    font-size:15pt;
+    font-size:10pt;
 }
 
 
@@ -95,9 +95,58 @@ input[type = "button"] {
     padding: 40px;
     position: absolute;
     left: 50%;
-    top: 105%;
+    top: 68%;
     transform: translate(-50%,-50%);
     background: #191919;
     opacity: 0.9;
     text-align: center;
+}
+
+nav {
+height: 90px;
+width: 100%;
+background-color: #969f3a;
+
+
+box-shadow: 0px 2px 4px rgba(0,0,0.144);
+}
+
+nav ul {
+
+float: right;
+}
+
+
+nav li1 {
+ display: inline-block;
+ margin-top: 15px;
+ margin-right: 40px;
+
+}
+
+nav li1 a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+
+}
+nav li {
+ display: inline-block;
+ margin-top: 30px;
+ margin-right: 40px;
+
+}
+
+nav li a {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+
+}
+
+nav ul li .active {
+color: white;
+
 }

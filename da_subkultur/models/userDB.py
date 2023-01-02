@@ -1,5 +1,4 @@
 import sqlite3
-
 from da_subkultur.models import Validation
 from da_subkultur.models.User import User
 
@@ -25,11 +24,13 @@ def insert(user):
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
         if getUser(user.email) == -1:
             raise Exception("E-Mail is already in use!")
-        if user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or \
-                user.email == "meesen@tsn.at":
+        if (
+            user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or
+                user.email == "meesen@tsn.at"):
             user.role = 1
         else:
             user.role = 0
+
 
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
                   "VALUES (?, ?, ?, ?, ?)",
@@ -81,9 +82,9 @@ def deleteUser(id):
     return 204
 
 
-def changeUser(user):
+def changeUser(id,user):
     try:
-        conn = sqlite3.connect('user.db')
+        conn = sqlite3.connect ('user.db')
         c = conn.cursor()
         c.execute("update users set firstname, lastname, birthdate, email, password, role" +
                   " where id =?", [id])
@@ -140,7 +141,7 @@ def logreg():
 
 
 if __name__ == "__main__":
-    #logreg()
+    logreg()
     print(getAllUser())
-    #print(getUser('mcetinkaya@tsn.at'))
+    print(getUser('mcetinkaya@tsn.at'))
     #deleteUser(1)

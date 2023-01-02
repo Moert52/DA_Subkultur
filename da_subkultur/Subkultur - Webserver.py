@@ -8,7 +8,6 @@ import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
 from da_subkultur.models import userDB
-from da_subkultur.models.User import User
 from da_subkultur.models.userDB import getAllUser
 
 # Für Solr
@@ -72,7 +71,11 @@ def subArchiv():
     return render_template("subArchiv.html")
 
 
-@app.route("/allUsers")
+@app.route('/admin')
+def admin():
+    return render_template("admin.html")
+
+@app.route('/allUsers')
 def getUsers():
     users = getAllUser()
     print(users)
