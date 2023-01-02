@@ -13,6 +13,7 @@ def tryConnection():
     finally:
         conn.close()
         print("The SQLite connection has been closed")
+    return conn
 
 
 def insert(user):

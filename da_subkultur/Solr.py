@@ -89,7 +89,7 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
             self.server.commit()
         except (IOError, Exception) as e:
             # Sonst kommt eine Fehlermeldung wenn es nicht geklappt hat
-            self.log.error("Failed to add documents to Solr: %s", e)
+            print("Failed to add documents to Solr: %s", e)
 
     # Hier wird ein Eintrag auf Solr gelöscht
     def delete(self, title, DOCUMENT_SITE_ID):
@@ -334,68 +334,71 @@ def highlight_image(img, xml, string):
     dic = dic.removesuffix('.png')
     file = dic + '_suche.jpg'  # die entsprechende suffix wird hinzugefügt
     file = file.replace("\\", "-")  # Die enstprechenden Zeichen werden ersetzt
-    # print(file)
-    # print(xml)
 
-    # print(stri)
-    root = ''
-    with open(xml, 'r',  encoding="utf-8") as xml_file:
-        root = ET.parse(xml_file)
-        print(root)
-    #root = ET.parse(xml)  # Die xml wird geöffnet
+    # Die XML - Datei wird im entsprechenden encoding geöffnet
+    root = ET.parse(xml)  # Die xml wird geöffnet
     image = Image.open(img)  # Die jpg Datei wird geöffnet
-    ts = datetime.datetime.now().timestamp()
-    if string != 'StringIsNull':  # Wenn der String null ist soll er das normale Bild ohne es zu higlighten abspeichern
-        stri = string.split()  # Der String wird gesplitet (je nachdem, ob das keyword mehrere Wörter lang ist) & als array gespeichert
+
+    # Abfrage ob der String StringIsNull enthält, dann soll er das normale Bild,
+    # ohne es zu higlighten, abspeichern und sonst wird das jeweilige keyword gehighlightet
+    if string != 'StringIsNull':
+        # Der String wird gesplitet, je nachdem ob das keyword mehrere
+        # Wörter lang ist und wird dann als array gespeichert
+        stri = string.split()
         print(stri)
-        # Jedes String element in dem xml File läuft hier durch
+        # Jedes String Element im XML - Dokument läuft hier durch
         for p in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
-            st = str(p.attrib["CONTENT"])  # den Content vom String Element wird abgespeichert
-            print(st)
-            st = str(st.encode("utf-8"))
-            print(st)
+
+            # Der Content vom String - Element wird abgespeichert und
+            # danach wird das Encoding enstsprechend umgeändert
+
+            st = p.attrib["CONTENT"]
+            st = st.encode('ISO-8859-1')
+            st = st.decode('utf-8')
+            #print(st)
+
             for e in stri:  # Dann läuft jedes einzelne wort vom keyword hier durch
-                e = str(e.encode("iso-8859-1"))
                 print(e)
-                if re.search(e, st):  # Dann wird geprüft ob das keyword im content vom String vorhanden ist
-                    th = datetime.datetime.now().timestamp()
-                    print("x")
-                    # gid = p.attrib["ID"]
-                    x0 = int(p.attrib["HPOS"])  # Die x - Position wird gepseichert
-                    y0 = int(p.attrib["VPOS"])  # Die y - Position wird gepseichert
-                    x1 = int(x0 + int(p.attrib["WIDTH"]))  # Hier wird die Breite gepseichert
-                    y1 = int(y0 + int(p.attrib["HEIGHT"]))  # Hier wird die Höhe gespeichert
-                    shape = [x0 - 7, y0 - 10, x1 + 8,
-                             y1 + 14]  # Hier werden die entsprechenden Größen in einem Array gespeichert
 
-                    TINT_COLOR = (0, 0, 0)  # Black     #Die Schriftfarbe ist schwarz
-                    TRANSPARENCY = .50  # Degree of transparency, 0-100%    #Die Transparenz bei 50%
-                    OPACITY = int(255 * TRANSPARENCY)
+                # Es wird geprüft ob das keyword mit
+                # dem String - Element überreinstimmt
+                if re.search(e, st):
+                    # Die Position und die Größe wird abgespeichert,
+                    # danach werden diese in einem Array gespeichert
+                    x0 = int(p.attrib["HPOS"])
+                    y0 = int(p.attrib["VPOS"])
+                    x1 = int(x0 + int(p.attrib["WIDTH"]))
+                    y1 = int(y0 + int(p.attrib["HEIGHT"]))
 
-                    # print (gid, shape)
-                    image = image.convert("RGBA")  # Das jpg File wird ins RGBA Format konvertiert
-                    overlay = Image.new('RGBA', image.size, TINT_COLOR + (
-                        0,))  # und mit den entsprechenden Werten bekommt sozusagen einen Filter
-                    draw = ImageDraw.Draw(
-                        overlay)  # EIen Variable wird erstellt umd auf dem Bild etwas zu zeichnen / malen.
-                    # draw.text((x1, y1), gid, align="right", font=ImageFont.load_default(), fill="green")
-                    draw.rectangle(shape, fill=(255, 255, 80, 130),
-                                   outline="black")  # Es wird ein Rechteck gemalt auf dem content
-                    # vom String, ist dann sozusagen ein Highlight auf das keyword im jpg File gemalt
+                    # Hier werden die entsprechenden Größen mit den enstsprechenden
+                    # Abweichungen in einem Array abgespeichert
+                    shape = [x0 - 7, y0 - 10, x1 + 8, y1 + 14]
 
+                    # Die Schiftfarbe wird auf schwarz eingestellt
+                    TINT_COLOR = (0, 0, 0)
+
+                    # Das JPG - File wird in RGBA-Format konvertiert, danach wird
+                    # mit den jeweiligen Werten ein Filter erstellt, welches man dann
+                    # zum Malen dem Bild malen verwendet, danach wird ein Rechteck mit
+                    # den Positionen und der eingestellten Farbe gemalt
+                    image = image.convert("RGBA")
+                    overlay = Image.new('RGBA', image.size, TINT_COLOR + (0,))
+                    draw = ImageDraw.Draw( overlay)
+                    draw.rectangle(shape, fill=(255, 255, 80, 130), outline="black")
+
+
+                    # Die beiden Bilder werden Alpha-Composited zu einem Bild.
                     # Alpha composite these two images together to obtain the desired result.
-                    image = Image.alpha_composite(image, overlay)  # Hier wird das ganze format
-                    image = image.convert("RGB")  # und Filter zurückgesetut
+                    # Danach wird der Filter auf das gemalte Bild angewendet
+                    # und dann wird dieses Bild ins RGB-Format zurückkonvertiert
+                    image = Image.alpha_composite(image, overlay)
+                    image = image.convert("RGB")
 
-                    # Die gesuchte Artikelseite wird im entsprechenden Ordner gespeichert
-                    delta1 = th - ts
-                    print("Timestamp 1: %d s" % delta1)
-    ts = datetime.datetime.now().timestamp()
-    image.save((ordner + '\suche\\') + file, quality=10,
-               dpi=(72, 72))
-    th = datetime.datetime.now().timestamp()
-    delta1 = th - ts
-    print("Timestamp 3 %d s" % delta1)  # Laufzeit liegt beim Speichern
+                    # Danach wird das Bild in den jeweilige Ordner gespeichert
+    image.save((ordner + '\suche\\') + file, quality=10, dpi=(72, 72))
+
+
+
     # image.save(img+"_suche.jpg")
     # print(img+"_suche.jpg")
 
