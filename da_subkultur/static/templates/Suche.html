@@ -28,14 +28,20 @@
     </nav>
 
 <h4 class="searchTitle">{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
+    <!--
+    Man gibt hier das Schlüsselwort ein und verschickt es dann.
+    Das Programm holt sich dann das Schlüsselwort von der Form,
+    wenn etwas verschickt wird.
+    -->
     <form method="post">
 
-           <label class="lblSuche" for="keyword">Suche:</label>
+        <label class="lblSuche" for="keyword">Suche:</label>
         <br>
         <input class="inputKeyword"type="text" name="keyword"
                placeholder={{keyword}}>
 
-        <button class="btn" type="submit" name="submit_button" value="Suche">Submit</button>
+        <button class="btn" type="submit" name="submit_button"
+                value="Suche">Submit</button>
 
     </form>
 

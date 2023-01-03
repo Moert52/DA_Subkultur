@@ -2,6 +2,7 @@
 import datetime
 import glob
 import hashlib
+import json
 import os
 import pathlib
 import re
@@ -124,13 +125,12 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
         self.server.commit()
 
         z = 0
-        pathArr = []
-        titleArr = []
+        pathArr = [None] * len(results)
+        titleArr = [None] * len(results)
 
         try:
             # Jedes einzelne Ergebnis läuft hier durch
             for result in results:
-                z += 1  # Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
                 # print('URL: %s' % result['url'])
                 # Die URL wird gespeichert und es wird daraus der
                 # entsprechende Pfad zum jeweiligen Bild erstellt
@@ -144,8 +144,9 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
                 path = os.path.join(path, p.removesuffix('png_text') + 'png')
 
                 #Der Titel und der Pfad wird ins jeweilige Array gespeichert
-                pathArr.append(path)  # Hier wird der Pfad des Ergebnissen gespeichert
-                titleArr.append(result['title'])  # Hier wird der Titel des Ergebnisses gespeichert
+                pathArr[z] = path  # Hier wird der Pfad des Ergebnissen gespeichert
+                titleArr[z] = result['title'] # Hier wird der Titel des Ergebnisses gespeichert
+                z += 1  # Hier wird mitgezählt wie viele Ergebnisse gefunden wurden
             print(pathArr)
 
         # Hier wird Fehlermeldung ausgegeben, wenn etwas nicht funktioniert hat
@@ -193,7 +194,7 @@ def directoryToAddAll(directory, processor, title, site):  #
 
 # Hier wird jede txt Datei in einem Ordner auf Solr hochgeladen
 # def addAll(dir, processor, title):
-def addAll(DOCUMENT_URL, processor, title, site):
+def addAll(DOCUMENT_URL, processor, title, DOCUMENT_SITE):
     id = 0  # Hier bekommt jeder Eintrag eine ID mit dem Filenamen
     for f in glob.glob("%s/*.txt" % DOCUMENT_URL):  # Hier läuft jede einzelner txt Datei + ihren Pfad im Ordner durch
         file = f.removeprefix(DOCUMENT_URL + '\\')  # Danach bekommt man den Dateinamen + Extension
@@ -202,7 +203,8 @@ def addAll(DOCUMENT_URL, processor, title, site):
 
         # processor.process(file, name + '_%s' % str(id))
         # Dann wird die txt Datei auf Solr hochgeladen
-        processor.process(file, name + '_%s' % str(id), DOCUMENT_URL, DOCUMENT_SITE)
+        #processor.process(file, name + '_%s' % str(id), DOCUMENT_URL, DOCUMENT_SITE)
+        processor.process(file, title, DOCUMENT_URL, DOCUMENT_SITE)
         id = id + 1  # Die ID erhöht sich dann um 1
 
 
@@ -232,33 +234,33 @@ def getSearch(keyword=""):
                            name=str(keyword) or 'StringIsNull',
                            keyword=keyword or "Keyword")
 
-
+# Die search - Methode, welche die Eintrgäe such und
+# demenstrpechend für die Anzeige bearbeitet
 def search(keyword):
-    resultArr = []  # ein Array für die Ergebnisse, nachdem Sie angepasst wurden
-    titlearr = []  # Wieder eine Titelarray, aber für die Titel nachdem capitalize
-    searchArr, patharr = p.search(str(keyword))  # Gibt einen Array von den Titeln der Ergebnissen bei der Suche
-    print("asas" + str(patharr))
-    # print(searchArr)
-    # Jeder einzelner title läuft hier durch, bei der die capitalize Methode durchgeführt wird
+    # Die array für die Ergebnisse und
+    # für die bearbeiteten Titel werden definiert
+    resultArr = []
+    titlearr = []
+    # Gibt ein Array von den Titel und Pfade der Ergebnisse zurück
+    searchArr, patharr = p.search(str(keyword))
+
+    # Durchlauf von jedem Titel, es wird die capitalize Methode bei jedem
+    # Titel ausgeführt und dann wird diese ins titlearr abgespeichert
     for title in searchArr:
         titlearr.append(str(title[0]).capitalize())
-    titlearr.sort()  # Danach wird das titleArr nach dem Alphabet sortiert
-    # print(titlearr)
-    # Variable zum Suchordner
-    resultDirectory = (ordner + "\suche")
-    for f in patharr:  # Alle jpg Files im Suchordner werden durchgelaufen
-        # ff = os.path.join(resultDirectory, f)   #der Pfad zum jpg File
-        # Dann wird ein Dictionary erstellt mit den entsprechen Weten
-        thumbFile = f.removesuffix('.png') + '-thumb.png'
-        print(thumbFile)
+
+    # Alle Pfade zu den  Files laufen hier durch
+    for f in range(len(patharr)):
+        # Der Pfad zum richtigen png File wird erstellt
+        thumbFile = patharr[f].removesuffix('.png') + '-thumb.png'
+        # Mit den jeweiligen Werten wird ein Dictionary erstellt
         doc = {
-            'title': pathlib.Path(str(f)).stem,
-            'url': f,  # str(f.removeprefix("['"))
-            'thumb': thumbFile
+            'title': titlearr[f],   # Der Titel
+            'url': patharr[f],  # Der Pfad vom normalen Bild
+            'thumb': thumbFile  # Der Pfad vom verkleinerten Bild
         }
-        # print(os.path.basename(ff))
-        resultArr.append(doc)  # Das Dictionary wird dann ins result - Array gepseichert
-    print(resultArr)
+        # Dieses Dictionary wird in ein Array abgespeichert
+        resultArr.append(doc)
     return resultArr
 
 #Hier wird das enstsprechende Bild mit den jeweiligen Keyword gehighlightet angezeigt
@@ -429,12 +431,14 @@ parser.add_argument("site_id", required=True)
 class Artikel(Resource):
     def get(self, title):
         # Es wird nach dem passenden Eintrag gesucht
-        data_get = Processor.search(title)
+        if title == 'StringIsNull':
+            title = ''
+        data_get = search(title)
         # Wenn die keine Daten gefunden werden, wird eine Fehlermeldung ausgegeben
         if data_get == 404:
             abort(404, message=f"Eintrag {title} nicht gefunden!")
         # Dann wird der gefundene Eintrag zurückgegeben
-        return jsonify(data_get), 200
+        return json.dumps(data_get), 200
 
     def post(self):
         args = parser.parse_args()
