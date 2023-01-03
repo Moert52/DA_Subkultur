@@ -156,15 +156,23 @@ def getSearch(keyword=""):
     # man dann die jeweiligen Einträge von der Suche erhält
     if request.method == 'POST':
         keyword = request.form['keyword']
+        if keyword == '':
+            keyword = 'StringIsNull'
         resultArr = json.loads(requests.get('%s/%s' % (host, keyword)).json())
+
+        if keyword == 'StringIsNull':
+            keyword = ''
         print(resultArr)
     # Wenn das Array aber leer ist, wird ein leeres String
     # der search - Methode mitgegeben, welche daraufhin
     # alle Einträge zurückgibt
     if not resultArr:
-        keyword = 'StringIsNull'
-        resultArr = requests.get('%s/%s' % (host, keyword)).json()
-        keyword =''
+        if keyword == '':
+            keyword = 'StringIsNull'
+        resultArr = json.loads(requests.get('%s/%s' % (host, keyword)).json())
+
+        if keyword == 'StringIsNull':
+            keyword =''
 
     # Die jeweiligen Werte werden der Webseite weitergegeben und diese
     # werden dann mit den Ergebnissen gemeinsam auf der Webseite angezeigt
