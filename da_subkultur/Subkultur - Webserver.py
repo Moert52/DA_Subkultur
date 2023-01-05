@@ -1,5 +1,7 @@
 import os
 import json
+import shutil
+
 from flask import Flask, render_template, flash, request, url_for, send_from_directory
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw
@@ -17,7 +19,8 @@ import requests
 import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
-import User
+from models.User import User
+
 from models.userDB import getAllUser, insert
 
 # Für Solr
@@ -63,7 +66,7 @@ def register():
         user = User(firstname, lastname, birthdate, email, password, 'user')
 
         print(user)
-        userDB.insert(user)
+        insert(user)
         return redirect(url_for('login'))  # , email=email, password=password, message="Efolgreich registriert!"
 
         # return render_template("register.html")  # , error=insertDB

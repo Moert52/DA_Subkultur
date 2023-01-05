@@ -1,7 +1,7 @@
 import sqlite3
-from models import Validation
-from models import User
 
+from models import Validation
+from models.User import User
 
 
 def tryConnection():
@@ -13,7 +13,6 @@ def tryConnection():
     finally:
         conn.close()
         print("The SQLite connection has been closed")
-    return conn
 
 
 def insert(user):
@@ -80,19 +79,6 @@ def deleteUser(id):
     finally:
         conn.close()
     return 204
-
-
-def changeUser(user):
-    try:
-        conn = sqlite3.connect('user.db')
-        c = conn.cursor()
-        c.execute("update users set firstname, lastname, birthdate, email, password, role" +
-                  " where id =?", [id])
-        conn.commit()
-    except sqlite3.Error as error:
-        raise Exception("An error occurred changing a user", error)
-    finally:
-        conn.close()
 
 
 def login(email, password):
