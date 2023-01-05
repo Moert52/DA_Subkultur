@@ -1,6 +1,6 @@
 from django.contrib.sites import requests
 import admin
-from User import User
+
 
 
 s = requests.Session()
