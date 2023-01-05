@@ -17,7 +17,7 @@ import requests
 import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
-from models import User
+import User
 from models.userDB import getAllUser, insert
 
 # Für Solr
