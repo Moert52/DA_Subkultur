@@ -78,6 +78,15 @@ def register():
 def login():
     return render_template("login.html")
 
+@app.route('/archivinfo', methods=('GET', 'POST'))
+def info():
+    return render_template("archivinfo.html")
+
+@app.route('/credits', methods=('GET', 'POST'))
+def credits():
+    return render_template("credits.html")
+
+
 
 @app.route('/subArchiv')
 def subArchiv():
