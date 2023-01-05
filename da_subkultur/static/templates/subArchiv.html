@@ -2,6 +2,17 @@
 <html lang="en">
  <link rel="stylesheet" href="{{ url_for('static', filename='css/subArchiv.css') }}">
     <link href='https://fonts.googleapis.com/css?family=Abril Fatface' rel='stylesheet'>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/search.css') }}">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script>
+        function preventBack() {
+            window.history.forward();
+        }
+        setTimeout("preventBack()", 0);
+        window.onunload = function () { null };
+    </script>
 
 
 <head>
@@ -23,7 +34,61 @@
     </nav>
 
 
- <nav2>
+
+
+<body>
+
+    <h1>Das subArchiv</h1>
+<div class="suche">
+
+    <h4 class="searchTitle">{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
+        <!--
+        Man gibt hier das Schlüsselwort ein und verschickt es dann.
+        Das Programm holt sich dann das Schlüsselwort von der Form,
+        wenn etwas verschickt wird.
+        -->
+        <form method="post">
+
+            <label class="lblSuche" for="keyword">Suche:</label>
+            <br>
+            <input class="inputKeyword"type="text" name="keyword"
+                   placeholder={{keyword}}>
+
+            <button class="btn" type="submit" name="submit_button"
+                    value="Suche">Submit</button>
+
+        </form>
+
+    <!--
+    Die Liste mit den ganzen gesuchten Einträgen läuft hier in einer
+    for - Schleife durch und dann werden mittels des Pfades und des
+    Titels die ganzen Bilder in einer Tabelle mit den Titeln
+    gemeinsam dargestellt. -->
+    <table id="table_id" class="display">
+        <thead>
+                <th class="first">Bilder</th>
+                <th class="second">Titel</th>
+        </thead>
+        <tbody>
+            {% for file in arr %}
+
+            <tr class="column">
+                <td class="picture">
+                <a href="{{ url_for('getImage', url=file.url, string=name) }}">
+                    <img class="img" width="20%" height="20%"
+                         src="{{ url_for('get_file', path=file.thumb) }}">
+                </a>
+                </td>
+                <td class="titel" >Titel: <br>{{file.title}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+
+ <footer>
 
      <ul>
             <li2><a href="/archivinfo">Archivinfo</a></li2>
@@ -32,13 +97,10 @@
             <li2><a href='https://www.instagram.com/subkulturarchiv_innsbruck/'>Instagram</a></li2>
             <li2><a href="/credits">Credits</a></li2>
        </ul>
-    </nav2>
-
-<body>
-
-    <h1>Das subArchiv</h1>
-
-
-</body>
-
+ </footer>
+ <script>
+        $(document).ready(function () {
+            $('#table_id').DataTable();
+        });
+    </script>
 </html>

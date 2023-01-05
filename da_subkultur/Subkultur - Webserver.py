@@ -88,9 +88,7 @@ def credits():
 
 
 
-@app.route('/subArchiv')
-def subArchiv():
-    return render_template("subArchiv.html")
+
 
 
 @app.route('/admin')
@@ -188,7 +186,7 @@ def getSearch(keyword=""):
 
     # Die jeweiligen Werte werden der Webseite weitergegeben und diese
     # werden dann mit den Ergebnissen gemeinsam auf der Webseite angezeigt
-    return render_template("Suche.html", len=len(resultArr), arr=resultArr,
+    return render_template("subArchiv.html", len=len(resultArr), arr=resultArr,
                            name=str(keyword) or 'StringIsNull',
                            keyword=keyword or "Keyword")
 
@@ -201,7 +199,6 @@ def getImage(url, string):
     getstring = ''
     if string != "StringIsNull":
         strr = string.lower()
-
         strr = strr.title()  # Jeder Buchstabe bei jedem Wort wird groß geschrieben
         strr = strr.split()
 

@@ -89,10 +89,9 @@ title {
     padding-top: 40px!important;
 }
 
-nav2 {
+footer {
 height: 90px;
 width: 100%;
-position: fixed;
 bottom: 0;
 background-color: #969f3a;
 box-shadow: 0px 2px 4px rgba(0,0,0.144);
