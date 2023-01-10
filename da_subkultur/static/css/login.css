@@ -6,6 +6,8 @@ body {
     -o-background-size: cover;
     background-size: cover;
     background-color: #cccccc;
+    height: 100%;
+    position: relative;
 }
 
 
@@ -92,16 +94,19 @@ input[type = "button"] {
 
 
 .box {
-    width: 400px;
-    padding: 40px;
+    width: 600px;
+    padding: 100px;
     position: absolute;
     left: 50%;
-    top: 58%;
-    transform: translate(-50%,-50%);
-    background: #191919;
+    top: 10rem;
+    transform: translateX(-50%);
+    background: black;
     opacity: 0.9;
-    text-align: center;
+    text-align:center;
+
 }
+
+
 nav {
 height: 90px;
 width: 100%;

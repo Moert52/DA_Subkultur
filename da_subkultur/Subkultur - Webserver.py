@@ -86,9 +86,9 @@ def info():
 def credits():
     return render_template("credits.html")
 
-
-
-
+@app.route('/impressum', methods=('GET', 'POST'))
+def impressum():
+    return render_template("impressum.html")
 
 
 @app.route('/admin')
