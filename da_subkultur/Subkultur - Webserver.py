@@ -160,7 +160,6 @@ def clear_folder_to_OCR():
 def getSearch(keyword=""):
     print("search")
     resultArr = []  # ein Array für die Ergebnisse
-
     # Wenn ein Schlüsselwort submitted wurde, wird dieser
     # abgespeichert und der search - Methode mitgegeben, wo
     # man dann die jeweiligen Einträge von der Suche erhält

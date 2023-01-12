@@ -25,9 +25,12 @@ def insert(user):
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
         if getUser(user.email) == -1:
             raise Exception("E-Mail is already in use!")
+        #wenn die email adresse folgende sind wird die rolle auf 1(amdin) gesetzt
         if user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or \
                 user.email == "meesen@tsn.at":
             user.role = 1
+            #falls die email adresse eine andere ist dann wird die rolle auf
+            # 0 (user) gesetzt keine zusätliche rechte
         else:
             user.role = 0
 
