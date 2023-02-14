@@ -106,6 +106,7 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
             document_id.encode('utf-8')).hexdigest()))  # Hier wird der Eintrag mittels der ID gelöscht
         self.server.commit()
 
+
     # Hier wird nach einem Eintrag gesucht
     def search(self, keyword):
         # Hier werden die entsprechenden Einträge auf Solr gesucht und
