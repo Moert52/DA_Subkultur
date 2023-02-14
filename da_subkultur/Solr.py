@@ -437,7 +437,7 @@ class Artikel(Resource):
         # Wenn die keine Daten gefunden werden, wird eine Fehlermeldung ausgegeben
         if data_get == 404:
             abort(404, message=f"Eintrag {title} nicht gefunden!")
-        # Dann wird der gefundene Eintrag zurückgegeben
+        # Dann wird der gefundene Einxtrag zurückgegeben
         return json.dumps(data_get), 200
 
     def post(self):

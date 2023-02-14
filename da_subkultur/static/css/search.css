@@ -64,7 +64,7 @@ label {
     margin-left: 15px;
     width: 300px;
     background: #fff;
-    color: $input-text-color;
+    color: black; <!--$input-text-color;-->
     font: inherit;
     box-shadow: 0 6px 10px 0 rgb(0 0 0 / 10%);
     border: 0;

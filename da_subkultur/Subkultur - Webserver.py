@@ -2,9 +2,10 @@ import os
 import json
 import shutil
 
-from flask import Flask, render_template, flash, request, url_for, send_from_directory
+from flask import Flask, render_template, flash, request, url_for, send_from_directory, session
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw
+from flask_session import Session
 import elementpath
 import datetime
 import glob
@@ -32,6 +33,8 @@ api = Api(app)  # Die Flask API
 app.secret_key = '_5#y2L"F4Q8z/n/xec] /'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
 # Variablen für wichtige Pfäde
 
 # Mert's Pfad
@@ -44,7 +47,7 @@ app.config['SECRET_KEY'] = 'thisisasecretkey'
 # ordner = r'D:\Diplomarbeit\test_tesseract'
 app.config['OCR_PATH'] = OCR_PATH
 app.config['DOCUMENTS_PATH'] = DOCUMENTS_PATH
-
+Session(app)
 host = "http://127.0.0.1:5000/artikel"
 
 
@@ -158,6 +161,7 @@ def clear_folder_to_OCR():
 @app.route('/suche/<keyword>', methods=('GET', 'POST'))
 @app.route('/suche', methods=('GET', 'POST'))
 def getSearch(keyword=""):
+    session.pop('getImageContent', None)
     print("search")
     resultArr = []  # ein Array für die Ergebnisse
     # Wenn ein Schlüsselwort submitted wurde, wird dieser
@@ -182,7 +186,8 @@ def getSearch(keyword=""):
 
         if keyword == 'StringIsNull':
             keyword =''
-
+    session["getImageContent"] = 'image'
+    print("Session "+session['getImageContent'])
     # Die jeweiligen Werte werden der Webseite weitergegeben und diese
     # werden dann mit den Ergebnissen gemeinsam auf der Webseite angezeigt
     return render_template("subArchiv.html", len=len(resultArr), arr=resultArr,
@@ -190,8 +195,26 @@ def getSearch(keyword=""):
                            keyword=keyword or "Keyword")
 
 #Hier wird das enstsprechende Bild mit den jeweiligen Keyword gehighlightet angezeigt
-@app.route('/getImage/<path:url>/<string>')
+@app.route('/getImage/<path:url>/<string>', methods=['GET', 'POST'])
 def getImage(url, string):
+    txt_content=''
+    a = session["getImageContent"]
+    print(a)
+    if request.method == 'POST':
+        if request.form['switchTo'] == 'Switch content':
+            if 'getImageContent' in session:
+                if session['getImageContent'] == 'image':
+                    session['getImageContent'] = 'text'
+                    txt_url = url + '_text.txt'
+                    print(txt_url)
+                    with open(txt_url, "r", encoding='utf-8') as f:
+                        txt_content = f.read()
+                else:
+                    session['getImageContent'] ='image'
+
+
+
+
     clearFolder()
     print(url)
     print(string)
@@ -210,7 +233,7 @@ def getImage(url, string):
     name = pathlib.Path(url).stem
     path = (app.config['DOCUMENTS_PATH'] + '\suche\\') + name + '_suche.jpg'
     print(path)
-    return render_template("getImage.html", url=path, name=string)  # , titlearr= sorted(searchArr))
+    return render_template("getImage.html", url=path, name=string, text_content=txt_content)  # , titlearr= sorted(searchArr))
 
 def highlight_image(img, xml, string):
     dic = os.path.basename(img)
@@ -314,4 +337,5 @@ def clearFolder():
 
 
 if __name__ == '__main__':
+
     app.run(debug=True, port='5252')
