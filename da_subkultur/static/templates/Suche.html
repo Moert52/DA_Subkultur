@@ -21,7 +21,9 @@
         <ul>
             <li><a href="/">Startseite</a></li>
             <li><a class= "active"  href="suche.html">Das Subarchiv</a></li>
+            {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
+            {% endif %}
             <li><a href="/register">RegistrationSeite</a></li>
             <li><a href="/allUsers">Alle Userdaten</a></li>
         </ul>

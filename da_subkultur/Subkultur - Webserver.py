@@ -24,6 +24,7 @@ from models import Validation
 from models.User import User
 
 from models.userDB import getAllUser, insert, getUser
+from models.adminDB import assignRole
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -74,17 +75,11 @@ def register():
         # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
         if getUser(user.email) == -1:
             raise Exception("E-Mail is already in use!")
-        # wenn die email adresse folgende sind wird die rolle auf 1(admin) gesetzt
-        if user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or \
-                user.email == "meesen@tsn.at":
-            user.role = 1
-            # falls die email adresse eine andere ist dann wird die rolle auf
-            # 0 (user) gesetzt keine zusätliche rechte
-        else:
-            user.role = 0
+        # Es wird geprüft ob die Email einem Admin gehört und sofort die richtige Rolle vergeben
+        user.role = assignRole(user.email)
 
         insert(user)
-        return render_template('login.html', email=email, password=password, message="Efolgreich registriert!")
+        return redirect('login', email=email, password=password, message="Erfolgreich registriert!")
 
         # return render_template("register.html")  # , error=insertDB
     else:
@@ -94,16 +89,20 @@ def register():
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
-        return redirect(url_for('Start'))
+        session["loggedIn"] = 1
+        return redirect(url_for('Start'), message="Erfolgreich eingeloggt!")
     return render_template("login.html")
+
 
 @app.route('/archivinfo', methods=('GET', 'POST'))
 def info():
     return render_template("archivinfo.html")
 
+
 @app.route('/credits', methods=('GET', 'POST'))
 def credits():
     return render_template("credits.html")
+
 
 @app.route('/impressum', methods=('GET', 'POST'))
 def impressum():

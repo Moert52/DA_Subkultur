@@ -2,7 +2,7 @@ import sqlite3
 
 from models.User import User
 
-databasePath = 'users.db'
+databasePath = 'models/users.db'
 
 
 def tryConnection():
