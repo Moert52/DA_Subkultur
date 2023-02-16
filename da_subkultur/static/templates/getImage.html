@@ -14,13 +14,16 @@
         </form>
         </div>
         {% if session.getImageContent == "image" %}
-        <div class="ImageContainer">
+          <div class="ImageContainer">
             <div class="zoom_outer">
                 <div id="zoom">
-                    <img id="shownImg" class="img" width="50%" height="50%" src="{{ url_for('get_file', path=url) }}">
+
+                        <img id="shownImg" class="img" width="50%" height="50%" src="{{ url_for('get_file', path=url) }}">
+                    </div>
                 </div>
             </div>
-        </div>
+
+        <div class="scrollmenu"></div>
         {% else %}
             <pre class="content">{{ text_content }}</pre>
         {% endif %}
@@ -28,6 +31,8 @@
 </body>
 
 <script>
+    // Der Quellcode für die Zoomfunktion wurde von Stackfindover übernommen und entsprechend erweitert
+    // URL: https://dev.to/stackfindover/zoom-image-point-with-mouse-wheel-11n3
       var scale = 1,
         panning = false,
         pointX = 0,

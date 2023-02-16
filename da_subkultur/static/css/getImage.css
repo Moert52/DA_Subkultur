@@ -21,14 +21,20 @@
   padding: 0;
   margin: 0;
   outline: 0;
-  overflow: hidden;
+
 }
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
+
+}
+
+.zoom_outer {
   overflow: hidden;
+    height: 100%;
+    width: auto;
 }
 #zoom {
   width: 100%;
