@@ -194,12 +194,16 @@ def getSearch(keyword=""):
                            name=str(keyword) or 'StringIsNull',
                            keyword=keyword or "Keyword")
 
+
+
+
 #Hier wird das enstsprechende Bild mit den jeweiligen Keyword gehighlightet angezeigt
 @app.route('/getImage/<path:url>/<string>', methods=['GET', 'POST'])
 def getImage(url, string):
     txt_content=''
     a = session["getImageContent"]
-    print(a)
+    directory = os.path.dirname(url)
+    arrAllFiles = []
     if request.method == 'POST':
         if request.form['switchTo'] == 'Switch content':
             if 'getImageContent' in session:
@@ -209,15 +213,25 @@ def getImage(url, string):
                     print(txt_url)
                     with open(txt_url, "r", encoding='utf-8') as f:
                         txt_content = f.read()
+
+
                 else:
                     session['getImageContent'] ='image'
 
-
-
-
+    for filename in os.listdir(directory):
+        if filename.endswith("-thumb.png"):
+            if not filename.endswith("-thumb-thumb.png"):
+                getPic = filename.removesuffix('-thumb.png')
+                doc = {
+                    'url': os.path.join(directory, getPic + '.png'),  # Der Pfad vom normalen Bild
+                    'thumb': os.path.join(directory, filename)  # Der Pfad vom verkleinerten Bild
+                }
+                arrAllFiles.append(doc)
+    print(arrAllFiles)
     clearFolder()
     print(url)
-    print(string)
+
+    #print(string)
     getstring = ''
     if string != "StringIsNull":
         strr = string.lower()
@@ -228,12 +242,12 @@ def getImage(url, string):
         for s in strr:
             getstring = '%s %s %s %s' % (s, s.upper(), s.lower(),
                                          getstring)  # +  string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
-        print(getstring)
+        #print(getstring)
     highlight_image(url, '%s_alto_neu.xml' % url, getstring)
     name = pathlib.Path(url).stem
     path = (app.config['DOCUMENTS_PATH'] + '\suche\\') + name + '_suche.jpg'
     print(path)
-    return render_template("getImage.html", url=path, name=string, text_content=txt_content)  # , titlearr= sorted(searchArr))
+    return render_template("getImage.html", url=path, name=string, text_content=txt_content, arrAllFiles = arrAllFiles)  # , titlearr= sorted(searchArr))
 
 def highlight_image(img, xml, string):
     dic = os.path.basename(img)
@@ -252,7 +266,7 @@ def highlight_image(img, xml, string):
         # Der String wird gesplitet, je nachdem ob das keyword mehrere
         # Wörter lang ist und wird dann als array gespeichert
         stri = string.split()
-        print(stri)
+        #print(stri)
         # Jedes String Element im XML - Dokument läuft hier durch
         for p in elementpath.select(root, '//String', {'': 'http://www.loc.gov/standards/alto/ns-v3#'}):
 
@@ -265,7 +279,7 @@ def highlight_image(img, xml, string):
             #print(st)
 
             for e in stri:  # Dann läuft jedes einzelne wort vom keyword hier durch
-                print(e)
+                #print(e)
 
                 # Es wird geprüft ob das keyword mit
                 # dem String - Element überreinstimmt

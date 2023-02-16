@@ -22,8 +22,17 @@
                     </div>
                 </div>
             </div>
-
-        <div class="scrollmenu"></div>
+        <div class="scrollContainer">
+            <div class="scrollmenu">
+            {% for file in arrAllFiles %}
+                 <a href="{{ url_for('getImage', url=file.url, string=name) }}">
+                    <img class="img" width="100%" height="100%"
+                         src="{{ url_for('get_file',path=file.thumb) }}">
+                 </a>
+            {% endfor %}
+            </div>
+        </div>
+        <br>
         {% else %}
             <pre class="content">{{ text_content }}</pre>
         {% endif %}
