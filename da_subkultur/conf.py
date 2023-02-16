@@ -1,8 +1,8 @@
 #Mert's:
-DOCUMENTS_PATH = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+#DOCUMENTS_PATH = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
 
 #Leo's
-#DOCUMENTS_PATH = r'C:\Users\mertc\Desktop\HTL - Fächer\Diplomarbeit\Test-tesseract'
+DOCUMENTS_PATH = r'D:\Diplomarbeit\test_tesseract'
 
 #Melih's
 #DOCUMENTS_PATH = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'

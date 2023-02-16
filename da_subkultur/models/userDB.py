@@ -1,12 +1,13 @@
 import sqlite3
 
-from models import Validation
 from models.User import User
+
+databasePath = 'users.db'
 
 
 def tryConnection():
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         print("A SQLite connection has been established")
     except sqlite3.Error as error:
         raise Exception("An error occurred while connecting to SQLite", error)
@@ -17,25 +18,11 @@ def tryConnection():
 
 def insert(user):
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         print(user)
-        # userList = list(user)
-        Validation.check_user(user)
-        # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
-        if getUser(user.email) == -1:
-            raise Exception("E-Mail is already in use!")
-        #wenn die email adresse folgende sind wird die rolle auf 1(amdin) gesetzt
-        if user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or \
-                user.email == "meesen@tsn.at":
-            user.role = 1
-            #falls die email adresse eine andere ist dann wird die rolle auf
-            # 0 (user) gesetzt keine zusätliche rechte
-        else:
-            user.role = 0
-
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
-                  "VALUES (?, ?, ?, ?, ?)",
+                  "VALUES (?, ?, ?, ?, ?, ?)",
                   (user.firstname, user.lastname, user.birthdate, user.email, user.password, user.role))
         conn.commit()
     except sqlite3.Error as error:
@@ -46,7 +33,7 @@ def insert(user):
 
 def getUser(email):
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=?", [email])
         user = c.fetchone()
@@ -60,7 +47,7 @@ def getUser(email):
 
 def getAllUser():
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         c.execute("SELECT * FROM users")
         users = c.fetchall()
@@ -73,7 +60,7 @@ def getAllUser():
 
 def deleteUser(id):
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         c.execute("DELETE FROM users WHERE id=?", [id])
         conn.commit()
@@ -86,7 +73,7 @@ def deleteUser(id):
 
 def login(email, password):
     try:
-        conn = sqlite3.connect('users.db')
+        conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
         if c.fetchone() is None:
@@ -124,8 +111,6 @@ def logreg():
         print("Password: ")
         password = str(input())
         user = User(firstname, lastname, birthdate, email, password)
-        print(user.role)
-        print(user.firstname)
         insert(user)
 
 
@@ -133,4 +118,4 @@ if __name__ == "__main__":
     #logreg()
     print(getAllUser())
     #print(getUser('mcetinkaya@tsn.at'))
-    #deleteUser(1)
+    #deleteUser(5)

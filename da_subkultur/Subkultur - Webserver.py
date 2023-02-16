@@ -20,9 +20,10 @@ import requests
 import Tesseract
 from Solr import Processor, addAll
 from conf import DOCUMENTS_PATH, OCR_PATH
+from models import Validation
 from models.User import User
 
-from models.userDB import getAllUser, insert
+from models.userDB import getAllUser, insert, getUser
 
 # Für Solr
 p = Processor('http://localhost:8983/solr/test')
@@ -68,9 +69,22 @@ def register():
         birthdate = str(request.form["birthdate"])
         user = User(firstname, lastname, birthdate, email, password, 'user')
 
-        print(user)
+        # userList = list(user)
+        Validation.check_user(user)
+        # Wenn es einen User mit der selben E-Mail gibt, wird eine Fehlermeldung geworfen
+        if getUser(user.email) == -1:
+            raise Exception("E-Mail is already in use!")
+        # wenn die email adresse folgende sind wird die rolle auf 1(admin) gesetzt
+        if user.email == "ldjurdjevic@tsn.at" or user.email == "mertcet@tsn.at" or \
+                user.email == "meesen@tsn.at":
+            user.role = 1
+            # falls die email adresse eine andere ist dann wird die rolle auf
+            # 0 (user) gesetzt keine zusätliche rechte
+        else:
+            user.role = 0
+
         insert(user)
-        return redirect(url_for('login'))  # , email=email, password=password, message="Efolgreich registriert!"
+        return render_template('login.html', email=email, password=password, message="Efolgreich registriert!")
 
         # return render_template("register.html")  # , error=insertDB
     else:
@@ -79,6 +93,8 @@ def register():
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    if request.method == 'POST':
+        return redirect(url_for('Start'))
     return render_template("login.html")
 
 @app.route('/archivinfo', methods=('GET', 'POST'))
@@ -97,6 +113,7 @@ def impressum():
 @app.route('/admin')
 def admin():
     return render_template("admin.html")
+
 
 @app.route('/allUsers')
 def getUsers():
@@ -157,6 +174,7 @@ def clear_folder_to_OCR():
     for f in os.listdir(dir):
         os.remove(os.path.join(dir, f))
 
+
 # Hier wird mittels dem keyword nach den jeweiligen Bilder gesucht
 @app.route('/suche/<keyword>', methods=('GET', 'POST'))
 @app.route('/suche', methods=('GET', 'POST'))
@@ -193,6 +211,7 @@ def getSearch(keyword=""):
     return render_template("subArchiv.html", len=len(resultArr), arr=resultArr,
                            name=str(keyword) or 'StringIsNull',
                            keyword=keyword or "Keyword")
+
 
 
 
@@ -248,6 +267,7 @@ def getImage(url, string):
     path = (app.config['DOCUMENTS_PATH'] + '\suche\\') + name + '_suche.jpg'
     print(path)
     return render_template("getImage.html", url=path, name=string, text_content=txt_content, arrAllFiles = arrAllFiles)  # , titlearr= sorted(searchArr))
+
 
 def highlight_image(img, xml, string):
     dic = os.path.basename(img)

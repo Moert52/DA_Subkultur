@@ -8,7 +8,7 @@ c = conn.cursor()
 #        id integer PRIMARY KEY AUTOINCREMENT UNIQUE NOT NULL,
 #        title text NOT NULL,
 #        site text,
-#        url text NOT NULL,
+#        url text NOT NULL,+
 #        date DATETIME NOT NULL
 #)""")
 
