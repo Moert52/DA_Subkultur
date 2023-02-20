@@ -24,6 +24,7 @@ from models import Validation
 from models.User import User
 
 from models.userDB import getAllUser, insert, getUser
+from models.userDB import login as checkLogin
 from models.adminDB import assignRole
 
 # Für Solr
@@ -89,9 +90,15 @@ def register():
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
+        email = str(request.form["email"])
+        password = str(request.form["password"])
+
+        checkLogin(email, password)
         session["loggedIn"] = 1
-        return redirect(url_for('Start'), message="Erfolgreich eingeloggt!")
-    return render_template("login.html")
+
+        return redirect(url_for('getSearch'))
+    else:
+        return render_template("login.html")
 
 
 @app.route('/archivinfo', methods=('GET', 'POST'))
