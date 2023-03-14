@@ -10,25 +10,31 @@
     {% for message in get_flashed_messages() %}
             <div class="alert">{{ message }}</div>
     {% endfor %}
+
     <form method="POST" action="" enctype="multipart/form-data">
         <label for="title">Title</label>
         <br>
-        <input type="text" name="title"
-               placeholder="Content title"
+
+        <input type="text" name="title" placeholder="Content title"
                value="{{ request.form['title'] }}"></input>
         <br>
+
         <label for="site">Site</label>
         <br>
+
         <input type="text" name="site"
                placeholder="Content site"
                value="{{ request.form['site'] }}"></input>
         <br>
+
         <label for="title">File</label>
         <br>
+
         <input type="file" name="file"
                placeholder="Content file"
                value="{{ request.form['file'] }}" accept=".pdf" multiple>
         <br>
+
 
         <button type="submit">Submit</button>
     </form>

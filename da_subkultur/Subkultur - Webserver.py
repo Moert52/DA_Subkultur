@@ -2,6 +2,7 @@ import os
 import json
 import shutil
 
+from django.contrib.auth.decorators import login_required
 from flask import Flask, render_template, flash, request, url_for, send_from_directory, session
 import xml.etree.ElementTree as ET
 from PIL import Image, ImageDraw
@@ -87,6 +88,7 @@ def register():
         return render_template("register.html")
 
 
+
 @app.route('/login', methods=('GET', 'POST'))
 def login():
     if request.method == 'POST':
@@ -117,15 +119,10 @@ def impressum():
 
 
 @app.route('/admin')
+@login_required
 def admin():
     return render_template("admin.html")
 
-
-@app.route('/allUsers')
-def getUsers():
-    users = getAllUser()
-    print(users)
-    return render_template("allUsers.html", usr=users)
 
 
 # Hier ist die Methode und das Formular um Artikel hochzuladen (OCR + Solr)
@@ -133,34 +130,34 @@ def getUsers():
 def create():
     if request.method == 'POST':  # Wenn etwas verschickt wird
         title = request.form['title']  # wird der eingegebene Titel
-        site = request.form['site']  # Docuement_Site als Variablen gespeichert
+        site = request.form['site']  # Docuement_Site als Variable gespeichert
         filenameArr = []
-        # Überprüfung ob Titel, Site eingegeben wurden und eine Datei hochgeladen wurde
-        if not title:
-            flash('Title is required!')
-        elif not site:
-            flash('Site is required!')
+
+        # Überprüfung ob der Titel, die Site eingegeben wurde und eine Datei hochgeladen wurde
+        if not title: flash('Title is required!')
+
+        elif not site: flash('Site is required!')
+
         for uploaded_file in request.files.getlist('file'):
-            if uploaded_file.filename == '':
-                flash('File is required!')
+
+            if uploaded_file.filename == '': flash('File is required!')
+
             else:
                 file = secure_filename(uploaded_file.filename)  # Dateiname mit Extension
                 path = os.path.join(app.config['OCR_PATH'], file)  # Pfad der Datei
-                uploaded_file.save(
-                    path)  # PDFs werden in einen bestimmen Ordner gespeichert, wo dann die OCR durchläuft
+                uploaded_file.save( path)  # PDFs werden in einen bestimmen Ordner gespeichert, wo die OCR durchläuft
 
                 filename = os.path.basename(path).split('.')[0]  # Dateiname ohne Extension
-                if filename not in filenameArr:
-                    filenameArr.append(filename)
-                # print(title)
-                # print(site)
-            # print(app.config['OCR_PATH'])
-        if len(os.listdir(app.config['OCR_PATH'])) != 0:  # Überprüfung ob sich überhaupt Dateien im Ordner befinden
-            Tesseract.process_dir(app.config[
-                                      'OCR_PATH'])  # OCR läuft die PDFS druch und speichert alles in einen eigenen Ordner für die Dateien
+                if filename not in filenameArr: filenameArr.append(filename)
+
+
+        # Überprüfung ob sich überhaupt Dateien im Ordner befinden
+        if len(os.listdir(app.config['OCR_PATH'])) != 0:
+            # OCR läuft die PDFS druch und speichert alles in einen eigenen Ordner
+            Tesseract.process_dir(app.config['OCR_PATH'])
             for file in filenameArr:
-                filepath = os.path.join(app.config['DOCUMENTS_PATH'],
-                                        file)  # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat    #
+                # Pfad vom Ordner, wohin die OCR die Dateien hingespeichert hat
+                filepath = os.path.join(app.config['DOCUMENTS_PATH'], file)
                 # for f in glob.glob("%s/*.txt" % filepath):  # Läuft den Ordner durch um alle txt - Dateien...
                 addAll(filepath, p, title, site)
                 # p.process(f, title, filepath, site)  # ... auf Solr hochzuladen
@@ -233,6 +230,8 @@ def getImage(url, string):
         if request.form['switchTo'] == 'Switch content':
             if 'getImageContent' in session:
                 if session['getImageContent'] == 'image':
+                    #session variable umändern den pfad zu txt datei festlegen
+                    #text auslesen ausspeichern der txt datei
                     session['getImageContent'] = 'text'
                     txt_url = url + '_text.txt'
                     print(txt_url)
@@ -243,6 +242,8 @@ def getImage(url, string):
                 else:
                     session['getImageContent'] ='image'
 
+#jede datei im ordner die mit thum.png endet wird es in der dic gespeichert
+    # thumb.png geenedet bei der if abfrgae
     for filename in os.listdir(directory):
         if filename.endswith("-thumb.png"):
             if not filename.endswith("-thumb-thumb.png"):
@@ -267,12 +268,18 @@ def getImage(url, string):
         for s in strr:
             getstring = '%s %s %s %s' % (s, s.upper(), s.lower(),
                                          getstring)  # +  string + ' %s ' % string.upper() + '%s ' % string.lower()  # Das Schlüsselwort wird in 3 Arten gespeichert normal, alles groß, alles klein
+
         #print(getstring)
     highlight_image(url, '%s_alto_neu.xml' % url, getstring)
     name = pathlib.Path(url).stem
     path = (app.config['DOCUMENTS_PATH'] + '\suche\\') + name + '_suche.jpg'
     print(path)
     return render_template("getImage.html", url=path, name=string, text_content=txt_content, arrAllFiles = arrAllFiles)  # , titlearr= sorted(searchArr))
+
+
+
+
+
 
 
 def highlight_image(img, xml, string):

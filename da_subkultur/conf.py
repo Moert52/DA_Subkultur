@@ -5,7 +5,7 @@
 DOCUMENTS_PATH = r'D:\Diplomarbeit\test_tesseract'
 
 #Melih's
-#DOCUMENTS_PATH = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+DOCUMENTS_PATH = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 #Assume we need 2 sections in the config file, let's call them USERINFO and SERVERCONFIG
 OCR_PATH = DOCUMENTS_PATH + r'\ToOCR'

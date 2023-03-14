@@ -167,7 +167,6 @@ class Processor(object):  # Klasse Processor - beinhaltet die Solr - Methoden
         self.server.delete(q='*:*')
         print("Alles gelöscht")
 
-
 # Der Ordner, wo alle Subordner, die durch die Ocr enstellt wurde, wird durchgelaufen und ladet die jeweiligen
 # Einträge auf Solr hoch
 def directoryToAddAll(directory, processor, title, site):  #

@@ -28,7 +28,6 @@ p {
     font-weight: 5000;
     font-size: 15pt;
 
-
 }
 
 .box {
@@ -50,23 +49,15 @@ h2 {
 }
 
 
-
 h3 {
 font-weight: 5000;
     font-size: 20pt;
 }
 
-input[type = "button"] {
-    border: 0;
-    background: white;
-    margin: 20px auto;
-    border: 2px solid #2ecc71;
-    padding: 14px 40px;
-    outline: none;
-    border-radius: 24px;
-    cursor: pointer;
-    font-size:15pt;
-}
+
+
+
+
 
 nav {
 height: 90px;

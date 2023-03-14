@@ -27,6 +27,7 @@
             <li><a href="suche">Das Subarchiv</a></li>
         </ul1>
         <ul>
+             <li><a href="admin">Admin</a></li>
             {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
             <li1><a href="/register">RegistrationSeite</a></li1>
@@ -41,7 +42,18 @@
 
 <body>
 
-    <h1>Das subArchiv</h1>
+<h1>Das subArchiv</h1> <br> <br> <br>
+
+
+
+    <h2> Liste der Orte</h2> <br>  <br>  <br> <br>
+
+
+
+
+    <h2> Liste der Zeitungen</h2> <br> <br> <br>
+
+
 
 
     <h4 class="searchTitle">{% block title %} Geben Sie den Suchbegriff ein: {% endblock %}</h4>
@@ -61,6 +73,8 @@
                     value="Suche">Submit</button>
 
         </form>
+
+
 
     <!--
     Die Liste mit den ganzen gesuchten Einträgen läuft hier in einer
