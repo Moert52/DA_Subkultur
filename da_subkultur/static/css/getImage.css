@@ -32,16 +32,14 @@ body {
 
 .ImageContainer2 {
   height: 100%;
-  margin-top: -2%;
-  margin-right:40%;
-  margin-left: 13%;
-  margin-bottom: 1%;
+  margin-left: 50%;
   border:1px solid black;
-  transform: translate(10%,-10%);
+  top: 5rem;
+  transform: translateX(-50%);
   background: white;
   opacity: 0.9;
   font-weight: 2000;
-  font-size:12.5pt;
+  font-size:10.5pt;
 
 }
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style = "height: 100vh">
 <head>
     <meta charset="UTF-8">
     <title>Artikel {{name}}</title>
@@ -27,6 +27,7 @@
     <div class="content">
         <a href="{{ url_for('getSearch', keyword=name) }}"> Back</a>
         <button type="reset" onclick="resetImg()" name="reset" value="Reset Size">Reset Size</button>
+
         <form method="post">
             <button type="submit" name="switchTo" value="Switch content">Switch</button><br>
         </form>
@@ -59,7 +60,7 @@
 
 
         {% else %}
-     <div class="ImageContainer2">
+     <div class="ImageContainer2 ">
             <pre class="content">{{ text_content }}</pre>
         {% endif %}
 

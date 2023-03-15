@@ -219,7 +219,7 @@ def getSearch(keyword=""):
 
 
 
-#Hier wird das enstsprechende Bild mit den jeweiligen Keyword gehighlightet angezeigt
+
 @app.route('/getImage/<path:url>/<string>', methods=['GET', 'POST'])
 def getImage(url, string):
     txt_content=''
@@ -237,8 +237,6 @@ def getImage(url, string):
                     print(txt_url)
                     with open(txt_url, "r", encoding='utf-8') as f:
                         txt_content = f.read()
-
-
                 else:
                     session['getImageContent'] ='image'
 
@@ -256,6 +254,9 @@ def getImage(url, string):
     print(arrAllFiles)
     clearFolder()
     print(url)
+
+
+
 
     #print(string)
     getstring = ''
