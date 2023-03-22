@@ -1,6 +1,12 @@
+import hashlib
 import sqlite3
+import string
 
-from models.User import User
+import bcrypt
+
+from User import User
+
+from cryptography.fernet import Fernet
 
 databasePath = 'models/users.db'
 
@@ -21,9 +27,10 @@ def insert(user):
         conn = sqlite3.connect(databasePath)
         c = conn.cursor()
         print(user)
+        secure_password = get_hashed_password(user.password)
         c.execute("INSERT INTO users (firstname, lastname, birthdate, email, password, role) "
                   "VALUES (?, ?, ?, ?, ?, ?)",
-                  (user.firstname, user.lastname, user.birthdate, user.email, user.password, user.role))
+                  (user.firstname, user.lastname, user.birthdate, user.email, secure_password, user.role))
         conn.commit()
     except sqlite3.Error as error:
         raise Exception("An error occurred while inserting a user", error)
@@ -31,18 +38,20 @@ def insert(user):
         conn.close()
 
 
-def getUser(email):
+def getUser(id):
     try:
         conn = sqlite3.connect(databasePath)
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE email=?", [email])
+        if type(id) is string:
+            c.execute("SELECT * FROM users WHERE email=?", [id])
+        elif type(id) is int:
+            c.execute("SELECT * FROM users WHERE id=?", [id])
         user = c.fetchone()
         return user
     except sqlite3.Error as error:
         raise Exception("An error occurred while getting a user", error)
     finally:
         conn.close()
-    return -1
 
 
 def getAllUser():
@@ -62,27 +71,31 @@ def deleteUser(id):
     try:
         conn = sqlite3.connect(databasePath)
         c = conn.cursor()
-        c.execute("DELETE FROM users WHERE id=?", [id])
+        if type(id) is string:
+            c.execute("DELETE FROM users WHERE email=?", [id])
+        elif type(id) is int:
+            c.execute("DELETE FROM users WHERE id=?", [id])
         conn.commit()
     except sqlite3.Error as error:
         raise Exception("An error occurred while deleting a user", error)
     finally:
         conn.close()
-    return 204
 
 
 def login(email, password):
     try:
         conn = sqlite3.connect(databasePath)
         c = conn.cursor()
-        c.execute("SELECT * FROM users WHERE email=? and password=?", (email, password))
+
+        c.execute("SELECT * FROM users WHERE email=? ", email)
         if c.fetchone() is None:
             raise Exception("Please use an existing E-Mail or Password")
+        else:
+            return 1
     except sqlite3.Error as error:
         raise Exception("An error occurred while login", error)
     finally:
         conn.close()
-    return 1
 
 
 def logreg():
@@ -114,8 +127,20 @@ def logreg():
         insert(user)
 
 
+def get_hashed_password(plain_text_password):
+    # Hash a password for the first time
+    #   (Using bcrypt, the salt is saved into the hash itself)
+    return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
+
+
+def check_password(plain_text_password, hashed_password):
+    # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+    return bcrypt.checkpw(plain_text_password, hashed_password)
+
+
 if __name__ == "__main__":
-    #logreg()
-    print(getAllUser())
-    #print(getUser('mcetinkaya@tsn.at'))
-    #deleteUser(5)
+    password = "Hallo123".encode('utf-8')
+    print(password)
+    hash = get_hashed_password(password)
+    print(hash)
+    check_password(password, hash)
