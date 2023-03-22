@@ -10,14 +10,14 @@
 
 
     <nav>
-        <ul1>
+        <ul class="ul1">
             <li><a href="/">Startseite</a></li>
             <li><a href="suche">Das Subarchiv</a></li>
-        </ul1>
+        </ul>
         <ul>
-            <li1><a href="/login">LoginSeite</a></li1>
-            <li1><a href="/register">RegistrationSeite</a></li1>
-            <li1><a href="/allUsers">Alle Userdaten</a></li1>
+            <li class="li1"><a href="/login">LoginSeite</a></li>
+            <li class="li1"><a href="/register">RegistrationSeite</a></li>
+            <li class="li1"><a href="/allUsers">Alle Userdaten</a></li>
        </ul>
     </nav>
 
@@ -38,7 +38,7 @@
             <div class="zoom_outer">
                 <div id="zoom">
 
-                        <img id="shownImg" class="img" width="50%" height="50%" src="{{ url_for('get_file', path=url) }}">
+                        <img id="shownImg" alt="Bild" class="img" width="50%" height="50%" src="{{ url_for('get_file', path=url) }}">
                     </div>
                 </div>
             </div>
@@ -50,7 +50,7 @@
             <div class="scrollmenu">
             {% for file in arrAllFiles %}
                  <a href="{{ url_for('getImage', url=file.url, string=name) }}">
-                    <img class="img" width="100%" height="100%"
+                    <img alt="Bild" class="img" width="100%" height="100%"
                          src="{{ url_for('get_file',path=file.thumb) }}">
                  </a>
             {% endfor %}
@@ -63,24 +63,24 @@
      <div class="ImageContainer2 ">
             <pre class="content">{{ text_content }}</pre>
         {% endif %}
-
+     </div>
 </body>
 
 <script>
     // Der Quellcode für die Zoomfunktion wurde von Stackfindover übernommen und entsprechend erweitert
     // URL: https://dev.to/stackfindover/zoom-image-point-with-mouse-wheel-11n3
-      var scale = 1,
+    let scale = 1,
         panning = false,
         pointX = 0,
         pointY = 0,
-        start = { x: 0, y: 0 },
+        start = {x: 0, y: 0},
         zoom = document.getElementById("zoom");
 
-      function setTransform() {
+    function setTransform() {
         zoom.style.transform = "translate(" + pointX + "px, " + pointY + "px) scale(" + scale + ")";
       }
       function resetImg() {
-        shownImg = document.getElementById("zoom");
+        let shownImg = document.getElementById("zoom");
         shownImg.style.transform = "translate( 0px, 0px) scale(1)";
         scale = 1;
         panning = false;
@@ -111,7 +111,7 @@
 
       zoom.onwheel = function (e) {
         e.preventDefault();
-        var xs = (e.clientX - pointX) / scale,
+        let xs = (e.clientX - pointX) / scale,
           ys = (e.clientY - pointY) / scale,
           delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY);
         (delta > 0) ? (scale *= 1.2) : (scale /= 1.2);

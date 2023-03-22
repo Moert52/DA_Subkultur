@@ -1,12 +1,11 @@
 body {
 
-    margin:0px;
-    background: url('http://127.0.0.1:5252/static/multimedia/innsbruck.jpg') no-repeat fixed;
+    margin:0;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    background-color: #cccccc;
+    background: #cccccc url('http://127.0.0.1:5252/static/multimedia/innsbruck.jpg') no-repeat fixed;
 
 }
 
@@ -51,24 +50,28 @@ width: 100%;
 background-color: #969f3a;
 
 
-box-shadow: 0px 2px 4px rgba(0,0,0.144);
+box-shadow: 0 2px 4px rgba(0,0,0.144);
 }
 
 nav ul {
 
 float: right;
 }
+nav .ul1 {
+
+float: left;
+}
 
 
 
-nav li1 {
+nav .li1 {
  display: inline-block;
  margin-top: 15px;
  margin-right: 40px;
 
 }
 
-nav li1 a {
+nav .li1 a {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 24px;
     color: #333;
@@ -103,7 +106,7 @@ height: 90px;
 width: 100%;
 bottom: 0;
 background-color: #969f3a;
-box-shadow: 0px 2px 4px rgba(0,0,0.144);
+box-shadow: 0 2px 4px rgba(0,0,0.144);
 }
 
 nav li2 {

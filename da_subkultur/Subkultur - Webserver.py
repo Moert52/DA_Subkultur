@@ -239,7 +239,7 @@ def getImage(url, string):
                 else:
                     session['getImageContent'] ='image'
 
-#jede datei im ordner die mit thum.png endet wird es in der dic gespeichert
+    #jede datei im ordner die mit thum.png endet wird es in der dic gespeichert
     # thumb.png geenedet bei der if abfrgae
     for filename in os.listdir(directory):
         if filename.endswith("-thumb.png"):

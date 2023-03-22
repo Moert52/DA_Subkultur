@@ -30,7 +30,7 @@ app.config['SECRET_KEY'] = 'you-will-never-guess'
 # ordner = r'D:\Diplomarbeit\test_tesseract'
 
 # Melih's Ordner
-#ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
+# ordner = r'C:\Users\Anwender\Documents\SCHULE\Diplomarbeit\test_tesseract'
 
 ordner = DOCUMENTS_PATH
 

@@ -11,14 +11,14 @@
 </head>
 
     <nav>
-        <ul1>
+        <ul class="ul1">
             <li><a href="/">Startseite</a></li>
             <li><a href="suche">Das Subarchiv</a></li>
-        </ul1>
+        </ul>
         <ul>
             {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
-            <li1><a href="/register">RegistrationSeite</a></li1>
+            <li class="li1"><a href="/register">RegistrationSeite</a></li>
             {% else %}
             <li><a href="/suche">Logout</a></li>
             {% endif %}
@@ -30,6 +30,7 @@
 
 
 
+<!--suppress SyntaxError -->
 <form class="box" action="#" method="post">
 
     <h1> Login </h1>
@@ -40,10 +41,10 @@
 
 
     <p>Passwort</p>
-    <input type="password" name="password" value = {{ password }}/> </br>
+    <input type="password" name="password" value = {{ password }}/> <br>
 
 
-    <input type="submit" value="submit" /> </br> </br>
+    <input type="submit" value="submit" /> <br> <br>
 
 
     <!-- <input type="button" value="Back" onClick="javascript:history.back()"> </br> -->

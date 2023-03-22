@@ -1,11 +1,10 @@
 body {
-    margin:0px;
-    background: url('http://127.0.0.1:5252/static/multimedia/start.jpg') no-repeat fixed;
+    margin:0;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    background-color: #cccccc;
+    background: #cccccc url('http://127.0.0.1:5252/static/multimedia/start.jpg') no-repeat fixed;
 }
 
 
@@ -18,41 +17,13 @@ body {
     position: absolute;
     top: 9px;
     left: 21px;
-    rigth: 50px;
+    right: 50px;
     width: 980px;
     height: 198px;
-    border: solid 120px #000;
-    border-color: #000 transparent transparent transparent;
     border-radius: 50%/408px 445px 0 0;
+    border: 120px solid transparent;
     border-top-color: #343909;
     opacity: 0.8;}
-
-.semi-circle {
-    margin-left: 29.1px;
-    margin-top: 26px;
-    width: 125px;
-    height: 52px;
-    background-color: #343909;
-    opacity: 0.75;
-    border-radius: 10rem 10rem 0 0;
-    transform: rotate(190deg);
-}
-
-.drei {
-    margin-left: 51.9px;
-    margin-top: -167.9px;
-    width: 1px;
-    height: 1px;
-    border-top: 121px solid transparent;
-    border-right: 91px solid transparent;
-    border-right: 93px solid transparent;
-    border-left: 20px solid #343909;
-    opacity: 0.79;
-    transform: rotate(280deg);
-
-
-
-}
 
 .title {
     margin-left: 9.5%;
@@ -95,10 +66,9 @@ a:hover, a:active {
     background-color: #545454;
     color: white;
     font-weight: bold;
-    padding: 1px 45px;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-    padding-bottom: 6px;
+    padding: 1px 45px 6px;
     font-size: 26px;
 }
 
@@ -110,18 +80,5 @@ a:hover, a:active {
 
 }
 
-.goo {
-    text-align: center;
-    font-size: 2rem;
-    line-height: 1.35;
-    display: inline;
-    box-decoration-break: clone;
-    background: var(--color-highlight);
-    padding: 0.5rem 1rem;
-    filter: url('#goo');
-}
 
-.goo:focus {
-    outline: 0;
-}
 

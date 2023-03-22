@@ -4,7 +4,7 @@ import string
 
 import bcrypt
 
-from User import User
+from models.User import User
 
 from cryptography.fernet import Fernet
 

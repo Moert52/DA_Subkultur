@@ -12,14 +12,14 @@
 </head>
 
  <nav>
-        <ul1>
+        <ul class="ul1">
             <li><a href="/">Startseite</a></li>
             <li><a href="suche">Das Subarchiv</a></li>
-        </ul1>
+        </ul>
         <ul>
             {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
-            <li1><a href="/register">RegistrationSeite</a></li1>
+            <li class="li1"><a href="/register">RegistrationSeite</a></li>
             {% else %}
             <li><a href="/suche">Logout</a></li>
             {% endif %}

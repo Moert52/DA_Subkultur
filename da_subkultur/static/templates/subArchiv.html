@@ -17,20 +17,21 @@
 
 <head>
     <meta charset="UTF-8">
+    <title>SubArchiv</title>
 
 
 </head>-
 
  <nav>
-        <ul1>
+        <ul class="ul1">
             <li><a href="/">Startseite</a></li>
             <li><a href="suche">Das Subarchiv</a></li>
-        </ul1>
+        </ul>
         <ul>
              <li><a href="admin">Admin</a></li>
             {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
-            <li1><a href="/register">RegistrationSeite</a></li1>
+            <li class="li1"><a href="/register">RegistrationSeite</a></li>
             {% else %}
             <li><a href="/suche">Logout</a></li>
             {% endif %}
@@ -66,7 +67,7 @@
 
             <label class="lblSuche" for="keyword">Suche:</label>
             <br>
-            <input class="inputKeyword"type="text" name="keyword"
+            <input class="inputKeyword" type="text" name="keyword"
                    placeholder={{keyword}}>
 
             <button class="btn" type="submit" name="submit_button"
@@ -92,7 +93,7 @@
             <tr class="column">
                 <td class="picture">
                 <a href="{{ url_for('getImage', url=file.url, string=name) }}">
-                    <img class="img" width="20%" height="20%"
+                    <img alt="Bild" class="img" width="20%" height="20%"
                          src="{{ url_for('get_file', path=file.thumb) }}">
                 </a>
                 </td>
@@ -101,7 +102,7 @@
             {% endfor %}
         </tbody>
     </table>
-</div>
+
 
 </body>
 

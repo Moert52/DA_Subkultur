@@ -1,12 +1,11 @@
 body {
 
-    margin:0px;
-    background: url('http://127.0.0.1:5252/static/multimedia/innsbruck.jpg') no-repeat fixed;
+    margin:0;
     -webkit-background-size: cover;
     -moz-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
-    background-color: #cccccc;
+    background: #cccccc url('http://127.0.0.1:5252/static/multimedia/innsbruck.jpg') no-repeat fixed;
 
 }
 
