@@ -25,7 +25,6 @@ def deleteAdmin(email):
         raise Exception("An error occurred while deleting an email", error)
     finally:
         conn.close()
-    return 204
 
 
 def getAllAdmins():

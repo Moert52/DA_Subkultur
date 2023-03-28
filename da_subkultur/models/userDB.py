@@ -1,4 +1,3 @@
-import hashlib
 import sqlite3
 import string
 
@@ -86,12 +85,15 @@ def login(email, password):
     try:
         conn = sqlite3.connect(databasePath)
         c = conn.cursor()
-
         c.execute("SELECT * FROM users WHERE email=? ", email)
-        if c.fetchone() is None:
+        user = c.fetchone()
+        if user is None:
             raise Exception("Please use an existing E-Mail or Password")
         else:
-            return 1
+            if check_password(password, user.password):
+                return 1
+            else:
+                raise Exception("Wrong Password provided")
     except sqlite3.Error as error:
         raise Exception("An error occurred while login", error)
     finally:
@@ -101,7 +103,6 @@ def login(email, password):
 def logreg():
     print("Login oder Register (login/register):")
     if input() == "login":
-
         print("Enter EMail: ")
         email = input()
         print("Enter Password: ")
@@ -112,7 +113,7 @@ def logreg():
         else:
             print("login failed")
 
-    else:
+    elif input() == "register":
         print("Firstname: ")
         firstname = str(input())
         print("Lastname: ")
@@ -123,18 +124,18 @@ def logreg():
         email = str(input())
         print("Password: ")
         password = str(input())
+
         user = User(firstname, lastname, birthdate, email, password)
         insert(user)
 
 
 def get_hashed_password(plain_text_password):
-    # Hash a password for the first time
-    #   (Using bcrypt, the salt is saved into the hash itself)
+    # Passwort wird mit Salt gehashed, bcrypt speichert Salt im Hash
     return bcrypt.hashpw(plain_text_password, bcrypt.gensalt())
 
 
 def check_password(plain_text_password, hashed_password):
-    # Check hashed password. Using bcrypt, the salt is saved into the hash itself
+    # Passwort mittels bcrypt prüfen
     return bcrypt.checkpw(plain_text_password, hashed_password)
 
 
@@ -143,4 +144,5 @@ if __name__ == "__main__":
     print(password)
     hash = get_hashed_password(password)
     print(hash)
-    check_password(password, hash)
+    falsch = "Hallo".encode('utf-8')
+    print(check_password(password, hash))

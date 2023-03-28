@@ -314,7 +314,7 @@ def get_file(path):
 
 # Dort bekommt man die ganzen Bilder von einem Ordner / PDF File
 ###################
-# noch nicht fertig#
+# noch nicht fertig
 ###################
 def getPictures(dir):
     picArr = []  # Array für die Bilder
