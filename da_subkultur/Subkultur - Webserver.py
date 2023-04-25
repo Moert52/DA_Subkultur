@@ -102,6 +102,13 @@ def login():
         return render_template("login.html")
 
 
+@app.route('/logout', methods=('GET', 'POST'))
+def logout():
+    session["loggedIn"] = 0
+
+    return redirect(url_for('getSearch'))
+
+
 @app.route('/archivinfo', methods=('GET', 'POST'))
 def info():
     return render_template("archivinfo.html")
@@ -120,8 +127,8 @@ def impressum():
 @app.route('/admin')
 @login_required
 def admin():
-    return render_template("admin.html")
-
+    users = getAllUser()
+    return render_template("admin.html", users=users)
 
 
 # Hier ist die Methode und das Formular um Artikel hochzuladen (OCR + Solr)

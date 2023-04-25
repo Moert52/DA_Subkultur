@@ -18,16 +18,18 @@
 <body>
 
     <nav>
-        <ul>
+        <ul class="ul1">
             <li><a href="/">Startseite</a></li>
-            <li><a class= "active"  href="suche.html">Das Subarchiv</a></li>
+            <li><a href="suche">Das Subarchiv</a></li>
+        </ul>
+        <ul>
             {% if session["loggedIn"] == 0 %}
             <li><a href="/login">LoginSeite</a></li>
             <li class="li1"><a href="/register">RegistrationSeite</a></li>
             {% else %}
             <li><a href="/suche">Logout</a></li>
-            {% endif %}
             <li><a href="admin">Admin</a></li>
+            {% endif %}
         </ul>
     </nav>
 

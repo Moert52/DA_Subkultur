@@ -3,7 +3,7 @@ import string
 
 import bcrypt
 
-from models.User import User
+from User import User
 
 from cryptography.fernet import Fernet
 

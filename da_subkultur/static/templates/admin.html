@@ -9,9 +9,28 @@
 <body>
 <h1> Admin Seite</h1>
 
-
-
-
+<table>
+    <tr>
+        <th>Id</th>
+        <th>Firstname</th>
+        <th>Lastname</th>
+        <th>Birthdate</th>
+        <th>E-Mail</th>
+        <th>Password</th>
+        <th>Role</th>
+    </tr>
+    {% for u in users %}
+        <tr>
+            <td>{{loop.index}}</td>
+            <td>{{u.firstname}}</td>
+            <td>{{u.lastname}}</td>
+            <td>{{u.birthdate}}</td>
+            <td>{{u.email}}</td>
+            <td>{{u.password}}</td>
+            <td>{{u.role}}</td>
+        </tr>
+    {%endfor%}
+</table>
 
 </body>
 </html>
